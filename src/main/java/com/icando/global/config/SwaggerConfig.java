@@ -1,4 +1,4 @@
-package com.icando._global.config;
+package com.icando.global.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -13,8 +13,8 @@ public class SwaggerConfig{
 
     @Bean
     public OpenAPI openAPI() {
-        io.swagger.v3.oas.models.security.SecurityScheme securityScheme = getSecurityScheme();
-        io.swagger.v3.oas.models.security.SecurityRequirement securityRequirement = getSecurityRequireMent();
+        SecurityScheme securityScheme = getSecurityScheme();
+        SecurityRequirement securityRequirement = getSecurityRequireMent();
 
         return new OpenAPI()
                 .info(new Info()
@@ -25,12 +25,12 @@ public class SwaggerConfig{
                 .security(java.util.List.of(securityRequirement));
     }
 
-    private io.swagger.v3.oas.models.security.SecurityScheme getSecurityScheme() {
-        return new io.swagger.v3.oas.models.security.SecurityScheme().type(io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
+    private SecurityScheme getSecurityScheme() {
+        return new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
                 .in(SecurityScheme.In.HEADER).name("Authorization");
     }
 
-    private io.swagger.v3.oas.models.security.SecurityRequirement getSecurityRequireMent() {
+    private SecurityRequirement getSecurityRequireMent() {
         return new SecurityRequirement().addList("bearerAuth");
     }
 }
