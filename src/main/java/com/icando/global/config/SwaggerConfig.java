@@ -18,8 +18,8 @@ public class SwaggerConfig{
 
         return new OpenAPI()
                 .info(new Info()
-                        .title("DeepGround Server API")
-                        .description("DeepGround APIs")
+                        .title("I Can Do API")
+                        .description("I Can Do APIs")
                         .version("1.0.0"))
                 .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
                 .security(java.util.List.of(securityRequirement));
