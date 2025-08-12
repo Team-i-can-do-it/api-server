@@ -37,3 +37,7 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+  ai:
+    openai:
+      base-url: https://openrouter.ai/api/v1
+      api-key: ${OPENAI_API_KEY}
