@@ -1,0 +1,41 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/${api.version}
+  name: iCanDo
+
+api:
+  version: v1
+
+swagger:
+  server:
+    url: http://localhost:8080/api/v1
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop  # 테스트 시작할 때마다 새로 생성
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+    show-sql: true
+
+  h2:
+    console:
+      enabled: true
+
+  ai:
+    openai:
+      base-url: https://openrouter.ai/api/v1
+      api-key: test-dummy-key  # 테스트용 더미 키
