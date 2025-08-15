@@ -40,13 +40,13 @@ jobs:
 
       # 4. Docker 이미지 빌드 & 푸시
       - name: Docker 이미지 생성
-        run: docker build -t i-can-do-server .
+        run: docker build -t icando .
 
       - name: Docker 이미지에 Tag 붙이기
-        run: docker tag i-can-do-server ${{ steps.login-ecr.outputs.registry }}/i-can-do-server:latest
+        run: docker tag i-can-do-server ${{ steps.login-ecr.outputs.registry }}/icando:latest
 
       - name: ECR에 Docker 이미지 Push하기
-        run: docker push ${{ steps.login-ecr.outputs.registry }}/i-can-do-server:latest
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/icando:latest
 
 #      # 4. Docker 이미지 빌드 & 푸시
 #      - name: Build, tag, and push image to ECR
