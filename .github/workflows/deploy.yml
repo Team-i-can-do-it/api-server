@@ -84,6 +84,14 @@
               # 기존 컨테이너 종료/제거
               docker stop my-app || true
               docker rm my-app || true
+              
+                    # 컨테이너 내 환경변수 확인
+              sleep 5
+              echo "=== 컨테이너 내 환경변수 확인 ==="
+              docker exec my-app env | grep -E "(DB_|OPENAI_|SPRING_)" || echo "환경변수 없음"
+      
+              echo "=== 컨테이너 로그 확인 ==="
+              docker logs my-app --tail 30
   
               # Docker 컨테이너 실행 (env 적용)
               docker run -d --name my-app -p 80:8080 --env-file .env ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:latest
