@@ -81,6 +81,9 @@
               echo "${{ secrets.ENV }}" | base64 -d > .env
               chmod 600 .env # .env 
               
+              echo "=== .env 파일 내용 (마스킹) ==="
+              cat .env | sed 's/=.*/=***/' # 비밀번호는 마스킹
+              
               # 기존 컨테이너 종료/제거
               docker stop my-app || true
               docker rm my-app || true
