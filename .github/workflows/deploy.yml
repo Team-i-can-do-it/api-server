@@ -73,10 +73,11 @@
               docker pull ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:latest
               docker stop my-app || true
               docker rm my-app || true
-              docker run -d --name my-app -p 80:8080 ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:latest
               
               echo "${{ secrets.ENV }}" | base64 -d > .env
               chmod 600 .env # .env 
+              
+              docker run -d --name my-app -p 80:8080 ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:latest
               
               echo "=== .env 파일 내용 (마스킹) ==="
               cat .env | sed 's/=.*/=***/' # 비밀번호는 마스킹
