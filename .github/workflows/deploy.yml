@@ -43,7 +43,7 @@ jobs:
         run: docker build -t icando .
 
       - name: Docker 이미지에 Tag 붙이기
-        run: docker tag i-can-do-server ${{ steps.login-ecr.outputs.registry }}/icando:latest
+        run: docker tag icando ${{ steps.login-ecr.outputs.registry }}/icando:latest
 
       - name: ECR에 Docker 이미지 Push하기
         run: docker push ${{ steps.login-ecr.outputs.registry }}/icando:latest
