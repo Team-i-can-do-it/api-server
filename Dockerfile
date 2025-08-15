@@ -7,8 +7,8 @@ WORKDIR /app
 # 빌드된 JAR 파일 복사
 COPY build/libs/*.jar app.jar
 
-## .env 파일도 컨테이너 내부에 복사
-#COPY .env .env
+# .env 파일도 컨테이너 내부에 복사
+COPY .env .env
 
 # 컨테이너가 8080 포트에서 통신하도록 설정합니다.
 EXPOSE 8080
