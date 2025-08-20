@@ -1,4 +1,4 @@
-package com.icando;
+package com.icando.global;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
