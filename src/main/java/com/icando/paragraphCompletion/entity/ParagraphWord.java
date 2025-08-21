@@ -13,7 +13,7 @@ public class ParagraphWord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "paragrahp_word_id")
+    @Column(name = "paragraph_word_id")
     private Long id;
 
     @Column
