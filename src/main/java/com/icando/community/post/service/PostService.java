@@ -1,4 +1,4 @@
-package com.icando.writing.service;
+package com.icando.community.post.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -7,5 +7,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class WritingService {
+public class PostService {
 }

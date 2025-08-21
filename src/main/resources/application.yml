@@ -41,9 +41,21 @@ spring:
     show-sql: true
   ai:
     openai:
-      api-key: ${OPENAI_API_KEY}
-      base-url: https://openrouter.ai/api
       chat:
         options:
           model: ${AI_MODEL}
         completions-path: /v1/chat/completions
+      base-url: https://openrouter.ai/api/v1
+      api-key: ${OPENAI_API_KEY}
+
+cloud:
+  aws:
+    s3:
+      bucketName: ${BUCKET_NAME}
+    credentials:
+      access-key: ${ACCESS_KEY}
+      secret-key: ${SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
