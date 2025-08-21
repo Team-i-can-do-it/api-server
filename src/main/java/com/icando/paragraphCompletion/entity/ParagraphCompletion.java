@@ -15,10 +15,10 @@ public class ParagraphCompletion extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "paragrahp_completion_id")
+    @Column(name = "paragraph_completion_id")
     private Long id;
 
-    @Column(name = "paragrahp_completion_content")
+    @Column(name = "paragraph_completion_content")
     private String content;
 
     @ManyToOne (fetch = FetchType.LAZY)

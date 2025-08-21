@@ -22,6 +22,6 @@ public class RandomBoxHistory extends BaseEntity {
     private Member member;
 
     @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name ="random_box_history_id")
-    private RandomBoxHistory randomBoxHistory;
+    @JoinColumn(name ="random_box_id")
+    private RandomBox randomBox;
 }

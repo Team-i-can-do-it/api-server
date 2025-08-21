@@ -1,6 +1,5 @@
 package com.icando.paragraphCompletion.entity;
 
-import com.icando.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,7 +12,7 @@ public class ParagraphWord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "paragrahp_word_id")
+    @Column(name = "paragraph_word_id")
     private Long id;
 
     @Column
