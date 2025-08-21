@@ -3,7 +3,7 @@
   on:
     push:
       branches:
-        - prototype
+        - main
 
   jobs:
     deploy:
