@@ -1,6 +1,5 @@
 package com.icando.paragraphCompletion.entity;
 
-import com.icando.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
