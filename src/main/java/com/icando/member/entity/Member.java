@@ -39,4 +39,14 @@ public class Member extends BaseEntity {
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name ="mbti_id")
     private Mbti mbti;
+
+    private Member(String name, String email,String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public static Member createLocalMember(String name, String email,String password) {
+        return new Member(name,email,password);
+    }
 }
