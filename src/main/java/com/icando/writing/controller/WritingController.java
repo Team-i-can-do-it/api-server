@@ -8,6 +8,11 @@ import com.icando.writing.enums.WritingSuccessCode;
 import com.icando.writing.error.TopicErrorCode;
 import com.icando.writing.error.TopicException;
 import com.icando.writing.service.TopicService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +24,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/writing")
 @RequiredArgsConstructor
+@Tag(name = "글쓰기 API", description = "주제 선정 등 글쓰기 관련 API")
 public class WritingController {
 
     private final ChatClient.Builder ai;
     private final TopicService topicService;
 
+    @Operation(summary = "랜덤 주제 조회", description = "카테고리별 또는 전체 랜덤 주제 1개를 조회합니다.")
+         @ApiResponses(value = {
+             @ApiResponse(responseCode = "200", description = "주제 조회 성공"),
+             @ApiResponse(responseCode = "404", description = "존재하지 않는 카테고리", content = @Content)
+         }
+     )
     @GetMapping("/topics/{category}")
     public ResponseEntity<SuccessResponse<TopicResponse>> getTopicByCategory(@PathVariable String category) {
 
