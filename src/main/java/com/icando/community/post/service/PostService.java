@@ -2,6 +2,8 @@ package com.icando.community.post.service;
 
 import com.icando.community.post.dto.PostCreateRequest;
 import com.icando.community.post.entity.Post;
+import com.icando.community.post.exception.PostErrorCode;
+import com.icando.community.post.exception.PostException;
 import com.icando.community.post.repository.PostRepository;
 import com.icando.member.entity.Member;
 import com.icando.member.exception.MemberErrorCode;
@@ -30,5 +32,12 @@ public class PostService {
         postRepository.save(post);
 
         return post;
+    }
+
+    //TODO: 추후 UI에 따라 좋아요수랑 조회수 추가 예정
+    public Post selectPost(Long postId) {
+
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(PostErrorCode.INVALID_POST_ID));
     }
 }
