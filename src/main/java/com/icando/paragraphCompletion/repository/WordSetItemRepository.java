@@ -9,12 +9,6 @@ import java.util.List;
 
 @Repository
 public interface WordSetItemRepository extends JpaRepository<WordSetItem, Integer> {
-    @Query(value = """
-    SELECT * FROM word_set_item
-    WHERE id >= (SELECT FLOOR(RANDOM() * (SELECT MAX(id) - MIN(id) + 1 FROM word_set_item) + (SELECT MIN(id) FROM word_set_item)))
-        AND id not in (:ids)
-    ORDER BY id
-    LIMIT 1
-    """, nativeQuery = true)
-    WordSetItem getRandomWord(List<Integer> ids);
+    @Query(value = "SELECT * FROM word_set_item ORDER BY RANDOM() LIMIT :count", nativeQuery = true)
+    List<WordSetItem> getRandomWords(int count);
 }
