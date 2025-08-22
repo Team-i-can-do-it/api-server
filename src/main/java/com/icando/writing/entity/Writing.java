@@ -24,11 +24,15 @@ public class Writing extends BaseEntity {
     @Column(name = "writing_content")
     private String content;
 
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="member_id" , nullable = false)
     private Member member;
 
-    @OneToOne (fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="feedback_id" , nullable = false)
     private Feedback feedback;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "topic_id", nullable = false)
+    private Topic topic;
 }
