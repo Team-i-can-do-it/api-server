@@ -22,7 +22,7 @@ public class ParagraphCompletionController {
     private final ParagraphCompletionService paragraphCompletionService;
 
     @GetMapping("/words")
-    public ResponseEntity<SuccessResponse<List<String>>> getWords(@RequestParam @Valid @Min(3) @Max(100) int count) {
+    public ResponseEntity<SuccessResponse<List<String>>> getWords(@RequestParam @Min(3) @Max(100) int count) {
         return ResponseEntity.ok(
                 SuccessResponse.of(
                         ParagraphCompletionSuccessCode.RANDOM_WORD_SUCCESS,
