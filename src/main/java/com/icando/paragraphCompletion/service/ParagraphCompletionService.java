@@ -18,7 +18,7 @@ public class ParagraphCompletionService {
     private final WordSetItemRepository wordSetItemRepository;
     private final ChatClient ai;
 
-    @Autowired
+    
     public ParagraphCompletionService(ParagraphCompletionRepository paragraphCompletionRepository, WordSetItemRepository wordSetItemRepository, ChatClient.Builder chatClient) {
         this.paragraphCompletionRepository = paragraphCompletionRepository;
         this.wordSetItemRepository = wordSetItemRepository;
