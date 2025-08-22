@@ -18,9 +18,6 @@ public class Writing extends BaseEntity {
     @Column(name = "writing_id")
     private Long id;
 
-    @Column(name = "writing_theme")
-    private String theme;
-
     @Column(name = "writing_content")
     private String content;
 
