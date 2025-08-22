@@ -26,7 +26,7 @@ public class Writing extends BaseEntity {
     private Member member;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="feedback_id" , nullable = false)
+    @JoinColumn(name ="feedback_id" , nullable = true)
     private Feedback feedback;
 
     @OneToOne(fetch = FetchType.LAZY)
