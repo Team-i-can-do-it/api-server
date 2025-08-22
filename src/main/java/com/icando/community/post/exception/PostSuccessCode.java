@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum PostSuccessCode implements SuccessCode {
-    SUCCESS_CREATE_POST(HttpStatus.CREATED,"게시글이 작성 되었습니다");
+    SUCCESS_CREATE_POST(HttpStatus.CREATED,"게시글이 작성되었습니다"),
+    SUCCESS_SELECT_POST(HttpStatus.OK,"게시글이 성공적으로 조회되었습니다" );
 
     private final HttpStatus status;
     private final String message;
