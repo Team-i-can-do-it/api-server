@@ -26,4 +26,15 @@ public class PostController {
         return ResponseEntity.ok(
                 SuccessResponse.of(PostSuccessCode.SUCCESS_CREATE_POST));
     }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<SuccessResponse> selectPost(
+            @PathVariable Long postId) {
+
+        postService.selectPost(postId);
+        return ResponseEntity.ok(
+                SuccessResponse.of(PostSuccessCode.SUCCESS_SELECT_POST));
+    }
+
+
 }
