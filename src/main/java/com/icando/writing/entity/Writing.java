@@ -18,7 +18,7 @@ public class Writing extends BaseEntity {
     @Column(name = "writing_id")
     private Long id;
 
-    @Column(name = "writing_content")
+    @Column(name = "writing_content", length = 600)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,10 +34,13 @@ public class Writing extends BaseEntity {
     private Topic topic;
 
     public static Writing of(String content, Member member, Topic topic) {
+
         Writing writing = new Writing();
+
         writing.content = content;
         writing.member = member;
         writing.topic = topic;
+
         return writing;
     }
 }
