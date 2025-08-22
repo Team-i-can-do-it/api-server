@@ -17,4 +17,6 @@ public interface TopicRepository extends JpaRepository<Topic, Long> {
 
     @Query(value = "SELECT * FROM topic ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
     Optional<Topic> findRandom();
+
+    List<Topic> findByTopic(String topic);
 }
