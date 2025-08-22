@@ -34,7 +34,9 @@ spring:
   h2:
     console:
       enabled: true
-
+  sql:
+    init:
+      mode: never
   ai:
     openai:
       base-url: https://openrouter.ai/api/v1
