@@ -31,7 +31,7 @@ public class PostController {
     public ResponseEntity<SuccessResponse> selectPost(
             @PathVariable Long postId) {
 
-        postService.selectPost(postId);
+        postService.selectPostById(postId);
         return ResponseEntity.ok(
                 SuccessResponse.of(PostSuccessCode.SUCCESS_SELECT_POST));
     }

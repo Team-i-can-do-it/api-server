@@ -35,7 +35,7 @@ public class PostService {
     }
 
     //TODO: 추후 UI에 따라 좋아요수랑 조회수 추가 예정
-    public Post selectPost(Long postId) {
+    public Post selectPostById(Long postId) {
 
         return postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorCode.INVALID_POST_ID));
