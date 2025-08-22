@@ -30,35 +30,39 @@ public class WritingController {
     private final ChatClient.Builder ai;
     private final TopicService topicService;
 
-    @Operation(summary = "랜덤 주제 조회", description = "카테고리별 또는 전체 랜덤 주제 1개를 조회합니다.")
-         @ApiResponses(value = {
-             @ApiResponse(responseCode = "200", description = "주제 조회 성공"),
-             @ApiResponse(responseCode = "404", description = "존재하지 않는 카테고리", content = @Content)
-         }
-     )
+    @Operation(
+        summary = "랜덤 주제 조회",
+        description = "카테고리별 또는 전체 랜덤 주제 1개를 조회합니다."
+    )
+    @ApiResponses(
+        value = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "주제 조회 성공"
+            ),
+            @ApiResponse(
+                responseCode = "404",
+                description = "존재하지 않는 카테고리",
+                content = @Content
+            )
+        }
+    )
     @GetMapping("/topics/{category}")
     public ResponseEntity<SuccessResponse<TopicResponse>> getTopicByCategory(@PathVariable String category) {
+        Topic selectedTopic;
 
         if ("random".equalsIgnoreCase(category)) {
-            Topic randomTopic = topicService.getRandomTopic();
-            TopicResponse topicResponse = new TopicResponse(randomTopic.getTopic());
-            SuccessResponse<TopicResponse> responseBody = SuccessResponse.of(
-                WritingSuccessCode.TOPIC_SELECT_SUCCESS,
-                topicResponse
-            );
+            selectedTopic = topicService.getRandomTopic();
+        } else {
+            Category selectedCategory = Category.fromPath(category);
+            if (selectedCategory == null) {
+                throw new TopicException(TopicErrorCode.TOPIC_NOT_FOUND);
+            }
+            selectedTopic = topicService.getRandomTopicByCategory(selectedCategory);
 
-            return ResponseEntity
-                .status(WritingSuccessCode.TOPIC_SELECT_SUCCESS.getStatus())
-                .body(responseBody);
         }
 
-        Category selectedCategory = Category.fromPath(category);
-
-        if (selectedCategory == null) {
-            throw new TopicException(TopicErrorCode.TOPIC_NOT_FOUND);
-        }
-
-        TopicResponse topicResponse = getRandomTopic(selectedCategory);
+        TopicResponse topicResponse = new TopicResponse(selectedTopic.getTopic());
 
         SuccessResponse<TopicResponse> responseBody =
             SuccessResponse.of(WritingSuccessCode.TOPIC_SELECT_SUCCESS, topicResponse);
@@ -66,10 +70,6 @@ public class WritingController {
         return ResponseEntity
             .status(WritingSuccessCode.TOPIC_SELECT_SUCCESS.getStatus())
             .body(responseBody);
-    }
-
-    private TopicResponse getRandomTopic(Category category) {
-        return new TopicResponse(topicService.getRandomTopicByCategory(category).getTopic());
     }
 
 }
