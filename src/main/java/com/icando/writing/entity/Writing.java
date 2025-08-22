@@ -32,4 +32,12 @@ public class Writing extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
+
+    public static Writing of(String content, Member member, Topic topic) {
+        Writing writing = new Writing();
+        writing.content = content;
+        writing.member = member;
+        writing.topic = topic;
+        return writing;
+    }
 }
