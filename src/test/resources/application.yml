@@ -42,13 +42,14 @@ spring:
       base-url: https://openrouter.ai/api/v1
       api-key: test-dummy-key  # 테스트용 더미 키
 
+# s3 더미 키 입력
 cloud:
   aws:
     s3:
-      bucketName: ${BUCKET_NAME}
+      bucketName: "test-bucket"
     credentials:
-      access-key: ${ACCESS_KEY}
-      secret-key: ${SECRET_KEY}
+      access-key: "test-access-key"
+      secret-key: "test-secret-key"
     region:
       static: ap-northeast-2
     stack:
