@@ -25,6 +25,8 @@ springdoc:
     path: /swagger-ui.html
 
 spring:
+  config:
+    import: optional:file:./.env
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -37,3 +39,32 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+  sql:
+    init:
+      mode: never
+  ai:
+    openai:
+      chat:
+        options:
+          model: ${AI_MODEL}
+        completions-path: /v1/chat/completions
+      base-url: https://openrouter.ai/api/v1
+      api-key: ${OPENAI_API_KEY}
+
+cloud:
+  aws:
+    s3:
+      bucketName: ${BUCKET_NAME}
+    credentials:
+      access-key: ${ACCESS_KEY}
+      secret-key: ${SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
