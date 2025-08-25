@@ -201,9 +201,6 @@ class ParagraphCompletionServiceTest {
         verify(paragraphCompletionRepository, times(0)).save(any());
     }
 
-    @Test
-
-
     private ParagraphCompletionRequest createParagraphCompletionRequest(String content, List<String> words) {
         ParagraphCompletionRequest request = mock(ParagraphCompletionRequest.class);
         if (content != null && !content.isEmpty()) {
