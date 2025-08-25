@@ -7,6 +7,7 @@ import com.icando.paragraphCompletion.dto.ParagraphCompletionResponse;
 import com.icando.paragraphCompletion.entity.ParagraphCompletion;
 import com.icando.paragraphCompletion.entity.ParagraphWord;
 import com.icando.paragraphCompletion.entity.WordSetItem;
+import com.icando.paragraphCompletion.exception.ParagraphCompletionErrorCode;
 import com.icando.paragraphCompletion.repository.ParagraphCompletionRepository;
 import com.icando.paragraphCompletion.repository.ParagraphWordRepository;
 import com.icando.paragraphCompletion.repository.WordSetItemRepository;
@@ -152,7 +153,7 @@ class ParagraphCompletionServiceTest {
         Exception exception = assertThrows(RuntimeException.class, () -> {
             paragraphCompletionService.insertParagraphCompletionArticle(mb1.getId(), req);
         });
-        assertEquals("내용에 포함되어 있지 않은 단어가 있습니다.", exception.getMessage());
+        assertEquals(ParagraphCompletionErrorCode.WORD_NOT_IN_CONTENT.getMessage(), exception.getMessage());
         verify(memberRepository, times(0)).findById(anyLong());
         verify(paragraphCompletionRepository, times(0)).save(any());
     }
@@ -168,7 +169,7 @@ class ParagraphCompletionServiceTest {
         Exception exception = assertThrows(RuntimeException.class, () -> {
             paragraphCompletionService.insertParagraphCompletionArticle(nonExistentUserId, req);
         });
-        assertEquals("사용자를 찾을 수 없습니다.", exception.getMessage());
+        assertEquals(ParagraphCompletionErrorCode.USER_NOT_FOUND.getMessage(), exception.getMessage());
         verify(memberRepository, times(1)).findById(nonExistentUserId);
         verify(paragraphCompletionRepository, times(0)).save(any());
     }
@@ -182,7 +183,7 @@ class ParagraphCompletionServiceTest {
         Exception exception = assertThrows(RuntimeException.class, () -> {
             paragraphCompletionService.insertParagraphCompletionArticle(1L, req);
         });
-        assertEquals("단어 목록이 비어있습니다.", exception.getMessage());
+        assertEquals(ParagraphCompletionErrorCode.INVALID_WORD_COUNT.getMessage(), exception.getMessage());
         verify(memberRepository, times(0)).findById(anyLong());
         verify(paragraphCompletionRepository, times(0)).save(any());
     }
@@ -196,7 +197,7 @@ class ParagraphCompletionServiceTest {
         Exception exception = assertThrows(RuntimeException.class, () -> {
             paragraphCompletionService.insertParagraphCompletionArticle(1L, req);
         });
-        assertEquals("내용이 비어있습니다.", exception.getMessage());
+        assertEquals(ParagraphCompletionErrorCode.INVALID_CONTENT.getMessage(), exception.getMessage());
         verify(memberRepository, times(0)).findById(anyLong());
         verify(paragraphCompletionRepository, times(0)).save(any());
     }
@@ -222,5 +223,58 @@ class ParagraphCompletionServiceTest {
         }).toList();
         when(pc.getParagraphWords()).thenReturn(pwList);
         return pc;
+    }
+
+    @Test
+    @DisplayName("문단완성 글 조회 성공")
+    void getParagraphCompletion_Success() {
+        //given
+        Member member = mock(Member.class);
+        ParagraphCompletion paragraphCompletion = createParagraphCompletion("테스트 문장입니다.", List.of("테스트", "문장", "입니다"));
+        when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
+        when(paragraphCompletionRepository.findByIdAndMember(anyLong(), eq(member))).thenReturn(Optional.of(paragraphCompletion));
+
+        // when & then
+        ParagraphCompletionResponse response = paragraphCompletionService.getParagraphCompletionArticle(1L, 1L);
+
+        assertEquals("테스트 문장입니다.", paragraphCompletion.getContent());
+        assertEquals(3, response.getWords().size());
+
+        verify(paragraphCompletionRepository, times(0)).save(any());
+        verify(memberRepository, times(1)).findById(anyLong());
+        verify(paragraphCompletionRepository, times(1)).findByIdAndMember(anyLong(), any());
+    }
+
+    @Test
+    @DisplayName("없는 사용자로 문단완성 글 조회 시도")
+    void getParagraphCompletion_UserNotFound() {
+        // given
+        when(memberRepository.findById(anyLong())).thenReturn(Optional.empty());
+        // when & then
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            paragraphCompletionService.getParagraphCompletionArticle(999L, 1L);
+        });
+        assertEquals(exception.getMessage(), ParagraphCompletionErrorCode.USER_NOT_FOUND.getMessage());
+
+        verify(memberRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("자신의 글이 아닌 / 존재하지 않는 글 조회 시도")
+    void getParagraphCompletion_PostNotFound() {
+        // given
+        Member member = mock(Member.class);
+        when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
+        when(paragraphCompletionRepository.findByIdAndMember(anyLong(), any())).thenReturn(Optional.empty());
+
+        // when & then
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            paragraphCompletionService.getParagraphCompletionArticle(1L, 1L);
+        });
+
+        assertEquals(exception.getMessage(), ParagraphCompletionErrorCode.PARAGRAPH_COMPLETION_NOT_FOUND.getMessage());
+
+        verify(memberRepository, times(1)).findById(anyLong());
+        verify(paragraphCompletionRepository, times(1)).findByIdAndMember(anyLong(), any());
     }
 }
