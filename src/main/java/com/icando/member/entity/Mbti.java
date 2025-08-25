@@ -13,7 +13,7 @@ public class Mbti extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name = "mbti_id")
     private Long id;
 
     @Column(name = "mbti_name")
