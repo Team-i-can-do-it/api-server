@@ -18,10 +18,7 @@ public class Writing extends BaseEntity {
     @Column(name = "writing_id")
     private Long id;
 
-    @Column(name = "writing_theme")
-    private String theme;
-
-    @Column(name = "writing_content")
+    @Column(name = "writing_content", length = 600)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,10 +26,21 @@ public class Writing extends BaseEntity {
     private Member member;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="feedback_id" , nullable = false)
+    @JoinColumn(name ="feedback_id" , nullable = true)
     private Feedback feedback;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
+
+    public static Writing of(String content, Member member, Topic topic) {
+
+        Writing writing = new Writing();
+
+        writing.content = content;
+        writing.member = member;
+        writing.topic = topic;
+
+        return writing;
+    }
 }

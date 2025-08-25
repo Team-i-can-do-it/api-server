@@ -46,7 +46,7 @@ public class Member extends BaseEntity {
         this.password = password;
     }
 
-    public static Member createLocalMember(String name, String email,String password) {
+    public static Member of(String name, String email,String password) {
         return new Member(name,email,password);
     }
 }
