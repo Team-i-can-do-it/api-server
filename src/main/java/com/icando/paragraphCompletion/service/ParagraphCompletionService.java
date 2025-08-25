@@ -1,6 +1,5 @@
 package com.icando.paragraphCompletion.service;
 
-import com.icando.global.error.core.ErrorCode;
 import com.icando.member.entity.Member;
 import com.icando.member.repository.MemberRepository;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionRequest;
