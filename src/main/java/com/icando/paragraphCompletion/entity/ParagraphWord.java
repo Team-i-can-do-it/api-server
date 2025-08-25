@@ -21,4 +21,11 @@ public class ParagraphWord {
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name ="paragraph_completion_id" , nullable = false)
     private ParagraphCompletion paragraphCompletion;
+
+    public static ParagraphWord of(String word, ParagraphCompletion paragraphCompletion) {
+        ParagraphWord paragraphWord = new ParagraphWord();
+        paragraphWord.word = word;
+        paragraphWord.paragraphCompletion = paragraphCompletion;
+        return paragraphWord;
+    }
 }
