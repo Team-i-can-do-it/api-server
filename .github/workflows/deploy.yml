@@ -72,24 +72,20 @@
                 | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
               docker pull ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:latest
               
-              docker stop my-app || true
-              docker rm my-app || true
+              cd /home/ubuntu/compose
               
               echo "${{ secrets.ENV }}" | base64 -d > .env
-              chmod 600 .env # .env 
+              chmod 600 .env # .env
               
-              docker run -d --name my-app -p 80:8080 --env-file .env ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:latest
+              docker-compose down || true
+              docker-compose up -d --pull
               
-              echo "=== .env 파일 내용 (마스킹) ==="
-              cat .env | sed 's/=.*/=***/' # 비밀번호는 마스킹
-              
-              
-                    # 컨테이너 내 환경변수 확인
-              sleep 5
-              echo "=== 컨테이너 내 환경변수 확인 ==="
-              docker exec my-app env | grep -E "(DB_|OPENAI_|SPRING_)" || echo "환경변수 없음"
+                    # 도커 컴포즈 서비스 상태 확인
+              sleep 20
+              echo "=== Docker Compose 서비스 상태 ==="
+              docker ps
       
               echo "=== 컨테이너 로그 확인 ==="
-              docker logs my-app --tail 30
+              docker-compose logs --tail 30
          
               rm .env
