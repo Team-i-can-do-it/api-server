@@ -41,4 +41,16 @@ public class ParagraphCompletionController {
                 )
         );
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SuccessResponse<ParagraphCompletionResponse>> getParagraphCompletionArticle(@PathVariable Long id) {
+        //TODO: 현재는 1으로 고정, 추후에 UserDetails에서 MemberId를 가져와야 함
+        ParagraphCompletionResponse response = paragraphCompletionService.getParagraphCompletionArticle(1L, id);
+        return ResponseEntity.ok(
+                SuccessResponse.of(
+                        ParagraphCompletionSuccessCode.PARAGRAPH_COMPLETION_READ_SUCCESS,
+                        response
+                )
+        );
+    }
 }

@@ -79,4 +79,15 @@ public class ParagraphCompletionService {
 
         return ParagraphCompletionResponse.of(savedParagraphCompletion);
     }
+
+    public ParagraphCompletionResponse getParagraphCompletionArticle(Long userId, Long id) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new ParagraphCompletionException(ParagraphCompletionErrorCode.USER_NOT_FOUND));
+
+        ParagraphCompletion paragraphCompletion = paragraphCompletionRepository.findByIdAndMember(id, member)
+                .orElseThrow(() -> new ParagraphCompletionException(ParagraphCompletionErrorCode.PARAGRAPH_COMPLETION_NOT_FOUND));
+        // TODO: Feedback 넣고 FetchJoin 해야함
+
+        return ParagraphCompletionResponse.of(paragraphCompletion);
+    }
 }
