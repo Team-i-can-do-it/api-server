@@ -1,7 +1,9 @@
 package com.icando.paragraphCompletion.service;
 
+import com.icando.global.dto.PagedResponse;
 import com.icando.member.entity.Member;
 import com.icando.member.repository.MemberRepository;
+import com.icando.paragraphCompletion.dto.ParagraphCompletionListResponse;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionRequest;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionResponse;
 import com.icando.paragraphCompletion.entity.ParagraphCompletion;
@@ -11,6 +13,7 @@ import com.icando.paragraphCompletion.exception.ParagraphCompletionErrorCode;
 import com.icando.paragraphCompletion.repository.ParagraphCompletionRepository;
 import com.icando.paragraphCompletion.repository.ParagraphWordRepository;
 import com.icando.paragraphCompletion.repository.WordSetItemRepository;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,9 +22,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.data.domain.Page;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -121,7 +128,7 @@ class ParagraphCompletionServiceTest {
 
     @Test
     @DisplayName("문장 완성 글쓰기 성공")
-    void insertParagraphCompletionArticle_Success() {
+    void insertParagraphCompletionArticle_Success() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given
         Member mb1 = mock(Member.class);
         when(mb1.getId()).thenReturn(1L);
@@ -129,14 +136,13 @@ class ParagraphCompletionServiceTest {
         ParagraphCompletionRequest req = createParagraphCompletionRequest("이것은 테스트 문장입니다.", List.of("테스트", "문장", "입니다"));
         ParagraphCompletion pc = createParagraphCompletion("이것은 테스트 문장입니다.", List.of("테스트", "문장", "입니다"));
 
-        when(pc.getContent()).thenReturn("이것은 테스트 문장입니다.");
         when(paragraphCompletionRepository.save(any())).thenReturn(pc);
 
         // when & then
-        paragraphCompletionService.insertParagraphCompletionArticle(mb1.getId(), req);
+        var res = paragraphCompletionService.insertParagraphCompletionArticle(mb1.getId(), req);
 
-        assertEquals(req.getContent(), pc.getContent());
-        assertEquals(3, pc.getParagraphWords().size());
+        assertEquals(req.getContent(), res.getContent());
+        assertEquals(3, res.getWords().size());
 
         verify(memberRepository, times(1)).findById(anyLong());
         verify(paragraphCompletionRepository, times(1)).save(any());
@@ -213,21 +219,30 @@ class ParagraphCompletionServiceTest {
         return request;
     }
 
-    private ParagraphCompletion createParagraphCompletion(String content, List<String> words) {
-        ParagraphCompletion pc = mock(ParagraphCompletion.class);
-        when(pc.getContent()).thenReturn(content);
+    private ParagraphCompletion createParagraphCompletion(String content, List<String> words) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
+        Constructor<ParagraphCompletion> constructor = ParagraphCompletion.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        ParagraphCompletion pc = constructor.newInstance();
+
+        FieldUtils.writeField(pc, "content", content, true);
+
         var pwList = words.stream().map(word -> {
             var pw = mock(ParagraphWord.class);
-            when(pw.getWord()).thenReturn(word);
+            try {
+                FieldUtils.writeField(pw, "word", word, true);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
             return pw;
         }).toList();
-        when(pc.getParagraphWords()).thenReturn(pwList);
+
+        FieldUtils.writeField(pc, "paragraphWords", pwList, true);
         return pc;
     }
 
     @Test
     @DisplayName("문단완성 글 조회 성공")
-    void getParagraphCompletion_Success() {
+    void getParagraphCompletion_Success() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         //given
         Member member = mock(Member.class);
         ParagraphCompletion paragraphCompletion = createParagraphCompletion("테스트 문장입니다.", List.of("테스트", "문장", "입니다"));
@@ -237,7 +252,7 @@ class ParagraphCompletionServiceTest {
         // when & then
         ParagraphCompletionResponse response = paragraphCompletionService.getParagraphCompletionArticle(1L, 1L);
 
-        assertEquals("테스트 문장입니다.", paragraphCompletion.getContent());
+        assertEquals("테스트 문장입니다.", response.getContent());
         assertEquals(3, response.getWords().size());
 
         verify(paragraphCompletionRepository, times(0)).save(any());
@@ -276,5 +291,50 @@ class ParagraphCompletionServiceTest {
 
         verify(memberRepository, times(1)).findById(anyLong());
         verify(paragraphCompletionRepository, times(1)).findByIdAndMember(anyLong(), any());
+    }
+
+
+    @Test
+    @DisplayName("문단완성 글 목록 조회 성공")
+    void getAllParagraphCompletion_Success() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
+        //given
+        Member member = mock(Member.class);
+        ParagraphCompletion paragraphCompletion = createParagraphCompletion("테스트 문장입니다.", List.of("테스트", "문장", "입니다"));
+
+        when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
+
+        Page<ParagraphCompletion> paragraphCompletions = mock(Page.class);
+        when(paragraphCompletionRepository.findAllByMember(any(), any())).thenReturn(paragraphCompletions);
+        when(paragraphCompletions.getTotalElements()).thenReturn(1L);
+        when(paragraphCompletions.getTotalPages()).thenReturn(123);
+        when(paragraphCompletions.stream()).thenReturn(Stream.of(
+                paragraphCompletion
+        ));
+
+        when(paragraphCompletionRepository.findAllByMember(any(), any())).thenReturn(paragraphCompletions);
+        // when & then
+        PagedResponse<ParagraphCompletionListResponse> result = paragraphCompletionService.getAllParagraphCompletionArticle(1L, 20, 1);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals(123, result.getTotalPages());
+        assertEquals(1, result.getContent().size());
+        verify(paragraphCompletionRepository, times(0)).save(any());
+
+        verify(memberRepository, times(1)).findById(anyLong());
+        verify(paragraphCompletionRepository, times(1)).findAllByMember(any(), any());
+    }
+
+    @Test
+    @DisplayName("없는 사용자로 문단완성 글 목록 조회 시도")
+    void getAllParagraphCompletion_UserNotFound() {
+        // given
+        when(memberRepository.findById(anyLong())).thenReturn(Optional.empty());
+        // when & then
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            paragraphCompletionService.getAllParagraphCompletionArticle(999L, 20, 1);
+        });
+        assertEquals(exception.getMessage(), ParagraphCompletionErrorCode.USER_NOT_FOUND.getMessage());
+
+        verify(memberRepository, times(1)).findById(anyLong());
     }
 }
