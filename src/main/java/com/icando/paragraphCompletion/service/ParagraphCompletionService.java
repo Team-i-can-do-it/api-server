@@ -1,7 +1,9 @@
 package com.icando.paragraphCompletion.service;
 
+import com.icando.global.dto.PagedResponse;
 import com.icando.member.entity.Member;
 import com.icando.member.repository.MemberRepository;
+import com.icando.paragraphCompletion.dto.ParagraphCompletionListResponse;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionRequest;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionResponse;
 import com.icando.paragraphCompletion.entity.ParagraphCompletion;
@@ -13,6 +15,8 @@ import com.icando.paragraphCompletion.repository.ParagraphCompletionRepository;
 import com.icando.paragraphCompletion.repository.ParagraphWordRepository;
 import com.icando.paragraphCompletion.repository.WordSetItemRepository;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,5 +92,19 @@ public class ParagraphCompletionService {
         // TODO: Feedback 넣고 FetchJoin 해야함
 
         return ParagraphCompletionResponse.of(paragraphCompletion);
+    }
+
+    public PagedResponse<ParagraphCompletionListResponse> getAllParagraphCompletionArticle(Long userId, int pageSize, int page) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new ParagraphCompletionException(ParagraphCompletionErrorCode.USER_NOT_FOUND));
+
+        Page<ParagraphCompletion> paragraphCompletions =
+                paragraphCompletionRepository.findAllByMember(member, PageRequest.of(page - 1, pageSize));
+
+        long totalElements = paragraphCompletions.getTotalElements();
+        int totalPages = paragraphCompletions.getTotalPages();
+        return PagedResponse.of(paragraphCompletions.stream()
+                .map(ParagraphCompletionListResponse::of)
+                .toList(), page, pageSize, totalElements, totalPages);
     }
 }
