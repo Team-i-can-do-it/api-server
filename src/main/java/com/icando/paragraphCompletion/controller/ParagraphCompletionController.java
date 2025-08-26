@@ -1,6 +1,8 @@
 package com.icando.paragraphCompletion.controller;
 
+import com.icando.global.dto.PagedResponse;
 import com.icando.global.success.SuccessResponse;
+import com.icando.paragraphCompletion.dto.ParagraphCompletionListResponse;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionRequest;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionResponse;
 import com.icando.paragraphCompletion.enums.ParagraphCompletionSuccessCode;
@@ -50,6 +52,20 @@ public class ParagraphCompletionController {
                 SuccessResponse.of(
                         ParagraphCompletionSuccessCode.PARAGRAPH_COMPLETION_READ_SUCCESS,
                         response
+                )
+        );
+    }
+
+    @GetMapping()
+    public ResponseEntity<SuccessResponse<PagedResponse<ParagraphCompletionListResponse>>> getAllParagraphCompletionArticle(
+            @Valid @RequestParam(defaultValue = "20") @Min(1) @Max(100) int pageSize,
+            @Valid @RequestParam(defaultValue = "1") @Min(1) int page
+    ) {
+        PagedResponse<ParagraphCompletionListResponse> responses = paragraphCompletionService.getAllParagraphCompletionArticle(1L, pageSize, page);
+        return ResponseEntity.ok(
+                SuccessResponse.of(
+                        ParagraphCompletionSuccessCode.PARAGRAPH_COMPLETION_READ_ALL_SUCCESS,
+                        responses
                 )
         );
     }
