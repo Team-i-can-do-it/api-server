@@ -17,8 +17,6 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--web.external-url=https://resona.life/prometheus"
-      - "--web.route-prefix=/"
     restart: unless-stopped
 
   grafana:
