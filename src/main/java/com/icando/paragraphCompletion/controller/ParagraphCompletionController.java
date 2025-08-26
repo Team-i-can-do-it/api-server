@@ -58,7 +58,7 @@ public class ParagraphCompletionController {
 
     @GetMapping()
     public ResponseEntity<SuccessResponse<PagedResponse<ParagraphCompletionListResponse>>> getAllParagraphCompletionArticle(
-            @Valid @RequestParam(defaultValue = "20") @Min(20) @Max(100) int pageSize,
+            @Valid @RequestParam(defaultValue = "20") @Min(1) @Max(100) int pageSize,
             @Valid @RequestParam(defaultValue = "1") @Min(1) int page
     ) {
         PagedResponse<ParagraphCompletionListResponse> responses = paragraphCompletionService.getAllParagraphCompletionArticle(1L, pageSize, page);
