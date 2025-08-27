@@ -3,6 +3,7 @@ package com.icando.feedback.entity;
 import com.icando.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,4 +38,23 @@ public class FeedbackScore extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "feedback_id")
     private Feedback feedback;
+
+    @Builder
+    public FeedbackScore(
+        Integer feedbackOverallScore,
+        Integer substance_score,
+        Integer completeness_score,
+        Integer expressiveness_score,
+        Integer clarity_score,
+        Integer coherence_score,
+        Feedback feedback
+    ) {
+        this.feedbackOverallScore = feedbackOverallScore;
+        this.substance_score = substance_score;
+        this.completeness_score = completeness_score;
+        this.expressiveness_score = expressiveness_score;
+        this.clarity_score = clarity_score;
+        this.coherence_score = coherence_score;
+        this.feedback = feedback;
+    }
 }
