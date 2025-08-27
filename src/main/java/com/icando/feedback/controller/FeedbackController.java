@@ -24,14 +24,17 @@ public class FeedbackController {
     public ResponseEntity<SuccessResponse<FeedbackResponse>> generateFeedback(@Valid @RequestBody FeedbackReqeust reqeust) {
         FeedbackResponse feedbackResponse = feedbackService.generateFeedback(reqeust);
 
+        final FeedbackSuccessCode successCode =
+            FeedbackSuccessCode.FEEDBACK_SUCCESS;
+
         SuccessResponse<FeedbackResponse> responseBody =
             SuccessResponse.of(
-                FeedbackSuccessCode.FEEDBACK_SUCCESS,
+                successCode,
                 feedbackResponse
             );
 
         return ResponseEntity
-            .status(FeedbackSuccessCode.FEEDBACK_SUCCESS.getStatus())
+            .status(successCode.getStatus())
             .body(responseBody);
     }
 }
