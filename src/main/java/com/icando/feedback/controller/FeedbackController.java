@@ -1,6 +1,6 @@
 package com.icando.feedback.controller;
 
-import com.icando.feedback.dto.FeedbackReqeust;
+import com.icando.feedback.dto.FeedbackRequest;
 import com.icando.feedback.dto.FeedbackResponse;
 import com.icando.feedback.enums.FeedbackSuccessCode;
 import com.icando.feedback.service.FeedbackService;
@@ -21,7 +21,7 @@ public class FeedbackController {
     private final FeedbackService feedbackService;
 
     @PostMapping
-    public ResponseEntity<SuccessResponse<FeedbackResponse>> generateFeedback(@Valid @RequestBody FeedbackReqeust reqeust) {
+    public ResponseEntity<SuccessResponse<FeedbackResponse>> generateFeedback(@Valid @RequestBody FeedbackRequest reqeust) {
         FeedbackResponse feedbackResponse = feedbackService.generateFeedback(reqeust);
 
         final FeedbackSuccessCode successCode =

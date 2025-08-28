@@ -1,6 +1,6 @@
 package com.icando.feedback.service;
 
-import com.icando.feedback.dto.FeedbackReqeust;
+import com.icando.feedback.dto.FeedbackRequest;
 import com.icando.feedback.dto.FeedbackResponse;
 import com.icando.feedback.entity.Feedback;
 import com.icando.feedback.entity.FeedbackScore;
@@ -27,7 +27,7 @@ public class FeedbackService {
     private String evaluationPromptFeedback;
 
     @Transactional
-    public FeedbackResponse generateFeedback(FeedbackReqeust reqeust) {
+    public FeedbackResponse generateFeedback(FeedbackRequest reqeust) {
         // 1. AI에 요청후 JSON 응답을 DTO로 변환
         FeedbackResponse aiResponse = chatClientBuilder.build()
                 .prompt("다음은 유저가 선택한 주제입니다." + reqeust.topic())

@@ -38,7 +38,7 @@ class FeedbackServiceTest {
     @DisplayName("피드백 생성 및 저장 로직 성공 테스트")
     void generateFeedback_success() {
         // Given
-        FeedbackReqeust request = new FeedbackReqeust("테스트 주제", "테스트 콘텐츠");
+        FeedbackRequest request = new FeedbackRequest("테스트 주제", "테스트 콘텐츠");
         FeedbackResponse mockAiResponse = createMockFeedbackResponse(); // 가짜 응답
 
         when(chatClientBuilder.build()
