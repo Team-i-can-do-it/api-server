@@ -24,6 +24,7 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
+
 spring:
   config:
     import: optional:file:./.env
@@ -50,6 +51,22 @@ spring:
         completions-path: /v1/chat/completions
       base-url: https://openrouter.ai/api/v1
       api-key: ${OPENAI_API_KEY}
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      password : ${REDIS_PASSWORD}
+      timeout: 60000
+  jwt:
+    secret: ${JWT_SECRET_KEY}
+    access:
+      expiration: 3600000
+      header: Authorization
+    refresh:
+      expiration: 1209600000
+      header: Authorization-refresh
+
+
 
 cloud:
   aws:

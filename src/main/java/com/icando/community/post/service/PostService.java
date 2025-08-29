@@ -5,9 +5,9 @@ import com.icando.community.post.entity.Post;
 import com.icando.community.post.exception.PostErrorCode;
 import com.icando.community.post.exception.PostException;
 import com.icando.community.post.repository.PostRepository;
+import com.icando.member.login.exception.AuthErrorCode;
+import com.icando.member.login.exception.AuthException;
 import com.icando.member.entity.Member;
-import com.icando.member.exception.MemberErrorCode;
-import com.icando.member.exception.MemberException;
 import com.icando.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class PostService {
     public Post createPost(PostCreateRequest postCreateRequest,Long memberId) {
 
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.INVALID_MEMBER_ID));
+                .orElseThrow(() -> new AuthException(AuthErrorCode.INVALID_MEMBER_ID));
 
         Post post = Post.of(postCreateRequest.getTitle(), postCreateRequest.getContent(),member);
 

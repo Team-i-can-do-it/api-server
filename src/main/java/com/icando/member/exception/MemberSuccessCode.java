@@ -1,0 +1,19 @@
+package com.icando.member.exception;
+
+import com.icando.global.success.SuccessCode;
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+@Getter
+public enum MemberSuccessCode implements SuccessCode {
+
+    MEMBER_SUCCESS_SIGNUP(HttpStatus.OK, "회원가입이 성공적으로 완료되었습니다.");
+
+    private final HttpStatus status;
+    private final String message;
+
+    MemberSuccessCode(HttpStatus status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+}

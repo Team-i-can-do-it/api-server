@@ -1,8 +1,8 @@
 package com.icando.writing.service;
 
+import com.icando.member.login.exception.AuthErrorCode;
+import com.icando.member.login.exception.AuthException;
 import com.icando.member.entity.Member;
-import com.icando.member.exception.MemberErrorCode;
-import com.icando.member.exception.MemberException;
 import com.icando.member.repository.MemberRepository;
 import com.icando.writing.dto.WritingCreateRequest;
 import com.icando.writing.entity.Topic;
@@ -25,9 +25,9 @@ public class WritingService {
     private final TopicRepository topicRepository;
 
     @Transactional
-    public void createWriting(WritingCreateRequest request, Long memberId) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new MemberException(MemberErrorCode.INVALID_MEMBER_ID));
+    public void createWriting(WritingCreateRequest request, String email) {
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new AuthException(AuthErrorCode.INVALID_MEMBER_ID));
 
         Topic topic = topicRepository.findById(request.topicId())
             .orElseThrow(() -> new TopicException(TopicErrorCode.TOPIC_NOT_FOUND));
