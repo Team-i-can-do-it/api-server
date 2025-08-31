@@ -1,4 +1,4 @@
-package com.icando.randomBox.entity;
+package com.icando.ItemShop.entity;
 
 import com.icando.global.BaseEntity;
 import com.icando.member.entity.Member;

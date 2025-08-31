@@ -1,4 +1,4 @@
-package com.icando.randomBox.exception;
+package com.icando.ItemShop.exception;
 
 import com.icando.global.success.SuccessCode;
 import lombok.Getter;

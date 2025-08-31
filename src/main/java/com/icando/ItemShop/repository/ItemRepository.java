@@ -1,6 +1,6 @@
-package com.icando.randomBox.repository;
+package com.icando.ItemShop.repository;
 
-import com.icando.randomBox.entity.RandomBox;
+import com.icando.ItemShop.entity.RandomBox;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

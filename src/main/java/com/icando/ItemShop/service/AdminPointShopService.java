@@ -1,39 +1,33 @@
-package com.icando.randomBox.service;
+package com.icando.ItemShop.service;
 
-import com.icando.member.entity.Member;
-import com.icando.member.entity.Point;
 import com.icando.member.exception.MemberErrorCode;
 import com.icando.member.exception.MemberException;
 import com.icando.member.repository.MemberRepository;
 import com.icando.member.repository.PointRepository;
-import com.icando.randomBox.dto.CreateItemRequest;
-import com.icando.randomBox.entity.RandomBox;
-import com.icando.randomBox.exception.RandomBoxException;
-import com.icando.randomBox.repository.RandomBoxRepository;
-import jakarta.validation.Valid;
+import com.icando.ItemShop.dto.CreateItemRequest;
+import com.icando.ItemShop.entity.Item;
+import com.icando.ItemShop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Random;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class RandomBoxService {
+public class ItemService {
 
-    private final RandomBoxRepository randomBoxRepository;
+    private final ItemRepository randomBoxRepository;
     private final MemberRepository memberRepository;
     private final PointRepository pointRepository;
 
     //TODO: 추후 관리자 계정 생성 기능 구현 후 admin 계정인지 아닌지에 대한 인증 로직 추가 예정
     @Transactional
-    public RandomBox createItemByAdminId(CreateItemRequest itemRequest, Long memberId) {
+    public Item createItemByAdminId(CreateItemRequest itemRequest, Long memberId) {
 
         memberRepository.findById(memberId)
                 .orElseThrow(()-> new MemberException(MemberErrorCode.INVALID_MEMBER_ID));
 
-        RandomBox item = RandomBox.of(itemRequest.getItem(), itemRequest.getQuantity(), itemRequest.getProbability());
+        Item item = Item.of(itemRequest.getItem(), itemRequest.getQuantity(), itemRequest.getProbability());
 
         randomBoxRepository.save(item);
 
