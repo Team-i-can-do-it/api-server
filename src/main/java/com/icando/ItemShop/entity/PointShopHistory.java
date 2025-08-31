@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RandomBoxHistory extends BaseEntity {
+public class PointShopHistory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +22,6 @@ public class RandomBoxHistory extends BaseEntity {
     private Member member;
 
     @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name ="random_box_id")
-    private RandomBox randomBox;
+    @JoinColumn(name ="item_id" , nullable = false)
+    private Item item;
 }
