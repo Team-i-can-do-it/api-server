@@ -6,34 +6,26 @@ import com.icando.ItemShop.exception.PointShopSuccessCode;
 import com.icando.ItemShop.service.AdminPointShopService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/randomBox")
+@RequestMapping("/pointShop")
 @RequiredArgsConstructor
-public class ItemController {
+public class AdminPointShopController {
 
     private final AdminPointShopService randomBoxService;
 
     //TODO: 추후 admin 계정을 통해서 등록할 수 있게 처리 예정
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SuccessResponse> createItem(
-            @Valid @RequestBody CreateItemRequest itemRequest,
+            @Valid @ModelAttribute CreateItemRequest itemRequest,
             @RequestParam Long memberId) {
         randomBoxService.createItemByAdminId(itemRequest, memberId);
 
         return ResponseEntity.ok(
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_CREATE_ITEM));
     }
-
-    //TODO: 갓챠 확률 기준 정하고 다시 작성 예정
-//    @PostMapping("/draw")
-//    public ResponseEntity<SuccessResponse> drawRandomBox(
-//            @RequestParam Long memberId){
-//        randomBoxService.drawRandomBoxByMemberPoint(memberId);
-//
-//        return ResponseEntity.ok(
-//                SuccessResponse.of(RandomBoxSuccessCode.SUCCESS_DRAW_RANDOM_BOX));
-//    }
 }
