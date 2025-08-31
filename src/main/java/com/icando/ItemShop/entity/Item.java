@@ -9,24 +9,28 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RandomBox extends BaseEntity {
+public class Item extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private Long id;
 
-    @Column(name = "item_name")
+    @Column(name = "item_name",nullable = false)
     private String name;
 
-    @Column(name = "item_quantity")
+    @Column(name = "item_image_url",nullable = false)
+    private String imageUrl;
+
+    @Column(name = "item_quantity",nullable = false)
     private int quantity;
 
-    @Column(name = "item_point")
+    @Column(name = "item_point",nullable = false)
     private int point;
 
-    private RandomBox(String name,int quantity, int point){
+    private Item(String name,String imageUrl, int quantity, int point){
         this.name = name;
+        this.imageUrl = imageUrl;
         this.quantity = quantity;
         this.point = point;
     }
@@ -39,7 +43,7 @@ public class RandomBox extends BaseEntity {
 //        quantity -= count;
 //    }
 
-    public static RandomBox of (String name,int quantity, int point) {
-        return new RandomBox(name,quantity,point);
+    public static Item of (String name,String imageUrl, int quantity, int point) {
+        return new Item(name,imageUrl, quantity,point);
     }
 }
