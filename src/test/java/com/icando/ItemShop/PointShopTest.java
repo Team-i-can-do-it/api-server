@@ -1,0 +1,53 @@
+package com.icando.ItemShop;
+
+import com.icando.global.upload.S3Uploader;
+import com.icando.member.entity.Member;
+import com.icando.member.repository.MemberRepository;
+import com.icando.ItemShop.dto.CreateItemRequest;
+import com.icando.ItemShop.service.AdminPointShopService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+@ExtendWith(MockitoExtension.class)
+public class PointShopTest {
+
+    @Mock
+    private MemberRepository memberRepository;
+
+    @Mock
+    private AdminPointShopService adminPointShopService;
+
+    @Mock
+    private S3Uploader s3Uploader;
+
+    private MockMultipartFile imageFile;
+
+    @BeforeEach
+    void setUp() {
+        String image = "test.jpg";
+
+        imageFile = new MockMultipartFile("file", image,"image/jpeg", "dummy image data".getBytes());
+    }
+
+    @Test
+    public void 가챠_상품_등록_성공() throws Exception {
+        //given
+        CreateItemRequest createItem = new CreateItemRequest("치킨",imageFile,10,100);
+        Member user = Member.of("user1","user@example.com","1234");
+        //when
+        adminPointShopService.createItemByAdminId(createItem,user.getId());
+
+        //then
+        assertThat(createItem.getName()).isEqualTo("치킨");
+        assertThat(createItem.getImageUrl()).isEqualTo(imageFile);
+        assertThat(createItem.getQuantity()).isEqualTo(10);
+        assertThat(createItem.getPoint()).isEqualTo(100);
+        }
+
+}
