@@ -3,6 +3,7 @@ package com.icando.ItemShop.service;
 import com.icando.ItemShop.dto.ItemResponse;
 import com.icando.ItemShop.entity.Item;
 import com.icando.ItemShop.repository.ItemRepository;
+import com.icando.ItemShop.repository.ItemRepositoryImpl;
 import com.icando.member.repository.MemberRepository;
 import com.icando.member.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +18,10 @@ import java.util.List;
 public class UserPointShopService {
 
     private final ItemRepository itemRepository;
-    private final MemberRepository memberRepository;
-    private final PointRepository pointRepository;
 
-    public List<ItemResponse> selectItemList() {
+    public List<ItemResponse> getItemList(String sortCondition) {
 
-        List<Item> itemList = itemRepository.findAll();
+        List<Item> itemList = itemRepository.selectItemByPrice(sortCondition);
 
         return itemList.stream()
                 .map(item -> new ItemResponse(item))
