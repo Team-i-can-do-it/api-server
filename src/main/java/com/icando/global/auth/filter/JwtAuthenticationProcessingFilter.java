@@ -17,6 +17,7 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -54,14 +55,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
     throws ServletException, IOException {
 
-
-        String requestURI = request.getRequestURI();
-        String contextPath = request.getContextPath();
-
-        log.info("=== JWT Filter Debug ===");
-        log.info("Request URI: {}", requestURI);
-        log.info("Context Path: {}", contextPath);
-        log.info("NO_CHECK_URL: {}", NO_CHECK_URL);
 
         String path = request.getRequestURI(); // 예: /api/v1/swagger-ui/swagger-initializer.js
         for (String url : NO_CHECK_URL) {
@@ -172,7 +165,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             password = PasswordUtil.generateRandomPassword();
         }
 
-        UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
+        UserDetails userDetailsUser = User.builder()
                 .username(myMember.getEmail())
                 .password(password)
                 .roles(myMember.getRole().name())

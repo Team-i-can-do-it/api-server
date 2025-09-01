@@ -139,16 +139,6 @@ public class JwtService {
         }
     }
 
-    //AccessHeader 설정
-    public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
-        response.setHeader(accessHeader, BEARER + accessToken);
-    }
-
-    //RefreshToken Header설정
-    public void setRefreshToken(HttpServletResponse response, String refreshToken) {
-        response.setHeader(refreshHeader, BEARER + refreshToken);
-    }
-
     //Refresh토큰 Redis 저장
     @Transactional
     public void updateRefreshToken(String email, String refreshToken) {

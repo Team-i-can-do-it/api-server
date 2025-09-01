@@ -54,6 +54,8 @@ public class SecurityConfig {
         //HTTP Basic 비활성화
         http
                 .httpBasic((auth) -> auth.disable());
+        http
+                .logout((auth) -> auth.disable());
         //URL 별 권한 설정
         http
                 .authorizeHttpRequests(auth -> auth

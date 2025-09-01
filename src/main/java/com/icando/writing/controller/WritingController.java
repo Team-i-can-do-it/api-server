@@ -84,7 +84,6 @@ public class WritingController {
     public ResponseEntity<SuccessResponse<Void>> createWriting(
             @RequestBody @Valid WritingCreateRequest request,
             @AuthenticationPrincipal UserDetails userDetails
-            // TODO: 실제 구현 시 @AuthenticationPrincipal 사용
     ) {
         writingService.createWriting(request, userDetails.getUsername());
 
