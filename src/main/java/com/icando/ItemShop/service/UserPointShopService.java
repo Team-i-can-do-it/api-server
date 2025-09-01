@@ -21,7 +21,7 @@ public class UserPointShopService {
 
     public List<ItemResponse> getItemList(String sortCondition) {
 
-        List<Item> itemList = itemRepository.selectItemByPrice(sortCondition);
+        List<Item> itemList = itemRepository.getItemByPrice(sortCondition);
 
         return itemList.stream()
                 .map(item -> new ItemResponse(item))

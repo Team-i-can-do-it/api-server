@@ -23,7 +23,7 @@ public class UserPointShopController {
             @RequestParam String sortCondition
     ){
 
-        List<ItemResponse> itemList =  userPointShopService.getItemList(sortCondition);
+        List<ItemResponse> itemList = userPointShopService.getItemList(sortCondition);
 
         return ResponseEntity.ok(
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_SELECT_ITEM_LIST,itemList));

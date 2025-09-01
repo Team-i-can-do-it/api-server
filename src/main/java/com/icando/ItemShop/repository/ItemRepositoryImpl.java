@@ -17,7 +17,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {  // ItemReposi
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Item> selectItemByPrice(String sortCondition) {  // 메서드명 수정
+    public List<Item> getItemByPrice(String sortCondition) {  // 메서드명 수정
         QItem qItem = QItem.item;
         QPointShopHistory qHistory = QPointShopHistory.pointShopHistory;
 
