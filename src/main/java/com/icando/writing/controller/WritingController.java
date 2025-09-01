@@ -18,6 +18,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -80,11 +82,10 @@ public class WritingController {
     )
     @PostMapping
     public ResponseEntity<SuccessResponse<Void>> createWriting(
-        @RequestBody @Valid WritingCreateRequest request,
-        @RequestParam Long memberId
-        // TODO: 실제 구현 시 @AuthenticationPrincipal 사용
+            @RequestBody @Valid WritingCreateRequest request,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        writingService.createWriting(request, memberId);
+        writingService.createWriting(request, userDetails.getUsername());
 
         return ResponseEntity
             .ok(SuccessResponse.of(WritingSuccessCode.WRITING_CREATE_SUCCESS));
