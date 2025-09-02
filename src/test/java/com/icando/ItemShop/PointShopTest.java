@@ -2,6 +2,7 @@ package com.icando.ItemShop;
 
 import com.icando.global.upload.S3Uploader;
 import com.icando.member.entity.Member;
+import com.icando.member.entity.Role;
 import com.icando.member.repository.MemberRepository;
 import com.icando.ItemShop.dto.CreateItemRequest;
 import com.icando.ItemShop.service.AdminPointShopService;
@@ -39,7 +40,14 @@ public class PointShopTest {
     public void 가챠_상품_등록_성공() throws Exception {
         //given
         CreateItemRequest createItem = new CreateItemRequest("치킨",imageFile,10,100);
-        Member user = Member.of("user1","user@example.com","1234");
+        Member user = Member.createLocalMember(
+            "user1",
+            "user@example.com",
+            "1234",
+            Role.USER,
+            false
+        );
+
         //when
         adminPointShopService.createItemByAdminId(createItem,user.getId());
 
