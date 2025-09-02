@@ -26,7 +26,17 @@ public class UserPointShopController {
         List<ItemResponse> itemList = userPointShopService.getItemList(sortCondition);
 
         return ResponseEntity.ok(
-                SuccessResponse.of(PointShopSuccessCode.SUCCESS_SELECT_ITEM_LIST,itemList));
+                SuccessResponse.of(PointShopSuccessCode.SUCCESS_GET_ITEM_LIST,itemList));
 
     }
+
+    @GetMapping("/{itemId}")
+    public ResponseEntity<SuccessResponse> getItem(
+            @PathVariable Long itemId){
+        userPointShopService.getItem(itemId);
+
+        return ResponseEntity.ok(
+                SuccessResponse.of(PointShopSuccessCode.SUCCESS_GET_ITEM));
+    }
+
 }
