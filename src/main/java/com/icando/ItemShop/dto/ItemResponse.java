@@ -16,8 +16,11 @@ public class ItemResponse {
         this.name = item.getName();
         this.imageUrl = item.getImageUrl();
         this. quantity = item.getQuantity();
-        this. point = item.getQuantity();
+        this. point = item.getPoint();
+    }
 
+    public static ItemResponse of (Item item){
+        return new ItemResponse(item);
     }
 
 }
