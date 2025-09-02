@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 public enum MemberErrorCode implements ErrorCode {
 
     INVALID_MEMBER_ID(HttpStatus.BAD_REQUEST, "입력하신 회원 ID가 올바르지 않거나 존재하지 않습니다."),
+    INVALID_MEMBER_EMAIL(HttpStatus.BAD_REQUEST, "회원의 이메일이 올바르지 않거나 존재하지 않습니다."),
     INVALID_POINT(HttpStatus.BAD_REQUEST, "포인트가 존재하지 않습니다" ),
     NOT_ENOUGH_POINTS(HttpStatus.BAD_REQUEST,"포인트가 부족합니다" );
 
