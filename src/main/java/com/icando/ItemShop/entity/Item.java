@@ -46,4 +46,11 @@ public class Item extends BaseEntity {
     public static Item of (String name,String imageUrl, int quantity, int point) {
         return new Item(name,imageUrl, quantity,point);
     }
+
+    public void editItemQuantity(int editQuantity) {
+        if (editQuantity < 0) {
+            throw new IllegalArgumentException("수량은 0 이상이어야 합니다.");
+        }
+        quantity = editQuantity;
+    }
 }
