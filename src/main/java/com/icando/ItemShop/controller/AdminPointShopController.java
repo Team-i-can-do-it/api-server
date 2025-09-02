@@ -1,5 +1,6 @@
 package com.icando.ItemShop.controller;
 
+import com.icando.ItemShop.entity.Item;
 import com.icando.global.success.SuccessResponse;
 import com.icando.ItemShop.dto.CreateItemRequest;
 import com.icando.ItemShop.exception.PointShopSuccessCode;
@@ -8,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,5 +29,17 @@ public class AdminPointShopController {
 
         return ResponseEntity.ok(
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_CREATE_ITEM));
+    }
+
+    @PatchMapping("/{itemId}/edit")
+    public ResponseEntity<SuccessResponse> editItemQuantity(
+            @PathVariable Long itemId,
+            @RequestParam int quantity,
+            @AuthenticationPrincipal UserDetails userDetails){
+
+        Item item = adminPointShopService.editItemQuantityByAdminId(userDetails.getUsername(),quantity,itemId);
+
+        return ResponseEntity.ok(
+                SuccessResponse.of(PointShopSuccessCode.SUCCESS_EDIT_ITEM_QUANTITY,item));
     }
 }

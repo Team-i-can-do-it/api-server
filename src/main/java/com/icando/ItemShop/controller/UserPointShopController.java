@@ -38,5 +38,4 @@ public class UserPointShopController {
         return ResponseEntity.ok(
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_GET_ITEM));
     }
-
 }
