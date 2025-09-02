@@ -9,5 +9,5 @@ public record FeedbackRequest(
     WritingType writingType,
 
     @NotBlank(message = "글쓰기Id는 필수입니다.")
-    Long wiringId
+    Long writingId
 ) {}
