@@ -40,14 +40,15 @@ public class UserPointShopService {
     }
 
     @Transactional
-    public Item buyItem(Long itemId, String email) {
+    public Item buyItem(Long itemId,String number, String email) {
         Member member = validateMember(email);
         Item item = validateItem(itemId);
         Point memberPoint = validatePoint(member.getId(), item.getPoint());
-
+        Item phone = Item.byPhoneNumber(number);
         memberPoint.decreasePoint(item.getPoint());
         item.decreaseQuantity(item.getQuantity());
         pointRepository.save(memberPoint);
+        itemRepository.save(phone);
 
         return item;
     }

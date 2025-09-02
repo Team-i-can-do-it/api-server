@@ -18,33 +18,44 @@ public class Item extends BaseEntity {
     @Column(name = "item_id")
     private Long id;
 
-    @Column(name = "item_name",nullable = false)
+    @Column(name = "item_name", nullable = false)
     private String name;
 
-    @Column(name = "item_image_url",nullable = false)
+    @Column(name = "item_image_url", nullable = false)
     private String imageUrl;
 
-    @Column(name = "item_quantity",nullable = false)
+    @Column(name = "item_quantity", nullable = false)
     private int quantity;
 
-    @Column(name = "item_point",nullable = false)
+    @Column(name = "item_point", nullable = false)
     private int point;
 
-    private Item(String name,String imageUrl, int quantity, int point){
+    @Column(name = "item_buier_number")
+    private String number;
+
+    private Item(String name, String imageUrl, int quantity, int point) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.quantity = quantity;
         this.point = point;
     }
 
+    private Item(String number) {
+        this.number = number;
+    }
+
     public void decreaseQuantity(int count) {
-        if (quantity == 0){
+        if (quantity == 0) {
             throw new PointShopException(PointShopErrorCode.OUT_OF_STOCK);
         }
         quantity -= count;
     }
 
-    public static Item of (String name,String imageUrl, int quantity, int point) {
-        return new Item(name,imageUrl, quantity,point);
+    public static Item of(String name, String imageUrl, int quantity, int point) {
+        return new Item(name, imageUrl, quantity, point);
+    }
+
+    public static Item byPhoneNumber(String phoneNumber) {
+        return new Item(phoneNumber);
     }
 }

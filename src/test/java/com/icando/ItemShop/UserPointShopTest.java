@@ -57,11 +57,13 @@ public class UserPointShopTest {
     private ItemRequest createItem;
     private ItemRequest createItem2;
     private Member user;
+    private String number;
 
     @BeforeEach
     void setUp() {
         String image = "test.jpg";
 
+        number = "010-1234-1234";
         imageFile = new MockMultipartFile("file", image, "image/jpeg", "dummy image data".getBytes());
         createItem = new ItemRequest("치킨",imageFile,10,100);
         createItem2 = new ItemRequest("피자",imageFile,0,200);
@@ -88,7 +90,7 @@ public class UserPointShopTest {
         when(pointRepository.findPointByMemberId(any())).thenReturn(Optional.of(point));
 
         //when
-        userPointShopService.buyItem(item.getId(), user.getEmail());
+        userPointShopService.buyItem(item.getId(),number, user.getEmail());
 
         //then
         assertThat(point.getPoint()).isEqualTo(900);
@@ -106,7 +108,7 @@ public class UserPointShopTest {
 
         //when,then
         PointShopException exception = assertThrows(PointShopException.class, () ->
-                userPointShopService.buyItem(999L, user.getEmail()));
+                userPointShopService.buyItem(999L,number, user.getEmail()));
 
         assertEquals(PointShopErrorCode.INVALID_ITEM_ID, exception.getErrorCode());
     }
@@ -125,7 +127,7 @@ public class UserPointShopTest {
 
         //when,then
         PointShopException exception = assertThrows(PointShopException.class, () ->
-                userPointShopService.buyItem(item.getId(), user.getEmail()));
+                userPointShopService.buyItem(item.getId(),number, user.getEmail()));
 
         assertEquals(PointShopErrorCode.NOT_ENOUGH_MEMBER_POINT, exception.getErrorCode());
         }
@@ -144,7 +146,7 @@ public class UserPointShopTest {
 
         //when,then
         PointShopException exception = assertThrows(PointShopException.class, () ->
-                userPointShopService.buyItem(item.getId(), user.getEmail()));
+                userPointShopService.buyItem(item.getId(),number, user.getEmail()));
 
         assertEquals(PointShopErrorCode.OUT_OF_STOCK, exception.getErrorCode());
     }

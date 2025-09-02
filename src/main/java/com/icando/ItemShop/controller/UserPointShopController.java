@@ -34,9 +34,10 @@ public class UserPointShopController {
     @PostMapping("/{itemId}/buy")
     public ResponseEntity<SuccessResponse> buyItem (
             @PathVariable Long itemId,
+            @RequestParam String number,
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        userPointShopService.buyItem(itemId,userDetails.getUsername());
+        userPointShopService.buyItem(itemId,number,userDetails.getUsername());
 
         return ResponseEntity.ok(
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_BUY_ITEM));
