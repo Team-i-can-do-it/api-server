@@ -1,11 +1,8 @@
 package com.icando.writing.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 import com.icando.member.entity.Member;
-import com.icando.member.exception.MemberException;
+import com.icando.member.entity.Role;
+import com.icando.member.login.exception.AuthException;
 import com.icando.member.repository.MemberRepository;
 import com.icando.writing.dto.WritingCreateRequest;
 import com.icando.writing.entity.Topic;
@@ -13,7 +10,6 @@ import com.icando.writing.entity.Writing;
 import com.icando.writing.error.TopicException;
 import com.icando.writing.repository.TopicRepository;
 import com.icando.writing.repository.WritingRepository;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +17,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class WritingServiceTest {
@@ -39,19 +42,25 @@ class WritingServiceTest {
     @DisplayName("글 생성 성공")
     void createWriting_Success() {
         // given
-        Long memberId = 1L;
         Long topicId = 10L;
+        String email = "test@test.com";
         String content = "테스트 글 내용입니다.";
         WritingCreateRequest request = new WritingCreateRequest(topicId, content);
 
-        Member mockMember = Member.of("testuser", "test@test.com", "password");
+        Member mockMember = Member.createLocalMember(
+            "testuser",
+            email,
+            "password",
+            Role.USER,
+            false
+        );
         Topic mockTopic = new Topic(null, "테스트 주제");
         
-        when(memberRepository.findById(memberId)).thenReturn(Optional.of(mockMember));
+        when(memberRepository.findByEmail(email)).thenReturn(Optional.of(mockMember));
         when(topicRepository.findById(topicId)).thenReturn(Optional.of(mockTopic));
 
         // when
-        writingService.createWriting(request, memberId);
+        writingService.createWriting(request, email);
 
         // then
         ArgumentCaptor<Writing> writingCaptor = ArgumentCaptor.forClass(Writing.class);
@@ -67,14 +76,14 @@ class WritingServiceTest {
     @DisplayName("글 생성 실패 - 사용자를 찾을 수 없음")
     void createWriting_Failure_MemberNotFound() {
         // given
-        Long memberId = 99L;
+        String email = "test@test.com";
         WritingCreateRequest request = new WritingCreateRequest(10L, "내용");
 
-        when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
+        when(memberRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(MemberException.class, () -> {
-            writingService.createWriting(request, memberId);
+        assertThrows(AuthException.class, () -> {
+            writingService.createWriting(request, email);
         });
 
         verify(writingRepository, never()).save(any(Writing.class));
@@ -84,17 +93,23 @@ class WritingServiceTest {
     @DisplayName("글 생성 실패 - 주제를 찾을 수 없음")
     void createWriting_Failure_TopicNotFound() {
         // given
-        Long memberId = 1L;
+        String email = "test@test.com";
         Long topicId = 99L;
         WritingCreateRequest request = new WritingCreateRequest(topicId, "내용");
 
-        Member mockMember = Member.of("testuser", "test@test.com", "password");
-        when(memberRepository.findById(memberId)).thenReturn(Optional.of(mockMember));
+        Member mockMember = Member.createLocalMember(
+            "testuser",
+            email,
+            "password",
+            Role.USER,
+            false
+        );
+        when(memberRepository.findByEmail(email)).thenReturn(Optional.of(mockMember));
         when(topicRepository.findById(topicId)).thenReturn(Optional.empty());
 
         // when & then
         assertThrows(TopicException.class, () -> {
-            writingService.createWriting(request, memberId);
+            writingService.createWriting(request, "test@test.com");
         });
 
         verify(writingRepository, never()).save(any(Writing.class));

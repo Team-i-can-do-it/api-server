@@ -6,6 +6,7 @@ import com.icando.community.post.repository.PostRepository;
 import com.icando.community.post.service.PostService;
 
 import com.icando.member.entity.Member;
+import com.icando.member.entity.Role;
 import com.icando.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,7 @@ public class PostTest {
     void setUp() {
 
         user = Member.createLocalMember("user1","user@example.com","1234",null,false);
+
         memberRepository.save(user);
 
         String title = "test";
