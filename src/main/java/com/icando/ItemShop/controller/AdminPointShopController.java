@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,5 +28,16 @@ public class AdminPointShopController {
 
         return ResponseEntity.ok(
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_CREATE_ITEM));
+    }
+
+    @DeleteMapping("/{itemId}/delete")
+    public ResponseEntity<SuccessResponse> deleteItem(
+            @PathVariable Long itemId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        adminPointShopService.deleteItemByAdminId(itemId, userDetails);
+
+        return ResponseEntity.ok(
+                SuccessResponse.of(PointShopSuccessCode.SUCCESS_DELETE_ITEM));
     }
 }
