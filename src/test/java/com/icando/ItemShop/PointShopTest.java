@@ -39,7 +39,7 @@ public class PointShopTest {
     public void 가챠_상품_등록_성공() throws Exception {
         //given
         CreateItemRequest createItem = new CreateItemRequest("치킨",imageFile,10,100);
-        Member user = Member.of("user1","user@example.com","1234");
+        Member user = Member.createLocalMember("user1","user@example.com","1234",null,false);
         //when
         adminPointShopService.createItemByAdminId(createItem,user.getId());
 

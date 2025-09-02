@@ -33,7 +33,7 @@ public class PostTest {
     @BeforeEach
     void setUp() {
 
-        user = Member.of("user1","user@example.com","1234");
+        user = Member.createLocalMember("user1","user@example.com","1234",null,false);
         memberRepository.save(user);
 
         String title = "test";
