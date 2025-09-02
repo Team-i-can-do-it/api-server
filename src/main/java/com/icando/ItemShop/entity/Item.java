@@ -1,5 +1,7 @@
 package com.icando.ItemShop.entity;
 
+import com.icando.ItemShop.exception.PointShopErrorCode;
+import com.icando.ItemShop.exception.PointShopException;
 import com.icando.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -35,13 +37,12 @@ public class Item extends BaseEntity {
         this.point = point;
     }
 
-    //TODO:추후 아이템 구매 구현 시 사용 예정
-//    public void decreaseQuantity(int count) {
-//        if (quantity == 0){
-//            throw new RandomBoxException(RandomBoxErrorCode.OUT_OF_STOCK);
-//        }
-//        quantity -= count;
-//    }
+    public void decreaseQuantity(int count) {
+        if (quantity == 0){
+            throw new PointShopException(PointShopErrorCode.OUT_OF_STOCK);
+        }
+        quantity -= count;
+    }
 
     public static Item of (String name,String imageUrl, int quantity, int point) {
         return new Item(name,imageUrl, quantity,point);
