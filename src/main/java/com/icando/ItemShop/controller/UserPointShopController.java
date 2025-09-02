@@ -38,6 +38,6 @@ public class UserPointShopController {
         List<PointShopHistoryResponse> historyList = userPointShopService.getItemHistoryList(userDetails.getUsername());
 
         return ResponseEntity.ok(
-                SuccessResponse.of(PointShopSuccessCode.SUCCESS_GET_POINT_HISTORY));
+                SuccessResponse.of(PointShopSuccessCode.SUCCESS_GET_POINT_HISTORY,historyList));
     }
 }
