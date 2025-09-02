@@ -4,6 +4,8 @@ import com.icando.ItemShop.dto.PointShopHistoryResponse;
 import com.icando.ItemShop.dto.ItemResponse;
 import com.icando.ItemShop.entity.Item;
 import com.icando.ItemShop.entity.PointShopHistory;
+import com.icando.ItemShop.exception.PointShopErrorCode;
+import com.icando.ItemShop.exception.PointShopException;
 import com.icando.ItemShop.repository.ItemRepository;
 import com.icando.ItemShop.repository.PointShopHistoryRepository;
 import com.icando.member.entity.Member;
@@ -44,5 +46,12 @@ public class UserPointShopService {
         return histories.stream()
                 .map(pointShopHistory -> new PointShopHistoryResponse(pointShopHistory))
                 .toList();
+
+    public ItemResponse getItem(Long itemId) {
+
+       Item item = itemRepository.findById(itemId)
+               .orElseThrow(() ->new PointShopException(PointShopErrorCode.INVALID_ITEM_ID));
+
+       return ItemResponse.of(item);
     }
 }

@@ -40,4 +40,14 @@ public class UserPointShopController {
         return ResponseEntity.ok(
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_GET_POINT_HISTORY,historyList));
     }
+
+    @GetMapping("/{itemId}")
+    public ResponseEntity<SuccessResponse> getItem(
+            @PathVariable Long itemId){
+        userPointShopService.getItem(itemId);
+
+        return ResponseEntity.ok(
+                SuccessResponse.of(PointShopSuccessCode.SUCCESS_GET_ITEM));
+    }
+
 }

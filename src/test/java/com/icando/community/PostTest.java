@@ -34,13 +34,8 @@ public class PostTest {
     @BeforeEach
     void setUp() {
 
-        user = Member.createLocalMember(
-            "user1",
-            "user@example.com",
-            "1234",
-            Role.USER,
-            false
-        );
+        user = Member.createLocalMember("user1","user@example.com","1234",null,false);
+
         memberRepository.save(user);
 
         String title = "test";
