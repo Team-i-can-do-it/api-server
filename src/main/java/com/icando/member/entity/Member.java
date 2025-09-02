@@ -59,4 +59,8 @@ public class Member extends BaseEntity {
         return new Member(name, email, password, null, null, false, role);
     }
 
+    public void updateVerify() {
+        this.isVerified = true;
+    }
+
 }

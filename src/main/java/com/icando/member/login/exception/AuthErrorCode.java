@@ -22,6 +22,6 @@ public enum AuthErrorCode implements ErrorCode {
 
     @Override
     public String getMessage() {
-        return "[MEMBER ERROR]" + message;
+        return "[AUTH ERROR]" + message;
     }
 }
