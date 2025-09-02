@@ -1,7 +1,10 @@
 package com.icando.writing.error;
 
-public class WritingException extends RuntimeException {
-    public WritingException(String message) {
-        super(message);
+import com.icando.global.error.core.BaseException;
+import com.icando.global.error.core.ErrorCode;
+
+public class WritingException extends BaseException {
+    public WritingException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }
