@@ -14,7 +14,8 @@ public enum PointShopSuccessCode implements SuccessCode {
     SUCCESS_GET_ITEM_LIST(HttpStatus.OK,"상품 목록을 성공적으로 조회했습니다" ),
     SUCCESS_GET_ITEM(HttpStatus.OK,"상품 정보를 성공적으로 조회했습니다" ),
     SUCCESS_EDIT_ITEM_QUANTITY(HttpStatus.OK,"상품 수량이 성공적으로 수정되었습니다" ),
-    SUCCESS_DELETE_ITEM(HttpStatus.OK,"상품을 성공적으로 삭제했습니다" );
+    SUCCESS_DELETE_ITEM(HttpStatus.OK,"상품을 성공적으로 삭제했습니다" ),
+    SUCCESS_GET_ALL_USER_PURCHASES(HttpStatus.OK,"전체 사용자 구매 내역을 성공적으로 조회했습니다" );
 
 
     private final HttpStatus status;

@@ -46,8 +46,7 @@ public class UserPointShopService {
 
     public List<PointShopHistoryResponse> getItemHistoryList(String email) {
 
-        Member member = memberRepository.findByEmail(email)
-                        .orElseThrow(()-> new MemberException(MemberErrorCode.INVALID_MEMBER_EMAIL));
+        Member member = validateMember(email);
 
         List<PointShopHistory> histories = pointShopHistoryRepository.findTop10ByMemberIdOrderByCreatedAtDesc(member.getId());
 
@@ -72,8 +71,7 @@ public class UserPointShopService {
       
     public ItemResponse getItem(Long itemId) {
 
-       Item item = itemRepository.findById(itemId)
-               .orElseThrow(() ->new PointShopException(PointShopErrorCode.INVALID_ITEM_ID));
+       Item item = validateItem(itemId);
 
        return ItemResponse.of(item);
     }
@@ -97,6 +95,4 @@ public class UserPointShopService {
         }
         return point;
     }
-
-    
 }
