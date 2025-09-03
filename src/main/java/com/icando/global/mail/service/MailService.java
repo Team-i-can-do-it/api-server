@@ -12,6 +12,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -30,6 +31,9 @@ public class MailService {
     private final RedisUtil redisUtil;
     private final MemberRepository memberRepository;
 
+    @Value("${mail.naver.username}")
+    String sendEmail;
+
     //보낼 이메일을 만드는 서비스
     public MimeMessage createCodeEmail(String email, String code) throws MessagingException {
        try {
@@ -37,7 +41,7 @@ public class MailService {
            message.addRecipients(MimeMessage.RecipientType.TO, email);
            message.setSubject("인증번호입니다.");
            message.setText("이메일 인증코드 : " + code);
-           message.setFrom("cho65156@naver.com");
+           message.setFrom(sendEmail);
            return message;
        } catch (MessagingException e) {
            throw new MailSendException("이메일 생성 중 오류 발생", e);
