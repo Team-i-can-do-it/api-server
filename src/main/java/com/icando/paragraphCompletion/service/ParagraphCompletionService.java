@@ -14,7 +14,6 @@ import com.icando.paragraphCompletion.exception.ParagraphCompletionException;
 import com.icando.paragraphCompletion.repository.ParagraphCompletionRepository;
 import com.icando.paragraphCompletion.repository.ParagraphWordRepository;
 import com.icando.paragraphCompletion.repository.WordSetItemRepository;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
