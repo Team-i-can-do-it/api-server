@@ -31,7 +31,7 @@ public class AdminPointShopController {
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_CREATE_ITEM));
     }
 
-    @PatchMapping("/{itemId}/edit")
+    @PatchMapping("/{itemId}")
     public ResponseEntity<SuccessResponse> editItemQuantity(
             @PathVariable Long itemId,
             @RequestParam int quantity,
