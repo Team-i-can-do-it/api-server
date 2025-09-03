@@ -35,7 +35,7 @@ public class Mbti extends BaseEntity {
         this.imageUrl = null;
     }
 
-    public Mbti of(String name, String description, String imageUrl) {
+    public static Mbti of(String name, String description, String imageUrl) {
         return new Mbti(name, description, imageUrl);
     }
 }
