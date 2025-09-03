@@ -1,10 +1,14 @@
 package com.icando.referenceMaterial.service;
 
+import com.icando.global.utils.GlobalLogger;
 import com.icando.referenceMaterial.dto.ReferenceMaterialAiResponse;
+import com.icando.referenceMaterial.dto.ReferenceMaterialListResponse;
 import com.icando.referenceMaterial.entity.ReferenceMaterial;
+import com.icando.referenceMaterial.enums.ReferenceMaterialErrorCode;
+import com.icando.referenceMaterial.exception.ReferenceMaterialException;
 import com.icando.referenceMaterial.repository.ReferenceMaterialRepository;
+import com.icando.writing.entity.Topic;
 import com.icando.writing.repository.TopicRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.core.ParameterizedTypeReference;
@@ -23,7 +27,6 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-@Slf4j
 @Transactional(readOnly = true)
 public class ReferenceMaterialService {
     private final ChatClient.Builder ai;
@@ -43,14 +46,14 @@ public class ReferenceMaterialService {
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void generateReferenceMaterials() {
-        log.info("Generating reference materials");
+        GlobalLogger.info("Generating reference materials");
         clearUselessReferenceMaterials();
         var topics = topicRepository.findByReferenceMaterialsCount(8);
         var retryCount = 0;
         List<ReferenceMaterial> referenceMaterials = new ArrayList<>();
         for (var i = 0; i < topics.size(); i++) {
             var topic = topics.get(i);
-            log.info("Generating reference materials for topic: {} / {} - {}", i + 1, topics.size(), topic.getTopic());
+            GlobalLogger.info("Generating reference materials for topic: {} / {} - {}", i + 1, topics.size(), topic.getTopic());
             try {
                 referenceMaterials.addAll(getReferenceMaterials(topic.getId())
                         .stream()
@@ -72,7 +75,7 @@ public class ReferenceMaterialService {
             retryCount = 0;
         }
         referenceMaterialRepository.saveAll(referenceMaterials);
-        log.info("Reference materials generation completed");
+        GlobalLogger.info("Reference materials generation completed");
     }
 
     private void clearUselessReferenceMaterials() {
@@ -150,8 +153,16 @@ public class ReferenceMaterialService {
 
             return null;
         } catch (IOException e) {
-            log.warn("Failed to extract image from URL: {}", url, e);
+            GlobalLogger.warn("Failed to extract image from URL: {}", url, e);
             return null;
         }
+    }
+
+    public List<ReferenceMaterialListResponse> getReferenceMaterialsByTopicId(Long topicId) {
+        Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new ReferenceMaterialException(ReferenceMaterialErrorCode.TOPIC_NOT_FOUND));
+        List<ReferenceMaterial> referenceMaterials = referenceMaterialRepository.findAllByTopic(topic);
+        return referenceMaterials.stream()
+                .map(ReferenceMaterialListResponse::of)
+                .toList();
     }
 }
