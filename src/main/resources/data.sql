@@ -5698,6 +5698,6 @@ INSERT INTO word_set_item(word) VALUES ('힘쓰다');
 INSERT INTO word_set_item(word) VALUES ('힘없이');
 INSERT INTO word_set_item(word) VALUES ('힘차다');
 
-INSERT INTO mbti(mbti_id, mbti_name, mbti_description, mbti_iamage_url, is_deleted, created_at, modified_at) VALUES (1, 'TEST', '테스트용 MBTI', 'https://example.com/test.png', false, '2023-10-01 00:00:00', '2023-10-01 00:00:00');
+INSERT INTO mbtiScore(mbti_id, mbti_name, mbti_description, mbti_iamage_url, is_deleted, created_at, modified_at) VALUES (1, 'TEST', '테스트용 MBTI', 'https://example.com/test.png', false, '2023-10-01 00:00:00', '2023-10-01 00:00:00');
 INSERT INTO member(member_id, is_deleted, created_at, mbti_id, modified_at, member_email, member_name, member_password, member_provider, member_provider_id, role) VALUES
 (1, false, '2023-10-01 00:00:00', 1, '2023-10-01 00:00:00', 'test@test.com', '테스트', '$2a$10$E9z1b5Z3k7Q8Y1f4e5d6uO0j1F8c5J3m5Z1b5Z3k7Q8Y1f4e5d6uO', 'local', 'test', 'ROLE_USER');

@@ -8,6 +8,7 @@ import com.icando.feedback.exception.FeedbackErrorCode;
 import com.icando.feedback.exception.FeedbackException;
 import com.icando.feedback.repository.FeedbackRepository;
 import com.icando.feedback.repository.FeedbackScoreRepository;
+import com.icando.member.entity.Mbti;
 import com.icando.writing.entity.Topic;
 import com.icando.writing.entity.Writing;
 import com.icando.writing.service.WritingService;
@@ -57,9 +58,9 @@ public class FeedbackService {
         Feedback feedbackToSave = Feedback.builder()
             .content(aiResponse.overallFeedback())
             .score(aiResponse.overallScore())
-            .expressionStyle(aiResponse.mbti().expressionStyle())
-            .contentFormat(aiResponse.mbti().contentFormat())
-            .toneOfVoice(aiResponse.mbti().toneOfVoice())
+            .expressionStyle(aiResponse.mbtiScore().expressionStyle())
+            .contentFormat(aiResponse.mbtiScore().contentFormat())
+            .toneOfVoice(aiResponse.mbtiScore().toneOfVoice())
             .substance(aiResponse.evaluationFeedback().substanceFeedback())
             .completeness(aiResponse.evaluationFeedback().completenessFeedback())
             .expressiveness(aiResponse.evaluationFeedback().expressivenessFeedback())
@@ -82,5 +83,13 @@ public class FeedbackService {
             .build();
 
         feedbackScoreRepository.save(scoreToSave);
+    }
+
+    private void saveFeedbackMbti(FeedbackResponse aiResponse) {
+    }
+
+    private void findMbtiMatches(FeedbackResponse aiResponse) {
+        Mbti mbtiScore = aiResponse.mbtiScore();
+
     }
 }
