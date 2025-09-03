@@ -28,15 +28,13 @@ import java.util.Optional;
 public class ParagraphCompletionService {
     private final ParagraphCompletionRepository paragraphCompletionRepository;
     private final WordSetItemRepository wordSetItemRepository;
-    private final ChatClient ai;
     private final MemberRepository memberRepository;
     private final ParagraphWordRepository paragraphWordRepository;
 
 
-    public ParagraphCompletionService(ParagraphCompletionRepository paragraphCompletionRepository, WordSetItemRepository wordSetItemRepository, ChatClient.Builder chatClient, MemberRepository memberRepository, ParagraphWordRepository paragraphWordRepository) {
+    public ParagraphCompletionService(ParagraphCompletionRepository paragraphCompletionRepository, WordSetItemRepository wordSetItemRepository, MemberRepository memberRepository, ParagraphWordRepository paragraphWordRepository) {
         this.paragraphCompletionRepository = paragraphCompletionRepository;
         this.wordSetItemRepository = wordSetItemRepository;
-        this.ai = chatClient.build();
         this.memberRepository = memberRepository;
         this.paragraphWordRepository = paragraphWordRepository;
     }
