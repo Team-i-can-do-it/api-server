@@ -53,14 +53,28 @@ public class Member extends BaseEntity {
         this.isVerified = isVerified;
         this.role = role;
     }
+    private Member(Long id ,String name, String email,String password,Provider provider,
+                    String providerId, Boolean isVerified, Role role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.provider = provider;
+        this.providerId = providerId;
+        this.isVerified = isVerified;
+        this.role = role;
+    }
 
     //로컬 자체로그인 회원 객체 생성
     public static Member createLocalMember(String name, String email,String password, Role role, Boolean isVerified) {
         return new Member(name, email, password, null, null, false, role);
     }
 
+    public static Member createLocalMemberByTest(Long id,String name, String email,String password, Role role, Boolean isVerified) {
+        return new Member(id, name, email, password, null, null, false, role);
+
     public void updateVerify() {
         this.isVerified = true;
+
     }
 
 }
