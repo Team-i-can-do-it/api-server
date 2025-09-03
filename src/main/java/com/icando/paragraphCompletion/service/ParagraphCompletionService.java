@@ -9,7 +9,7 @@ import com.icando.paragraphCompletion.dto.ParagraphCompletionResponse;
 import com.icando.paragraphCompletion.entity.ParagraphCompletion;
 import com.icando.paragraphCompletion.entity.ParagraphWord;
 import com.icando.paragraphCompletion.entity.WordSetItem;
-import com.icando.paragraphCompletion.exception.ParagraphCompletionErrorCode;
+import com.icando.paragraphCompletion.enums.ParagraphCompletionErrorCode;
 import com.icando.paragraphCompletion.exception.ParagraphCompletionException;
 import com.icando.paragraphCompletion.repository.ParagraphCompletionRepository;
 import com.icando.paragraphCompletion.repository.ParagraphWordRepository;
