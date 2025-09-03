@@ -41,6 +41,20 @@ spring:
     openai:
       base-url: https://openrouter.ai/api/v1
       api-key: test-dummy-key  # 테스트용 더미 키
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      password : ${REDIS_PASSWORD}
+      timeout: 60000
+  jwt:
+    secret: akgkqksdiakfkalfektlarudrhkswkwoqhtkfdlrlvdmsqksdiqkfkalfekfmfgodgkfEo
+    access:
+      expiration: 3600000
+      header: Authorization
+    refresh:
+      expiration: 1209600000
+      header: Authorization-refresh
 
 # s3 더미 키 입력
 cloud:
@@ -54,3 +68,13 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+
+
+feedback:
+  evaluation:
+    prompt:
+      feedback: "test"
+
+reference-material:
+  urls:
+    prompt: "test"
