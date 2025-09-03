@@ -18,5 +18,6 @@ public interface TopicRepository extends JpaRepository<Topic, Long> {
     @Query(value = "SELECT * FROM topic ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
     Optional<Topic> findRandom();
 
-    List<Topic> findByTopic(String topic);
+    @Query("SELECT distinct t FROM Topic t WHERE SIZE(t.referenceMaterials) < :referenceMaterialsCount and t.category = 'CULTURE_ARTS'") // TODO: 임시로 문화예술 카테고리만
+    List<Topic> findByReferenceMaterialsCount(int referenceMaterialsCount);
 }
