@@ -73,21 +73,15 @@ public class Member extends BaseEntity {
 
         return new Member(id, name, email, password, null, null, false, role);
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> develop
     public void updateVerify() {
         this.isVerified = true;
 
     }
-<<<<<<< HEAD
 
     public void updateMbti(Mbti mbti) {
         this.mbti = mbti;
     }
-=======
->>>>>>> develop
 }
 
 
