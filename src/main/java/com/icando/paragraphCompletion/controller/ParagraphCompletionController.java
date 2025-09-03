@@ -37,7 +37,6 @@ public class ParagraphCompletionController {
     @PostMapping()
     public ResponseEntity<SuccessResponse<ParagraphCompletionResponse>> writeParagraphCompletionArticle(@Valid @RequestBody ParagraphCompletionRequest paragraphCompletionRequest,
                                                                                                         @AuthenticationPrincipal UserDetails userDetails) {
-        //TODO: 현재는 1으로 고정, 추후에 UserDetails에서 MemberId를 가져와야 함
         ParagraphCompletionResponse response = paragraphCompletionService.insertParagraphCompletionArticle(userDetails.getUsername(), paragraphCompletionRequest);
         return ResponseEntity.ok(
                 SuccessResponse.of(
@@ -50,7 +49,6 @@ public class ParagraphCompletionController {
     @GetMapping("/{id}")
     public ResponseEntity<SuccessResponse<ParagraphCompletionResponse>> getParagraphCompletionArticle(@PathVariable Long id,
                                                                                                       @AuthenticationPrincipal UserDetails userDetails) {
-        //TODO: 현재는 1으로 고정, 추후에 UserDetails에서 MemberId를 가져와야 함
         ParagraphCompletionResponse response = paragraphCompletionService.getParagraphCompletionArticle(userDetails.getUsername(), id);
         return ResponseEntity.ok(
                 SuccessResponse.of(
