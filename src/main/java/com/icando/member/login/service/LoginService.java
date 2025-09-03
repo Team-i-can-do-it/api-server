@@ -9,6 +9,7 @@ import com.icando.member.entity.Role;
 import com.icando.member.exception.MemberException;
 import com.icando.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class LoginService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
@@ -51,6 +53,8 @@ public class LoginService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws MemberException {
+        System.out.println("=== loadUserByUsername 호출됨! email: " + email + " ===");
+        log.info("loadUserByUsername 호출됨! email: {}", email);
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.EMAIL_INVALID));
 

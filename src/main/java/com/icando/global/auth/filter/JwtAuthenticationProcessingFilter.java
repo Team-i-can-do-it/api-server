@@ -42,7 +42,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             "/api/v1/auth/login",
             "/api/v1/auth/join",
             "/api/v1/mail/code/request",
-            "/api/v1/mail/code/verify"
+            "/api/v1/mail/code/verify",
+            "/"
     );
 
 
@@ -57,16 +58,11 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
     throws ServletException, IOException {
 
-        log.info("[JWT Filter] Entered doFilterInternal: {}", request.getRequestURI());
-
-
-
         String path = request.getRequestURI(); // 예: /api/v1/swagger-ui/swagger-initializer.js
         for (String url : NO_CHECK_URL) {
             // /** 패턴이 붙으면 startsWith로 체크
             String checkUrl = url.replace("/**", "");
             if (path.startsWith(checkUrl)) {
-                System.out.println("[JWT Filter] Skip URL matched: " + path + " -> " + checkUrl);
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -88,7 +84,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
                         memberRepository.findByEmail(email)
                                 .ifPresentOrElse(
                                         this::saveAuthentication,
-                                        () -> log.warn("Member not found for email: {}", email)
+                                        () -> log.warn("이메일을 통한 회원이 보이지 않습니다.: {}", email)
                                 );
                     });
             filterChain.doFilter(request, response);

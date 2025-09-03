@@ -42,43 +42,6 @@ public class LoginController {
                 .body(SuccessResponse.of(AuthSuccessCode.MEMBER_SUCCESS_SIGNUP));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto loginRequestDto, HttpServletResponse httpResponse) {
-        try {
-            // 사용자 인증
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequestDto.getEmail(),
-                            loginRequestDto.getPassword()
-                    )
-            );
-
-            // JWT 생성
-            String accessToken = jwtService.createAccessToken(loginRequestDto.getEmail());
-            String refreshToken = jwtService.createRefreshToken();
-
-            jwtService.updateRefreshToken(loginRequestDto.getEmail(), refreshToken);
-            jwtService.sendAccessTokenAndRefreshToken(httpResponse, accessToken, refreshToken);
-
-            // 응답 DTO
-            LoginResponse response = new LoginResponse(
-                    "로그인에 성공하였습니다.",
-                    loginRequestDto.getEmail(),
-                    accessToken,
-                    refreshToken
-            );
-
-            // REST API 응답
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(SuccessResponse.of(AuthSuccessCode.LOGIN_SUCCESS, response));
-
-        } catch (AuthenticationException e) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body("아이디 또는 비밀번호가 올바르지 않습니다.");
-        }
-    }
 
     @PostMapping("/logout")
     public ResponseEntity<SuccessResponse> logOut(HttpServletRequest request) {

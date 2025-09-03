@@ -56,6 +56,7 @@ spring:
       port: 6379
       host: localhost
       timeout: 60000
+#      password: ${REDIS_PASSWORD}
   jwt:
     secret: ${JWT_SECRET_KEY}
     access:
@@ -64,6 +65,16 @@ spring:
     refresh:
       expiration: 1209600000
       header: Authorization-refresh
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+            - email
+            - profile
 
 mail:
   naver:
@@ -75,6 +86,7 @@ mail:
       mail.smtp.auth: true #SMTP 인증여부(필수)
       mail.smtp.ssl.enable: true #SMTP 보안 연결 사용 여부
       mail.smtp.ssl.trust: smtp.naver.com
+
 
 
 cloud:

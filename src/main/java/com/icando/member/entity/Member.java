@@ -2,13 +2,13 @@ package com.icando.member.entity;
 
 import com.icando.global.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class Member extends BaseEntity {
 
     @Id
@@ -74,6 +74,5 @@ public class Member extends BaseEntity {
     }
     public void updateVerify() {
         this.isVerified = true;
-
     }
 }
