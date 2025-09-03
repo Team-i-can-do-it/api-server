@@ -1,5 +1,6 @@
 package com.icando.ItemShop.controller;
 
+import com.icando.ItemShop.dto.PointShopHistoryResponse;
 import com.icando.ItemShop.dto.ItemResponse;
 import com.icando.ItemShop.exception.PointShopSuccessCode;
 import com.icando.ItemShop.service.UserPointShopService;
@@ -26,7 +27,17 @@ public class UserPointShopController {
         List<ItemResponse> itemList = userPointShopService.getItemList(sortCondition);
 
         return ResponseEntity.ok(
-                SuccessResponse.of(PointShopSuccessCode.SUCCESS_GET_ITEM_LIST,itemList));
+                SuccessResponse.of(PointShopSuccessCode.SUCCESS_SELECT_ITEM_LIST,itemList));
+    }
+
+    @GetMapping("/PointHistory")
+    public ResponseEntity<SuccessResponse<List<PointShopHistoryResponse>>> getPointHistory(
+            @AuthenticationPrincipal UserDetails userDetails){
+
+        List<PointShopHistoryResponse> historyList = userPointShopService.getItemHistoryList(userDetails.getUsername());
+
+        return ResponseEntity.ok(
+                SuccessResponse.of(PointShopSuccessCode.SUCCESS_GET_POINT_HISTORY,historyList));
     }
 
     @PostMapping("/{itemId}/buy")
