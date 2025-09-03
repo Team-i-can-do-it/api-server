@@ -61,7 +61,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger 접근 허용
-                                .requestMatchers("/auth/login").permitAll()
+                                .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/mail/code/request").permitAll()
                                 .requestMatchers("/mail/code/verify").permitAll()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
