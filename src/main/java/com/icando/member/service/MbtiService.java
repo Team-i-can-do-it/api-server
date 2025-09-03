@@ -19,6 +19,7 @@ public class MbtiService {
     private final MbtiRepository mbtiRepository;
     private final MemberRepository memberRepository;
 
+    // JwtAuthenticationProcessingFilter 참고하면 username을 email로 받아옴
     @Transactional
     public void saveMbti(MbtiRequest mbtiRequest, String email) {
         Member member = memberRepository.findByEmail(email)
