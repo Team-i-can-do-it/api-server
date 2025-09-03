@@ -1,5 +1,6 @@
 package com.icando.member.entity;
 
+import com.icando.global.BaseEntity;
 import com.icando.member.exception.MemberErrorCode;
 import com.icando.member.exception.MemberException;
 
@@ -12,7 +13,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Point {
+public class Point extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
