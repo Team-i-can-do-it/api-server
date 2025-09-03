@@ -1,14 +1,13 @@
-package com.icando.community.post.exception;
+package com.icando.writing.error;
 
 import com.icando.global.error.core.ErrorCode;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
-@AllArgsConstructor
-public enum PostErrorCode implements ErrorCode {
+@RequiredArgsConstructor
+public enum WritingErrorCode implements ErrorCode {
 
-    INVALID_POST_ID(HttpStatus.BAD_REQUEST,"해당한 게시글이 존재하지 않습니다." );
-
+    WRITING_NOT_FOUND(HttpStatus.NOT_FOUND, "글쓰기 조회를 실패했습니다.");
 
     private final HttpStatus status;
     private final String message;
@@ -20,6 +19,6 @@ public enum PostErrorCode implements ErrorCode {
 
     @Override
     public String getMessage() {
-        return "[POST ERROR]" + message;
+        return message;
     }
 }

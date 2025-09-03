@@ -4,7 +4,7 @@ import com.icando.global.upload.S3Uploader;
 import com.icando.member.entity.Member;
 import com.icando.member.entity.Role;
 import com.icando.member.repository.MemberRepository;
-import com.icando.ItemShop.dto.CreateItemRequest;
+import com.icando.ItemShop.dto.ItemRequest;
 import com.icando.ItemShop.service.AdminPointShopService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class PointShopTest {
+public class AdminPointShopTest {
 
     @Mock
     private MemberRepository memberRepository;
@@ -37,14 +37,19 @@ public class PointShopTest {
     }
 
     @Test
-    public void 가챠_상품_등록_성공() throws Exception {
+    public void 상점_상품_등록_성공() throws Exception {
         //given
-        CreateItemRequest createItem = new CreateItemRequest("치킨",imageFile,10,100);
-
-        Member user = Member.createLocalMember("user1","user@example.com","1234",null,false);
+        ItemRequest createItem = new ItemRequest("치킨",imageFile,10,100);
+        Member user = Member.createLocalMember(
+            "user1",
+            "user@example.com",
+            "1234",
+            Role.ADMIN,
+            false
+        );
 
         //when
-        adminPointShopService.createItemByAdminId(createItem,user.getId());
+        adminPointShopService.createItemByAdminId(createItem,user.getEmail());
 
         //then
         assertThat(createItem.getName()).isEqualTo("치킨");

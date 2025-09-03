@@ -8,49 +8,60 @@ import com.icando.member.entity.Role;
 import com.icando.member.exception.MemberErrorCode;
 import com.icando.member.exception.MemberException;
 import com.icando.member.repository.MemberRepository;
-import com.icando.member.repository.PointRepository;
 import com.icando.ItemShop.dto.CreateItemRequest;
+import com.icando.ItemShop.dto.ItemRequest;
 import com.icando.ItemShop.entity.Item;
 import com.icando.ItemShop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AdminPointShopService {
 
-    private final ItemRepository randomBoxRepository;
+    private final ItemRepository itemRepository;
     private final MemberRepository memberRepository;
     private final S3Uploader s3Uploader;
     private final ItemRepository itemRepository;
 
-    //TODO: 추후 관리자 계정 생성 기능 구현 후 admin 계정인지 아닌지에 대한 인증 로직 추가 예정
+    //TODO: 추후 관리자 계정 생성 기능 구현 후 admin 계정인지 아닌지에 대한 인증 로직 추가 예정 , user계정에 대한 예외사항 테스트 코드 작성
     @Transactional
-    public Item createItemByAdminId(CreateItemRequest itemRequest, Long memberId) {
+    public Item createItemByAdminId(ItemRequest itemRequest, String email) {
 
-        memberRepository.findById(memberId)
-                .orElseThrow(()-> new MemberException(MemberErrorCode.INVALID_MEMBER_ID));
+        memberRepository.findByEmail(email)
+                .orElseThrow(()-> new MemberException(MemberErrorCode.INVALID_MEMBER_EMAIL));
 
         String imageUrl = s3Uploader.upload(itemRequest.getImageUrl(),"item");
 
         Item item = Item.of(itemRequest.getName(), imageUrl, itemRequest.getQuantity(),itemRequest.getPoint());
 
-        randomBoxRepository.save(item);
+        itemRepository.save(item);
 
         return item;
     }
 
+    //TODO : 작성한 로직들 머지 된 후 서비스 테스트 진행 예정
+    @Transactional
+    public Item editItemQuantityByAdminId(String email,int quantity, Long itemId) {
+
+        validateAdmin(email);
+        Item item = itemRepository.findById(itemId).
+                orElseThrow(()-> new PointShopException(PointShopErrorCode.INVALID_ITEM_ID));
+
+        item.editItemQuantity(quantity);
+
+        return itemRepository.save(item);
+    }
+  
     //TODO: 반복 예외 사항 validate 메서드로 통합 예정
     public void deleteItemByAdminId(Long itemId, UserDetails userDetails) {
         validateAdmin(userDetails.getUsername());
         Item item = validateItem(itemId);
 
         itemRepository.delete(item);
-    }
 
     private Member validateAdmin(String email) {
         Member member = memberRepository.findByEmail(email)
