@@ -24,7 +24,10 @@ public class Topic {
     @Column(name = "topic")
     private String topic;
 
-    private Topic(Category category, String topic) {
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<ReferenceMaterial> referenceMaterials = new ArrayList<>();
+
+    public Topic(Category category, String topic) {
         this.category = category;
         this.topic = topic;
     }
