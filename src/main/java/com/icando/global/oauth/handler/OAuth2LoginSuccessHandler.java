@@ -32,8 +32,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
             if (oAuth2User.getRole() == Role.USER) {
                 String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
+                String refreshToken= jwtService.createRefreshToken();
                 response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
-                response.sendRedirect("/api/v1");
+                response.addHeader(jwtService.getRefreshHeader(), "Bearer " + refreshToken);
 
                 jwtService.sendAccessTokenAndRefreshToken(response, accessToken, null);
             } else {
