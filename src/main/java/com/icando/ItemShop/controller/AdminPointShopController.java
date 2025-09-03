@@ -41,5 +41,16 @@ public class AdminPointShopController {
 
         return ResponseEntity.ok(
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_EDIT_ITEM_QUANTITY,item));
+
     }
+  
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity<SuccessResponse> deleteItem(
+            @PathVariable Long itemId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        adminPointShopService.deleteItemByAdminId(itemId, userDetails);
+
+        return ResponseEntity.ok(
+                SuccessResponse.of(PointShopSuccessCode.SUCCESS_DELETE_ITEM));
 }
