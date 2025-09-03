@@ -25,4 +25,17 @@ public class Mbti extends BaseEntity {
     @Column(name = "mbti_iamage_url")
     private String imageUrl;
 
+    private Mbti(
+        String name,
+        String description,
+        String imageUrl
+    ) {
+        this.name = name;
+        this.description = description;
+        this.imageUrl = null;
+    }
+
+    public Mbti of(String name, String description, String imageUrl) {
+        return new Mbti(name, description, imageUrl);
+    }
 }
