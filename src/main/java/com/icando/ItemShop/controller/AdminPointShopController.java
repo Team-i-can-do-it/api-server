@@ -35,15 +35,15 @@ public class AdminPointShopController {
     public ResponseEntity<SuccessResponse> editItemQuantity(
             @PathVariable Long itemId,
             @RequestParam int quantity,
-            @AuthenticationPrincipal UserDetails userDetails){
+            @AuthenticationPrincipal UserDetails userDetails) {
 
-        Item item = adminPointShopService.editItemQuantityByAdminId(userDetails.getUsername(),quantity,itemId);
+        Item item = adminPointShopService.editItemQuantityByAdminId(userDetails.getUsername(), quantity, itemId);
 
         return ResponseEntity.ok(
-                SuccessResponse.of(PointShopSuccessCode.SUCCESS_EDIT_ITEM_QUANTITY,item));
+                SuccessResponse.of(PointShopSuccessCode.SUCCESS_EDIT_ITEM_QUANTITY, item));
 
     }
-  
+
     @DeleteMapping("/{itemId}")
     public ResponseEntity<SuccessResponse> deleteItem(
             @PathVariable Long itemId,
@@ -53,4 +53,5 @@ public class AdminPointShopController {
 
         return ResponseEntity.ok(
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_DELETE_ITEM));
+    }
 }
