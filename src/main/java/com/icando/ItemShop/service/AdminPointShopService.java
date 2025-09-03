@@ -1,7 +1,10 @@
 package com.icando.ItemShop.service;
 
+import com.icando.ItemShop.dto.PointShopHistoryResponse;
+import com.icando.ItemShop.entity.PointShopHistory;
 import com.icando.ItemShop.exception.PointShopErrorCode;
 import com.icando.ItemShop.exception.PointShopException;
+import com.icando.ItemShop.repository.PointShopHistoryRepository;
 import com.icando.global.upload.S3Uploader;
 import com.icando.member.entity.Member;
 import com.icando.member.entity.Role;
@@ -12,9 +15,13 @@ import com.icando.ItemShop.dto.ItemRequest;
 import com.icando.ItemShop.entity.Item;
 import com.icando.ItemShop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,13 +31,13 @@ public class AdminPointShopService {
     private final MemberRepository memberRepository;
     private final S3Uploader s3Uploader;
     private final ItemRepository itemRepository;
+    private final PointShopHistoryRepository pointShopHistoryRepository;
 
     //TODO: 추후 관리자 계정 생성 기능 구현 후 admin 계정인지 아닌지에 대한 인증 로직 추가 예정 , user계정에 대한 예외사항 테스트 코드 작성
     @Transactional
     public Item createItemByAdminId(ItemRequest itemRequest, String email) {
 
-        memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.INVALID_MEMBER_EMAIL));
+        validateAdmin(email);
 
         String imageUrl = s3Uploader.upload(itemRequest.getImageUrl(), "item");
 
@@ -41,7 +48,6 @@ public class AdminPointShopService {
         return item;
     }
 
-    //TODO : 작성한 로직들 머지 된 후 서비스 테스트 진행 예정
     @Transactional
     public Item editItemQuantityByAdminId(String email, int quantity, Long itemId) {
 
@@ -51,16 +57,25 @@ public class AdminPointShopService {
 
         item.editItemQuantity(quantity);
 
-        return itemRepository.save(item);
+        itemRepository.save(item);
+
+        return item;
     }
 
-    //TODO: 반복 예외 사항 validate 메서드로 통합 예정
     public void deleteItemByAdminId(Long itemId, UserDetails userDetails) {
         validateAdmin(userDetails.getUsername());
         Item item = validateItem(itemId);
 
         itemRepository.delete(item);
+    }
 
+    public Page<PointShopHistoryResponse> getAllUserPurchasesByAdminId(String email, Pageable pageable) {
+
+        validateAdmin(email);
+
+        Page<PointShopHistory> pointShopHistoriesPage = pointShopHistoryRepository.findAll(pageable);
+        return pointShopHistoriesPage
+                .map(pointShopHistory -> new PointShopHistoryResponse(pointShopHistory));
     }
 
         private Member validateAdmin (String email){
@@ -77,5 +92,6 @@ public class AdminPointShopService {
             return itemRepository.findById(itemId)
                     .orElseThrow(() -> new PointShopException(PointShopErrorCode.INVALID_ITEM_ID));
         }
+
 
 }
