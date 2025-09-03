@@ -108,7 +108,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
-        // ✅ 올바른 방식: Redis에서 RefreshToken과 매칭되는 이메일 찾기
+        // 방식: Redis에서 RefreshToken과 매칭되는 이메일 찾기
         String email = findEmailByRefreshToken(refreshToken);
 
         if (email != null && jwtService.isRefreshTokenValid(refreshToken, email)) {
@@ -118,7 +118,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             // Redis에 새 RefreshToken 저장
             jwtService.updateRefreshToken(email, newRefreshToken);
 
-            // ✅ 수정된 메서드 사용 (Bearer 포함)
+            //수정된 메서드 사용 (Bearer 포함)
             jwtService.sendAccessTokenAndRefreshToken(response, newAccessToken, newRefreshToken);
 
             log.info("토큰 재발급 완료 - 이메일: {}", email);

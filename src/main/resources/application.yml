@@ -71,7 +71,7 @@ mail:
     host: smtp.naver.com #네이버 메일 서버 주소
     port: 465 #네이버 SMTP 포트
     username: cho65156@naver.com
-    password : 4H4N3TZDRF3X
+    password : ${MAIL_PASSWORD}
     properties:
       mail.smtp.auth: true #SMTP 인증여부(필수)
       mail.smtp.ssl.enable: true #SMTP 보안 연결 사용 여부
