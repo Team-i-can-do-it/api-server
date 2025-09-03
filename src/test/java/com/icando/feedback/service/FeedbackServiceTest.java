@@ -5,6 +5,14 @@ import com.icando.feedback.entity.Feedback;
 import com.icando.feedback.entity.FeedbackScore;
 import com.icando.feedback.repository.FeedbackRepository;
 import com.icando.feedback.repository.FeedbackScoreRepository;
+import com.icando.member.entity.Member;
+import com.icando.member.entity.Role;
+import com.icando.writing.entity.Topic;
+import com.icando.writing.entity.Writing;
+import com.icando.writing.enums.Category;
+import com.icando.writing.enums.WritingType;
+import com.icando.writing.service.WritingService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,17 +42,38 @@ class FeedbackServiceTest {
     @Mock
     private FeedbackScoreRepository feedbackScoreRepository;
 
+    @Mock
+    private WritingService writingService;
+
+    Member globalmember;
+
+    @BeforeEach
+    void setUp() {
+        globalmember = Member.createLocalMember(
+            "name",
+            "test@exampl.com",
+            "1234",
+            Role.USER,
+            false
+        );
+    }
+
     @Test
     @DisplayName("피드백 생성 및 저장 로직 성공 테스트")
     void generateFeedback_success() {
         // Given
-        FeedbackRequest request = new FeedbackRequest("테스트 주제", "테스트 콘텐츠");
-        FeedbackResponse mockAiResponse = createMockFeedbackResponse(); // 가짜 응답
+        Long writingId = 1L;
+        Topic topic = Topic.of(Category.DAILY_LIFE, "일상 주제 취미입니다.");
+        Writing writing = Writing.of("글 쓴 내용", globalmember, topic);
+        FeedbackRequest request = new FeedbackRequest(WritingType.WRITING, writingId);
+        FeedbackResponse mockAiResponse = createMockFeedbackResponse();
 
+        when(writingService.getWriting(writingId))
+            .thenReturn(writing);
         when(chatClientBuilder.build()
             .prompt(anyString())
             .system((String) any())
-            .user(request.content())
+            .user(writing.getContent())
             .call()
             .entity(FeedbackResponse.class))
         .thenReturn(mockAiResponse);

@@ -24,8 +24,12 @@ public class Topic {
     @Column(name = "topic")
     private String topic;
 
-    public Topic(Category category, String topic) {
+    private Topic(Category category, String topic) {
         this.category = category;
         this.topic = topic;
+    }
+
+    public static Topic of(Category category, String topic) {
+        return new Topic(category, topic);
     }
 }
