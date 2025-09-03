@@ -8,6 +8,9 @@ import com.icando.feedback.exception.FeedbackErrorCode;
 import com.icando.feedback.exception.FeedbackException;
 import com.icando.feedback.repository.FeedbackRepository;
 import com.icando.feedback.repository.FeedbackScoreRepository;
+import com.icando.writing.entity.Topic;
+import com.icando.writing.entity.Writing;
+import com.icando.writing.service.WritingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,17 +25,22 @@ public class FeedbackService {
     private final ChatClient.Builder chatClientBuilder;
     private final FeedbackRepository feedbackRepository;
     private final FeedbackScoreRepository feedbackScoreRepository;
+    private final WritingService writingService;
 
     @Value("${feedback.evaluation.prompt.feedback}")
     private String evaluationPromptFeedback;
 
+    // TODO: 추후 stream, Flux 비동기로 성능개선
     @Transactional
     public FeedbackResponse generateFeedback(FeedbackRequest reqeust) {
-        // 1. AI에 요청후 JSON 응답을 DTO로 변환
+        Writing writing = writingService.getWriting(reqeust.writingId());
+        Topic topic = writing.getTopic();
+
+        // AI에 요청후 JSON 응답을 DTO로 변환
         FeedbackResponse aiResponse = chatClientBuilder.build()
-                .prompt("다음은 유저가 선택한 주제입니다." + reqeust.topic())
+                .prompt("다음은 유저가 선택한 주제입니다." + topic)
                 .system(evaluationPromptFeedback)
-                .user(reqeust.content())
+                .user(writing.getContent())
                 .call()
                 .entity(FeedbackResponse.class);
 
@@ -40,13 +48,8 @@ public class FeedbackService {
             throw new FeedbackException(FeedbackErrorCode.FEEDBACK_GENERATION_FAILED);
         }
 
-        // 2. Feedback 엔티티 생성 및 저장
         Feedback savedFeedback = saveFeedback(aiResponse);
-
-        // 3. FeedbackScore 엔티티 생성 및 저장
         saveFeedbackScore(aiResponse, savedFeedback);
-
-        // 4. DTO 반환
         return aiResponse;
     }
 

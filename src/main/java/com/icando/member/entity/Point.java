@@ -27,11 +27,23 @@ public class Point {
     @JoinColumn(name ="member_id" , nullable = false)
     private Member member;
 
-    //TODO: 추후 가챠 뽑기 로직 작성 시 사용 예정
-//    public void decreasePoint(int gamePoint){
-//        if(point < gamePoint){
-//            throw new MemberException(MemberErrorCode.NOT_ENOUGH_POINTS);}
-//        point -= gamePoint;
-//    }
+    private Point (int point ,Member member){
+        this.point = point;
+        this.member = member;
+    }
+
+    public static Point of(int point, Member member){
+        return new Point(point,member);
+    }
+
+    public void decreasePoint(int itemPoint){
+        if(point < itemPoint){
+            throw new MemberException(MemberErrorCode.NOT_ENOUGH_POINTS);}
+        point -= itemPoint;
+    }
+
+    public void earnPoints(int getPoint) {
+        point += getPoint;
+    }
 
 }

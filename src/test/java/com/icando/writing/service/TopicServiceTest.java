@@ -29,7 +29,7 @@ class TopicServiceTest {
     void getRandomTopicByCategory_Success() {
         // given
         Category category = Category.DAILY_LIFE;
-        Topic expectedTopic = new Topic(category, "테스트 주제");
+        Topic expectedTopic = Topic.of(category, "테스트 주제");
 
         when(topicRepository.findRandomByCategory(category.name()))
             .thenReturn(Optional.of(expectedTopic));
@@ -47,7 +47,7 @@ class TopicServiceTest {
     @DisplayName("전체 랜덤 주제 조회 성공")
     void getRandomTopic_Success() {
         // given
-        Topic expectedTopic = new Topic(Category.DAILY_LIFE, "전체 랜덤 테스트 주제");
+        Topic expectedTopic = Topic.of(Category.DAILY_LIFE, "전체 랜덤 테스트 주제");
         when(topicRepository.findRandom()).thenReturn(Optional.of(expectedTopic));
 
         // when

@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CreateItemRequest {
+public class ItemRequest {
 
     @NotBlank(message = "상품명은 필수 입니다")
     private String name;

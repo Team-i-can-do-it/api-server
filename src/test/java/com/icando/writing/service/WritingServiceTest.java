@@ -54,7 +54,7 @@ class WritingServiceTest {
             Role.USER,
             false
         );
-        Topic mockTopic = new Topic(null, "테스트 주제");
+        Topic mockTopic = Topic.of(null, "테스트 주제");
         
         when(memberRepository.findByEmail(email)).thenReturn(Optional.of(mockMember));
         when(topicRepository.findById(topicId)).thenReturn(Optional.of(mockTopic));
