@@ -56,7 +56,9 @@ public class AdminPointShopService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.INVALID_MEMBER_EMAIL));
 
-        if(member.getRole().equals(Role.ADMIN)){ return member; }
+        if(member.getRole() == (Role.ADMIN)){
+            return member;
+        }
         throw new MemberException(MemberErrorCode.NOT_ADMIN_MEMBER);
     }
 
