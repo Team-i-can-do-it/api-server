@@ -57,6 +57,7 @@ public class UserPointShopTest {
     private ItemRequest createItem;
     private ItemRequest createItem2;
     private Member user;
+    private Member admin;
     private String number;
 
     @BeforeEach
@@ -75,22 +76,30 @@ public class UserPointShopTest {
                 Role.USER,
                 false
         );
+        admin = Member.createLocalMemberByTest(
+                2L,
+                "user2",
+                "admin@example.com",
+                "1234",
+                Role.ADMIN,
+                false
+        );
     }
 
     @Test
     @DisplayName("상품 구매 성공")
     void buyItem_Success() {
         //given
-        when(memberRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        Item item = adminPointShopService.createItemByAdminId(createItem, user.getEmail());
-        Point point = Point.of(0,user);
+        when(memberRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
+        Item item = adminPointShopService.createItemByAdminId(createItem, admin.getEmail());
+        Point point = Point.of(0,admin);
         point.earnPoints(1000);
 
         when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
         when(pointRepository.findPointByMemberId(any())).thenReturn(Optional.of(point));
 
         //when
-        userPointShopService.buyItem(item.getId(),number, user.getEmail());
+        userPointShopService.buyItem(item.getId(),number, admin.getEmail());
 
         //then
         assertThat(point.getPoint()).isEqualTo(900);
@@ -117,9 +126,9 @@ public class UserPointShopTest {
     @DisplayName("상품 포인트보다 작을 시 예외")
     void point_less_than_item_point_exception() {
         //given
-        when(memberRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        Item item = adminPointShopService.createItemByAdminId(createItem, user.getEmail());
-        Point point = Point.of(0,user);
+        when(memberRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
+        Item item = adminPointShopService.createItemByAdminId(createItem, admin.getEmail());
+        Point point = Point.of(0,admin);
         point.earnPoints(50);
 
         when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
@@ -127,7 +136,7 @@ public class UserPointShopTest {
 
         //when,then
         PointShopException exception = assertThrows(PointShopException.class, () ->
-                userPointShopService.buyItem(item.getId(),number, user.getEmail()));
+                userPointShopService.buyItem(item.getId(),number, admin.getEmail()));
 
         assertEquals(PointShopErrorCode.NOT_ENOUGH_MEMBER_POINT, exception.getErrorCode());
         }
@@ -136,9 +145,9 @@ public class UserPointShopTest {
     @DisplayName("상품 수량이 없을 시 예외")
     void item_quantity_0_exception() {
         //given
-        when(memberRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        Item item = adminPointShopService.createItemByAdminId(createItem2, user.getEmail());
-        Point point = Point.of(0,user);
+        when(memberRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
+        Item item = adminPointShopService.createItemByAdminId(createItem2, admin.getEmail());
+        Point point = Point.of(0,admin);
         point.earnPoints(1000);
 
         when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
@@ -146,7 +155,7 @@ public class UserPointShopTest {
 
         //when,then
         PointShopException exception = assertThrows(PointShopException.class, () ->
-                userPointShopService.buyItem(item.getId(),number, user.getEmail()));
+                userPointShopService.buyItem(item.getId(),number, admin.getEmail()));
 
         assertEquals(PointShopErrorCode.OUT_OF_STOCK, exception.getErrorCode());
     }
