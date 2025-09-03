@@ -1,5 +1,6 @@
 package com.icando.ItemShop.controller;
 
+import com.icando.ItemShop.entity.Item;
 import com.icando.global.success.SuccessResponse;
 import com.icando.ItemShop.dto.ItemRequest;
 import com.icando.ItemShop.exception.PointShopSuccessCode;
@@ -28,5 +29,17 @@ public class AdminPointShopController {
 
         return ResponseEntity.ok(
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_CREATE_ITEM));
+    }
+
+    @PatchMapping("/{itemId}")
+    public ResponseEntity<SuccessResponse> editItemQuantity(
+            @PathVariable Long itemId,
+            @RequestParam int quantity,
+            @AuthenticationPrincipal UserDetails userDetails){
+
+        Item item = adminPointShopService.editItemQuantityByAdminId(userDetails.getUsername(),quantity,itemId);
+
+        return ResponseEntity.ok(
+                SuccessResponse.of(PointShopSuccessCode.SUCCESS_EDIT_ITEM_QUANTITY,item));
     }
 }

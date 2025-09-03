@@ -39,7 +39,7 @@ public class UserPointShopController {
         return ResponseEntity.ok(
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_GET_POINT_HISTORY,historyList));
     }
-
+  
     @PostMapping("/{itemId}/buy")
     public ResponseEntity<SuccessResponse> buyItem (
             @PathVariable Long itemId,
