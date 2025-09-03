@@ -9,6 +9,8 @@ import com.icando.writing.entity.Topic;
 import com.icando.writing.entity.Writing;
 import com.icando.writing.error.TopicErrorCode;
 import com.icando.writing.error.TopicException;
+import com.icando.writing.error.WritingErrorCode;
+import com.icando.writing.error.WritingException;
 import com.icando.writing.repository.TopicRepository;
 import com.icando.writing.repository.WritingRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,12 @@ public class WritingService {
         Writing writing = Writing.of(request.content(), member, topic);
 
         writingRepository.save(writing);
+    }
+
+    @Transactional(readOnly = true)
+    public Writing getWriting(Long writingId) {
+        return writingRepository.findById(writingId)
+            .orElseThrow(() -> new WritingException(WritingErrorCode.WRITING_NOT_FOUND));
     }
 
 }

@@ -40,7 +40,9 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             "/api/v1/swagger-ui/**",
             "/api/v1/v3/api-docs/**",
             "/api/v1/auth/login",
-            "/api/v1/auth/join"
+            "/api/v1/auth/join",
+            "/api/v1/mail/code/request",
+            "/api/v1/mail/code/verify"
     );
 
 
@@ -55,12 +57,16 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
     throws ServletException, IOException {
 
+        log.info("[JWT Filter] Entered doFilterInternal: {}", request.getRequestURI());
+
+
 
         String path = request.getRequestURI(); // 예: /api/v1/swagger-ui/swagger-initializer.js
         for (String url : NO_CHECK_URL) {
             // /** 패턴이 붙으면 startsWith로 체크
             String checkUrl = url.replace("/**", "");
             if (path.startsWith(checkUrl)) {
+                System.out.println("[JWT Filter] Skip URL matched: " + path + " -> " + checkUrl);
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -102,7 +108,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
-        // ✅ 올바른 방식: Redis에서 RefreshToken과 매칭되는 이메일 찾기
+        // 방식: Redis에서 RefreshToken과 매칭되는 이메일 찾기
         String email = findEmailByRefreshToken(refreshToken);
 
         if (email != null && jwtService.isRefreshTokenValid(refreshToken, email)) {
@@ -112,7 +118,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             // Redis에 새 RefreshToken 저장
             jwtService.updateRefreshToken(email, newRefreshToken);
 
-            // ✅ 수정된 메서드 사용 (Bearer 포함)
+            //수정된 메서드 사용 (Bearer 포함)
             jwtService.sendAccessTokenAndRefreshToken(response, newAccessToken, newRefreshToken);
 
             log.info("토큰 재발급 완료 - 이메일: {}", email);
