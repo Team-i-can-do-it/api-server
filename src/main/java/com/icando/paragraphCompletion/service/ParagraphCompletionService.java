@@ -46,7 +46,7 @@ public class ParagraphCompletionService {
     }
 
     @Transactional
-    public ParagraphCompletionResponse insertParagraphCompletionArticle(Long memberId, ParagraphCompletionRequest paragraphCompletionRequest) {
+    public ParagraphCompletionResponse insertParagraphCompletionArticle(String memberEmail, ParagraphCompletionRequest paragraphCompletionRequest) {
         if (paragraphCompletionRequest.getWords() == null || paragraphCompletionRequest.getWords().isEmpty()) {
             throw new ParagraphCompletionException(ParagraphCompletionErrorCode.INVALID_WORD_COUNT);
         }
@@ -61,7 +61,7 @@ public class ParagraphCompletionService {
             }
         });
 
-        Optional<Member> member = memberRepository.findById(memberId);
+        Optional<Member> member = memberRepository.findByEmail(memberEmail);
         if (member.isEmpty()) {
             throw new ParagraphCompletionException(ParagraphCompletionErrorCode.USER_NOT_FOUND);
         }
@@ -83,8 +83,8 @@ public class ParagraphCompletionService {
         return ParagraphCompletionResponse.of(savedParagraphCompletion);
     }
 
-    public ParagraphCompletionResponse getParagraphCompletionArticle(Long userId, Long id) {
-        Member member = memberRepository.findById(userId)
+    public ParagraphCompletionResponse getParagraphCompletionArticle(String memberEmail, Long id) {
+        Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new ParagraphCompletionException(ParagraphCompletionErrorCode.USER_NOT_FOUND));
 
         ParagraphCompletion paragraphCompletion = paragraphCompletionRepository.findByIdAndMember(id, member)
@@ -94,8 +94,8 @@ public class ParagraphCompletionService {
         return ParagraphCompletionResponse.of(paragraphCompletion);
     }
 
-    public PagedResponse<ParagraphCompletionListResponse> getAllParagraphCompletionArticle(Long userId, int pageSize, int page) {
-        Member member = memberRepository.findById(userId)
+    public PagedResponse<ParagraphCompletionListResponse> getAllParagraphCompletionArticle(String memberEmail, int pageSize, int page) {
+        Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new ParagraphCompletionException(ParagraphCompletionErrorCode.USER_NOT_FOUND));
 
         Page<ParagraphCompletion> paragraphCompletions =
