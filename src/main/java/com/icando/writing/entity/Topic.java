@@ -1,11 +1,15 @@
 package com.icando.writing.entity;
 
 
+import com.icando.referenceMaterial.entity.ReferenceMaterial;
 import com.icando.writing.enums.Category;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
