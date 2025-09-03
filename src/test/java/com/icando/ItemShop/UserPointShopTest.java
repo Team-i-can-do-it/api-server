@@ -11,8 +11,6 @@ import com.icando.global.upload.S3Uploader;
 import com.icando.member.entity.Member;
 import com.icando.member.entity.Point;
 import com.icando.member.entity.Role;
-import com.icando.member.exception.MemberErrorCode;
-import com.icando.member.exception.MemberException;
 import com.icando.member.repository.MemberRepository;
 import com.icando.member.repository.PointRepository;
 import org.junit.jupiter.api.BeforeEach;
