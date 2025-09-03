@@ -6,8 +6,6 @@ import com.icando.referenceMaterial.repository.ReferenceMaterialRepository;
 import com.icando.writing.repository.TopicRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.ResponseEntity;
-import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.scheduling.annotation.Async;
@@ -64,7 +62,7 @@ public class ReferenceMaterialService {
                     i--;
                     retryCount++;
                     try {
-                        Thread.sleep((long) 1000L * retryCount);
+                        Thread.sleep(1000L * retryCount);
                     } catch (InterruptedException ex) {
                         throw new RuntimeException(ex);
                     }

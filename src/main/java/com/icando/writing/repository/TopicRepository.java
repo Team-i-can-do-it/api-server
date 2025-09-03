@@ -1,7 +1,6 @@
 package com.icando.writing.repository;
 
 import com.icando.writing.entity.Topic;
-import com.icando.writing.enums.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
