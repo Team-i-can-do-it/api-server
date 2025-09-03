@@ -86,7 +86,6 @@ public class ParagraphCompletionService {
 
         ParagraphCompletion paragraphCompletion = paragraphCompletionRepository.findByIdAndMember(id, member)
                 .orElseThrow(() -> new ParagraphCompletionException(ParagraphCompletionErrorCode.PARAGRAPH_COMPLETION_NOT_FOUND));
-        // TODO: Feedback 넣고 FetchJoin 해야함
 
         return ParagraphCompletionResponse.of(paragraphCompletion);
     }
