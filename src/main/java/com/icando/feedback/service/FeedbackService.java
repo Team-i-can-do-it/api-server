@@ -2,13 +2,14 @@ package com.icando.feedback.service;
 
 import com.icando.feedback.dto.FeedbackRequest;
 import com.icando.feedback.dto.FeedbackResponse;
+import com.icando.feedback.dto.MbtiScore;
 import com.icando.feedback.entity.Feedback;
 import com.icando.feedback.entity.FeedbackScore;
 import com.icando.feedback.exception.FeedbackErrorCode;
 import com.icando.feedback.exception.FeedbackException;
 import com.icando.feedback.repository.FeedbackRepository;
 import com.icando.feedback.repository.FeedbackScoreRepository;
-import com.icando.member.entity.Mbti;
+import com.icando.member.repository.MbtiRepository;
 import com.icando.writing.entity.Topic;
 import com.icando.writing.entity.Writing;
 import com.icando.writing.service.WritingService;
@@ -27,6 +28,7 @@ public class FeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final FeedbackScoreRepository feedbackScoreRepository;
     private final WritingService writingService;
+    private final MbtiRepository mbtiRepository;
 
     @Value("${feedback.evaluation.prompt.feedback}")
     private String evaluationPromptFeedback;
@@ -85,11 +87,4 @@ public class FeedbackService {
         feedbackScoreRepository.save(scoreToSave);
     }
 
-    private void saveFeedbackMbti(FeedbackResponse aiResponse) {
-    }
-
-    private void findMbtiMatches(FeedbackResponse aiResponse) {
-        Mbti mbtiScore = aiResponse.mbtiScore();
-
-    }
 }
