@@ -46,7 +46,7 @@ spring:
       port: 6379
       host: localhost
       timeout: 60000
-      password: ${REDIS_PASSWORD}
+      password: ${REDIS_PASSWORD:}
   jwt:
     secret: 67t8yhuijo2k435rwef90sdujoip23w
     access:
@@ -83,6 +83,6 @@ feedback:
   evaluation:
     prompt:
       feedback: "dummy prompt for testing"
-  reference-material:
-    urls:
-      prompt: "dummy reference material prompt for testing"
+reference-material:
+  urls:
+    prompt: "dummy reference material prompt for testing"
