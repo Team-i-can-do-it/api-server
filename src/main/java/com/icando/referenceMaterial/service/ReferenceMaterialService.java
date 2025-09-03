@@ -26,7 +26,6 @@ import java.util.Objects;
 @Slf4j
 @Transactional(readOnly = true)
 public class ReferenceMaterialService {
-//    private final ChatClient ai;
     private final ChatClient.Builder ai;
     private final TopicRepository topicRepository;
     private final ReferenceMaterialRepository referenceMaterialRepository;
