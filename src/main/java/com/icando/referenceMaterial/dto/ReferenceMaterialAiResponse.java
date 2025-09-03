@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReferenceMaterialAiResponse {
@@ -14,4 +13,8 @@ public class ReferenceMaterialAiResponse {
     private String description;
     private String imageUrl;
     private String url;
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
