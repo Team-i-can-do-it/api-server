@@ -1,5 +1,6 @@
 package com.icando.member.login.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icando.global.auth.service.JwtService;
 import com.icando.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,20 +28,35 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) {
-        String email = extractUsername(authentication);// 인증 정보에서 Username(email) 추출
-        String accessToken = jwtService.createAccessToken(email); // JwtService의 createAccessToken을 사용하여 AccessToken 발급
-        String refreshToken = jwtService.createRefreshToken(); // JwtService의 createRefreshToken을 사용하여 RefreshToken 발급
+                                        Authentication authentication) throws IOException {
+        String email = extractUsername(authentication); // 인증 정보에서 Username(email) 추출
+        String accessToken = jwtService.createAccessToken(email);
+        String refreshToken = jwtService.createRefreshToken();
 
-        jwtService.sendAccessTokenAndRefreshToken(response, accessToken, refreshToken); // 응답 헤더에 AccessToken, RefreshToken 실어서 응답
+        jwtService.sendAccessTokenAndRefreshToken(response, accessToken, refreshToken);
 
         memberRepository.findByEmail(email)
                 .ifPresent(user -> {
                     jwtService.updateRefreshToken(email, refreshToken);
                     memberRepository.saveAndFlush(user);
                 });
+
+        // 응답 헤더 설정
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
+
+        // JSON 직접 작성
+        String jsonResponse = String.format(
+                "{ \"message\": \"%s\", \"email\": \"%s\", \"accessTokenExpiration\": \"%s\" }",
+                "로그인에 성공하였습니다.",
+                email,
+                accessExpiration
+        );
+
+        response.getWriter().write(jsonResponse);
+
         log.info("로그인에 성공하였습니다. 이메일 : {}", email);
-        log.info("로그인에 성공하였습니다. AccessToken : {}", accessToken);
         log.info("발급된 AccessToken 만료 기간 : {}", accessExpiration);
     }
 
@@ -45,3 +65,4 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         return userDetails.getUsername();
     }
 }
+

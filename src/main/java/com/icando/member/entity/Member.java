@@ -4,14 +4,16 @@ import com.icando.global.BaseEntity;
 import com.icando.member.exception.MemberErrorCode;
 import com.icando.member.exception.MemberException;
 import jakarta.persistence.*;
+
+import lombok.*;
 import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class Member extends BaseEntity {
 
     @Id

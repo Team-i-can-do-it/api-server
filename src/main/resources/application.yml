@@ -57,6 +57,7 @@ spring:
       password : ${REDIS_PASSWORD:}
       timeout: 60000
       password: ${REDIS_PASSWORD}
+
   jwt:
     secret: ${JWT_SECRET_KEY}
     access:
@@ -65,6 +66,16 @@ spring:
     refresh:
       expiration: 1209600000
       header: Authorization-refresh
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+            - email
+            - profile
 
 mail:
   naver:
