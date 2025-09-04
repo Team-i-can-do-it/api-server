@@ -25,4 +25,8 @@ public class Mbti extends BaseEntity {
     @Column(name = "mbti_iamage_url")
     private String imageUrl;
 
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name ="member_id")
+    private Member member;
+
 }

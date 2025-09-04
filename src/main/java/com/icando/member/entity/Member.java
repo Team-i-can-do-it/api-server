@@ -39,9 +39,6 @@ public class Member extends BaseEntity {
     @Column(name = "role", nullable = false)
     private Role role = Role.USER;
 
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name ="mbti_id")
-    private Mbti mbti;
 
     private Member(String name, String email,String password,Provider provider,
                    String providerId, Boolean isVerified, Role role) {

@@ -12,7 +12,9 @@ public enum MemberErrorCode implements ErrorCode {
     INVALID_POINT(HttpStatus.BAD_REQUEST, "포인트가 존재하지 않습니다" ),
     NOT_ENOUGH_POINTS(HttpStatus.BAD_REQUEST,"포인트가 부족합니다" ),
     NOT_ADMIN_MEMBER(HttpStatus.BAD_REQUEST,"관리자 계정이 아닙니다" ),
-    MEMBER_EMAIL_NOT_FOUND(HttpStatus.BAD_REQUEST, "이메일이 없습니다.");
+    MEMBER_EMAIL_NOT_FOUND(HttpStatus.BAD_REQUEST, "이메일이 없습니다."),
+    MYPAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "마이페이지 정보를 찾을 수 없습니다."),
+    MBTI_NOT_FOUND(HttpStatus.BAD_REQUEST, "최근의 MBTI가 존재하지 않습니다.");
 
     private final HttpStatus status;
     private final String message;
