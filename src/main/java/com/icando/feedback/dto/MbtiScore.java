@@ -3,7 +3,7 @@ package com.icando.feedback.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 // MBTI 점수
-public record Mbti(
+public record MbtiScore(
     @JsonProperty("expression_style")
     Integer expressionStyle,
     @JsonProperty("content_format")

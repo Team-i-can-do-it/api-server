@@ -5698,6 +5698,10 @@ INSERT INTO word_set_item(word) VALUES ('힘쓰다');
 INSERT INTO word_set_item(word) VALUES ('힘없이');
 INSERT INTO word_set_item(word) VALUES ('힘차다');
 
+INSERT INTO mbtiScore(mbti_id, mbti_name, mbti_description, mbti_iamage_url, is_deleted, created_at, modified_at) VALUES (1, 'TEST', '테스트용 MBTI', 'https://example.com/test.png', false, '2023-10-01 00:00:00', '2023-10-01 00:00:00');
+INSERT INTO member(member_id, is_deleted, created_at, mbti_id, modified_at, member_email, member_name, member_password, member_provider, member_provider_id, role) VALUES
+(1, false, '2023-10-01 00:00:00', 1, '2023-10-01 00:00:00', 'test@test.com', '테스트', '$2a$10$E9z1b5Z3k7Q8Y1f4e5d6uO0j1F8c5J3m5Z1b5Z3k7Q8Y1f4e5d6uO', 'local', 'test', 'ROLE_USER');
+
 INSERT INTO public.reference_material (is_deleted,created_at,modified_at,topic_id,image_url,url,description,title) VALUES
                                                                                                                        (false,'2025-09-02 14:26:46.434165','2025-09-02 14:26:46.434165',132,'https://image.yes24.com/images/chyes24/article/cover/2025/06/20250623-584eb4f1.png','https://ch.yes24.com/Article/Details/81234','2025년 상반기 예스24의 베스트셀러 순위와 출판계 트렌드를 정리한 기사로, 정치 사회 분야와 문학 분야에서 특히 주목받은 도서들을 소개한다. 이재명 대통령의 『결국 국민이 합니다』가 종합 1위를 차지했으며, 한강 작가의 『소년이 온다』도 꾸준한 인기를 보였다.','2025년 상반기 베스트셀러 동향은? - 채널예스'),
                                                                                                                        (false,'2025-09-02 14:26:46.454127','2025-09-02 14:26:46.454127',132,'https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/fEAg/image/jV6amoBTWnx6EC0AzTEFTlTAHRs.jpg','https://brunch.co.kr/@@fEAg/1124','2025년 3월 둘째 주 교보문고 주간 베스트셀러 순위를 소개하는 자료로, 정치, 소설, 자기계발, 경제경영, 인문 분야별 인기 도서를 상세히 나열하며 최근 독서 트렌드를 보여준다.','주간 베스트셀러-스테디셀러(2025년 3월 14일) - 브런치'),
