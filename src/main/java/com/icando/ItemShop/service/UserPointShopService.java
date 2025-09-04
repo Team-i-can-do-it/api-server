@@ -1,6 +1,7 @@
 package com.icando.ItemShop.service;
 
 
+import com.icando.ItemShop.dto.ItemGetType;
 import com.icando.ItemShop.dto.PointShopHistoryResponse;
 import com.icando.ItemShop.dto.ItemRequest;
 import com.icando.ItemShop.dto.ItemResponse;
@@ -35,9 +36,9 @@ public class UserPointShopService {
     private final MemberRepository memberRepository;
     private final PointRepository pointRepository;
 
-    public List<ItemResponse> getItemList(String sortCondition) {
+    public List<ItemResponse> getItemList(ItemGetType itemGetType) {
 
-        List<Item> itemList = itemRepository.getItemByPrice(sortCondition);
+        List<Item> itemList = itemRepository.getItemByPrice(itemGetType);
 
         return itemList.stream()
                 .map(item -> new ItemResponse(item))
