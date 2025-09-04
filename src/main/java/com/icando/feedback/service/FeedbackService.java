@@ -9,6 +9,8 @@ import com.icando.feedback.exception.FeedbackErrorCode;
 import com.icando.feedback.exception.FeedbackException;
 import com.icando.feedback.repository.FeedbackRepository;
 import com.icando.feedback.repository.FeedbackScoreRepository;
+import com.icando.member.entity.ActivityType;
+import com.icando.member.service.PointService;
 import com.icando.member.repository.MbtiRepository;
 import com.icando.writing.entity.Topic;
 import com.icando.writing.entity.Writing;
@@ -29,13 +31,14 @@ public class FeedbackService {
     private final FeedbackScoreRepository feedbackScoreRepository;
     private final WritingService writingService;
     private final MbtiRepository mbtiRepository;
+    private final PointService pointService;
 
     @Value("${feedback.evaluation.prompt.feedback}")
     private String evaluationPromptFeedback;
 
     // TODO: 추후 stream, Flux 비동기로 성능개선
     @Transactional
-    public FeedbackResponse generateFeedback(FeedbackRequest reqeust) {
+    public FeedbackResponse generateFeedback(FeedbackRequest reqeust, ActivityType activityType) {
         Writing writing = writingService.getWriting(reqeust.writingId());
         Topic topic = writing.getTopic();
 
@@ -51,6 +54,7 @@ public class FeedbackService {
             throw new FeedbackException(FeedbackErrorCode.FEEDBACK_GENERATION_FAILED);
         }
 
+        pointService.earnPoints(writing.getMember().getId(),100,activityType);
         Feedback savedFeedback = saveFeedback(aiResponse);
         saveFeedbackScore(aiResponse, savedFeedback);
         return aiResponse;
@@ -86,5 +90,4 @@ public class FeedbackService {
 
         feedbackScoreRepository.save(scoreToSave);
     }
-
 }

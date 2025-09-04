@@ -5,5 +5,8 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 public enum Provider {
-    GOOGLE, LOCAL
+
+    LOCAL,
+    GOOGLE
+
 }

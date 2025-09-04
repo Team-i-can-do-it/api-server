@@ -5,8 +5,10 @@ import com.icando.feedback.entity.Feedback;
 import com.icando.feedback.entity.FeedbackScore;
 import com.icando.feedback.repository.FeedbackRepository;
 import com.icando.feedback.repository.FeedbackScoreRepository;
+import com.icando.member.entity.ActivityType;
 import com.icando.member.entity.Member;
 import com.icando.member.entity.Role;
+import com.icando.member.service.PointService;
 import com.icando.writing.entity.Topic;
 import com.icando.writing.entity.Writing;
 import com.icando.writing.enums.Category;
@@ -45,6 +47,9 @@ class FeedbackServiceTest {
     @Mock
     private WritingService writingService;
 
+    @Mock
+    private PointService pointService;
+
     Member globalmember;
 
     @BeforeEach
@@ -79,7 +84,7 @@ class FeedbackServiceTest {
         .thenReturn(mockAiResponse);
 
         // When
-        FeedbackResponse actualResponse = feedbackService.generateFeedback(request);
+        FeedbackResponse actualResponse = feedbackService.generateFeedback(request, ActivityType.TOPIC);
 
         // Then
         assertThat(actualResponse.overallFeedback()).isEqualTo("전반적으로 훌륭합니다!");

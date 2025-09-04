@@ -4,10 +4,9 @@ import com.icando.member.entity.PointHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.time.LocalDate;
 
 @Repository
-public interface PointRepository extends JpaRepository<PointHistory,Long> {
-
-    Optional<PointHistory> findPointByMemberId(Long memberId);
+public interface PointHistoryRepository extends JpaRepository<PointHistory,Long> {
+    int countByMemberIdAndCreatedAt(Long memberId, LocalDate today);
 }

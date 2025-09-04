@@ -5,14 +5,17 @@ import com.icando.ItemShop.entity.Item;
 import com.icando.ItemShop.exception.PointShopErrorCode;
 import com.icando.ItemShop.exception.PointShopException;
 import com.icando.ItemShop.repository.ItemRepository;
+import com.icando.ItemShop.repository.PointShopHistoryRepository;
 import com.icando.ItemShop.service.AdminPointShopService;
 import com.icando.ItemShop.service.UserPointShopService;
 import com.icando.global.upload.S3Uploader;
+import com.icando.member.entity.ActivityType;
 import com.icando.member.entity.Member;
-import com.icando.member.entity.Point;
+import com.icando.member.entity.PointHistory;
 import com.icando.member.entity.Role;
 import com.icando.member.repository.MemberRepository;
 import com.icando.member.repository.PointRepository;
+import com.icando.member.service.PointService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UserPointShopTest {
+public class UserPointHistoryShopTest {
 
     @Mock
     private MemberRepository memberRepository;
@@ -42,11 +45,17 @@ public class UserPointShopTest {
     @Mock
     private PointRepository pointRepository;
 
+    @Mock
+    private PointShopHistoryRepository pointShopHistoryRepository;
+
     @InjectMocks
     private UserPointShopService userPointShopService;
 
     @InjectMocks
     private AdminPointShopService adminPointShopService;
+
+    @Mock
+    private PointService pointService;
 
     @Mock
     private S3Uploader s3Uploader;
@@ -55,7 +64,6 @@ public class UserPointShopTest {
     private ItemRequest createItem;
     private ItemRequest createItem2;
     private Member user;
-    private Member admin;
     private String number;
 
     @BeforeEach
@@ -71,46 +79,33 @@ public class UserPointShopTest {
                 "user1",
                 "user@example.com",
                 "1234",
-                Role.USER,
-                false
-        );
-        admin = Member.createLocalMemberByTest(
-                2L,
-                "user2",
-                "admin@example.com",
-                "1234",
                 Role.ADMIN,
                 false
         );
+
     }
 
     @Test
     @DisplayName("상품 구매 성공")
     void buyItem_Success() {
         //given
-        when(memberRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
-        Item item = adminPointShopService.createItemByAdminId(createItem, admin.getEmail());
-        Point point = Point.of(0,admin);
-        point.earnPoints(1000);
+        when(memberRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        Item item = adminPointShopService.createItemByAdminId(createItem, user.getEmail());
+        user.addPoints(1000);
 
         when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
-        when(pointRepository.findPointByMemberId(any())).thenReturn(Optional.of(point));
 
         //when
-        userPointShopService.buyItem(item.getId(),number, admin.getEmail());
+        userPointShopService.buyItem(item.getId(),number, user.getEmail());
 
         //then
-        assertThat(point.getPoint()).isEqualTo(900);
+        assertThat(user.getTotalPoint() == 900);
     }
 
     @Test
     @DisplayName("구매 시 존재하지 않는 상품 예외")
     void buy_Item_Not_Found_Exception() {
         //given
-        when(memberRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        Point point = Point.of(0, user);
-        point.earnPoints(1000);
-
         when(itemRepository.findById(999L)).thenReturn(Optional.empty());
 
         //when,then
@@ -124,13 +119,11 @@ public class UserPointShopTest {
     @DisplayName("상품 포인트보다 작을 시 예외")
     void point_less_than_item_point_exception() {
         //given
-        when(memberRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
-        Item item = adminPointShopService.createItemByAdminId(createItem, admin.getEmail());
-        Point point = Point.of(0,admin);
-        point.earnPoints(50);
+        when(memberRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        Item item = adminPointShopService.createItemByAdminId(createItem, user.getEmail());
+        user.addPoints(50);
 
         when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
-        when(pointRepository.findPointByMemberId(any())).thenReturn(Optional.of(point));
 
         //when,then
         PointShopException exception = assertThrows(PointShopException.class, () ->
@@ -143,13 +136,11 @@ public class UserPointShopTest {
     @DisplayName("상품 수량이 없을 시 예외")
     void item_quantity_0_exception() {
         //given
-        when(memberRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
-        Item item = adminPointShopService.createItemByAdminId(createItem2, admin.getEmail());
-        Point point = Point.of(0,admin);
-        point.earnPoints(1000);
+        when(memberRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        Item item = adminPointShopService.createItemByAdminId(createItem2, user.getEmail());
+        user.addPoints(1000);
 
         when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
-        when(pointRepository.findPointByMemberId(any())).thenReturn(Optional.of(point));
 
         //when,then
         PointShopException exception = assertThrows(PointShopException.class, () ->
