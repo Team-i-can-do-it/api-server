@@ -1,12 +1,12 @@
 package com.icando.referenceMaterial.enums;
 
-import com.icando.global.success.SuccessCode;
+import com.icando.global.error.core.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
-public enum ReferenceMaterialSuccessCode implements SuccessCode {
-    REFERENCE_MATERIAL_READ_SUCCESS(HttpStatus.OK, "참고자료 조회 성공");
+public enum ReferenceMaterialErrorCode implements ErrorCode {
+    TOPIC_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 주제가 존재하지 않습니다.");
 
     private final HttpStatus status;
     private final String message;
@@ -20,4 +20,5 @@ public enum ReferenceMaterialSuccessCode implements SuccessCode {
     public String getMessage() {
         return message;
     }
+
 }

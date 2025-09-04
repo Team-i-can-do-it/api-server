@@ -76,7 +76,6 @@ public class Member extends BaseEntity {
 
     public void updateVerify() {
         this.isVerified = true;
-
     }
 }
 

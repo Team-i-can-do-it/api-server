@@ -1,4 +1,4 @@
-package com.icando.paragraphCompletion.exception;
+package com.icando.paragraphCompletion.enums;
 
 import com.icando.global.error.core.ErrorCode;
 import lombok.RequiredArgsConstructor;
