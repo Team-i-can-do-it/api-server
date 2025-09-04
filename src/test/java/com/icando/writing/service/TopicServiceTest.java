@@ -39,7 +39,7 @@ class TopicServiceTest {
 
         // then
         assertNotNull(actualTopic);
-        assertEquals(expectedTopic.getTopic(), actualTopic.getTopic());
+        assertEquals(expectedTopic.getTopicContent(), actualTopic.getTopicContent());
         verify(topicRepository).findRandomByCategory(category.name());
     }
 
@@ -55,7 +55,7 @@ class TopicServiceTest {
 
         // then
         assertNotNull(actualTopic);
-        assertEquals(expectedTopic.getTopic(), actualTopic.getTopic());
+        assertEquals(expectedTopic.getTopicContent(), actualTopic.getTopicContent());
         verify(topicRepository).findRandom();
     }
 }
