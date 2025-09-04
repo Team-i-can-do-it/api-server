@@ -13,7 +13,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -21,8 +26,22 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
 
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
     private final LoginService loginService;
+
+    // TEST용
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(
+            @RequestBody LoginDto loginDto,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String accessToken = jwtService.createAccessToken(userDetails.getUsername());
+        String refreshToken = jwtService.createRefreshToken();
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+        return ResponseEntity.ok(tokens);
+    }
+
 
 
     @PostMapping("/join")
