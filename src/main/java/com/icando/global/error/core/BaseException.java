@@ -16,4 +16,9 @@ public abstract class BaseException extends RuntimeException {
         super(errorCode.getMessage(args));
         this.errorCode = errorCode;
     }
+
+    public BaseException(ErrorCode errorCode, Throwable cause) {
+        super(errorCode.getMessage(), cause);
+        this.errorCode = errorCode;
+    }
 }

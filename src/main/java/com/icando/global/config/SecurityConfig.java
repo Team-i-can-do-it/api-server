@@ -66,9 +66,11 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
 
-                                .requestMatchers("/index.html","/","/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger 접근 허용
+
+                                .requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger 접근 허용
                                 .requestMatchers("/auth/login").permitAll()
                                 .requestMatchers("/oauth2/**", "/login/oauth2/code/**").permitAll()
+                                .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/mail/code/request").permitAll()
                                 .requestMatchers("/mail/code/verify").permitAll()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")

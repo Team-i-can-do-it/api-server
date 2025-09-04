@@ -1,5 +1,6 @@
 package com.icando.ItemShop.controller;
 
+import com.icando.ItemShop.dto.ItemGetType;
 import com.icando.ItemShop.dto.PointShopHistoryResponse;
 import com.icando.ItemShop.dto.ItemResponse;
 import com.icando.ItemShop.exception.PointShopSuccessCode;
@@ -22,9 +23,9 @@ public class UserPointShopController {
 
     @GetMapping
     public ResponseEntity<SuccessResponse<List<ItemResponse>>> getItemList (
-            @RequestParam String sortCondition){
+            @RequestParam ItemGetType itemGetType){
 
-        List<ItemResponse> itemList = userPointShopService.getItemList(sortCondition);
+        List<ItemResponse> itemList = userPointShopService.getItemList(itemGetType);
 
         return ResponseEntity.ok(
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_GET_ITEM_LIST,itemList));

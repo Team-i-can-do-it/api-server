@@ -89,7 +89,7 @@ class FeedbackServiceTest {
 
     private FeedbackResponse createMockFeedbackResponse() {
         // 1. 중첩 DTO 객체들을 먼저 생성합니다.
-        Mbti mbti = new Mbti(
+        MbtiScore mbtiScore = new MbtiScore(
             -50,
             50,
             10
@@ -112,7 +112,7 @@ class FeedbackServiceTest {
         );
 
         return new FeedbackResponse(
-            mbti,
+            mbtiScore,
             evaluation,
             evaluationFeedback,
             "전반적으로 훌륭합니다!",

@@ -70,9 +70,18 @@ public class Member extends BaseEntity {
     }
 
     public static Member createLocalMemberByTest(Long id,String name, String email,String password, Role role, Boolean isVerified) {
+
         return new Member(id, name, email, password, null, null, false, role);
     }
+
     public void updateVerify() {
         this.isVerified = true;
     }
+
+    public void updateMbti(Mbti mbti) {
+        this.mbti = mbti;
+    }
+
 }
+
+

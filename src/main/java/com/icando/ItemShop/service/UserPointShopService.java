@@ -1,6 +1,7 @@
 package com.icando.ItemShop.service;
 
 
+import com.icando.ItemShop.dto.ItemGetType;
 import com.icando.ItemShop.dto.PointShopHistoryResponse;
 import com.icando.ItemShop.dto.ItemRequest;
 import com.icando.ItemShop.dto.ItemResponse;
@@ -35,9 +36,9 @@ public class UserPointShopService {
     private final MemberRepository memberRepository;
     private final PointRepository pointRepository;
 
-    public List<ItemResponse> getItemList(String sortCondition) {
+    public List<ItemResponse> getItemList(ItemGetType itemGetType) {
 
-        List<Item> itemList = itemRepository.getItemByPrice(sortCondition);
+        List<Item> itemList = itemRepository.getItemByPrice(itemGetType);
 
         return itemList.stream()
                 .map(item -> new ItemResponse(item))
@@ -46,8 +47,7 @@ public class UserPointShopService {
 
     public List<PointShopHistoryResponse> getItemHistoryList(String email) {
 
-        Member member = memberRepository.findByEmail(email)
-                        .orElseThrow(()-> new MemberException(MemberErrorCode.INVALID_MEMBER_EMAIL));
+        Member member = validateMember(email);
 
         List<PointShopHistory> histories = pointShopHistoryRepository.findTop10ByMemberIdOrderByCreatedAtDesc(member.getId());
 
@@ -72,8 +72,7 @@ public class UserPointShopService {
       
     public ItemResponse getItem(Long itemId) {
 
-       Item item = itemRepository.findById(itemId)
-               .orElseThrow(() ->new PointShopException(PointShopErrorCode.INVALID_ITEM_ID));
+       Item item = validateItem(itemId);
 
        return ItemResponse.of(item);
     }
@@ -97,6 +96,4 @@ public class UserPointShopService {
         }
         return point;
     }
-
-    
 }

@@ -12,11 +12,14 @@ public class PointShopHistoryResponse {
     private String name;
     private String imageUrl;
     private int point;
+    private String number;
 
     public PointShopHistoryResponse(PointShopHistory pointShopHistory) {
         this.createdAt = pointShopHistory.getCreatedAt();
         this.name = pointShopHistory.getItem().getName();
         this.imageUrl = pointShopHistory.getItem().getImageUrl();
         this.point = pointShopHistory.getItem().getPoint();
+        this.number = pointShopHistory.getItem().getNumber();
     }
+
 }
