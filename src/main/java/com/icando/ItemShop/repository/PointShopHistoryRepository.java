@@ -13,5 +13,5 @@ public interface PointShopHistoryRepository extends JpaRepository<PointShopHisto
 
     List<PointShopHistory> findTop10ByMemberIdOrderByCreatedAtDesc(Long memberId);
 
-    Page<PointShopHistory> findAllOrderByCreatedAtDecs(Pageable pageable);
+    Page<PointShopHistory> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }
