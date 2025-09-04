@@ -16,7 +16,6 @@ public enum MemberErrorCode implements ErrorCode {
     MBTI_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 MBTI가 존재하지 않습니다."),
     MBTI_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MBTI 저장 실패");
 
-
     private final HttpStatus status;
     private final String message;
 

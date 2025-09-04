@@ -73,7 +73,7 @@ public class AdminPointShopService {
 
         validateAdmin(email);
 
-        Page<PointShopHistory> pointShopHistoriesPage = pointShopHistoryRepository.findAllOrderByCreatedAtDecs(pageable);
+        Page<PointShopHistory> pointShopHistoriesPage = pointShopHistoryRepository.findAll(pageable);
         return pointShopHistoriesPage
                 .map(pointShopHistory -> new PointShopHistoryResponse(pointShopHistory));
     }

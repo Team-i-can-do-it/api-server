@@ -76,12 +76,12 @@ public class Member extends BaseEntity {
 
     public void updateVerify() {
         this.isVerified = true;
-
     }
 
     public void updateMbti(Mbti mbti) {
         this.mbti = mbti;
     }
+
 }
 
 
