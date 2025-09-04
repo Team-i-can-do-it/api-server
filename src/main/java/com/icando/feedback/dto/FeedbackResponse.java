@@ -1,6 +1,7 @@
 package com.icando.feedback.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.icando.feedback.entity.Feedback;
 
 public record FeedbackResponse(
     MbtiScore mbtiScore,
@@ -11,4 +12,5 @@ public record FeedbackResponse(
     String overallFeedback,
     @JsonProperty("overall_score")
     Integer overallScore
-) { }
+) {
+}

@@ -3,6 +3,7 @@ package com.icando.writing.controller;
 import com.icando.global.success.SuccessResponse;
 import com.icando.writing.dto.TopicResponse;
 import com.icando.writing.dto.WritingCreateRequest;
+import com.icando.writing.dto.WritingListResponse;
 import com.icando.writing.entity.Topic;
 import com.icando.writing.enums.Category;
 import com.icando.writing.enums.WritingSuccessCode;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -89,5 +91,20 @@ public class WritingController {
 
         return ResponseEntity
             .ok(SuccessResponse.of(WritingSuccessCode.WRITING_CREATE_SUCCESS));
+    }
+
+    @GetMapping
+    public ResponseEntity<SuccessResponse<Page<WritingListResponse>>> getAllWritings(
+            @RequestParam(defaultValue = "20") int pageSize,
+            @RequestParam(defaultValue = "1") int page,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        Page<WritingListResponse> responses = writingService.getAllWritings(userDetails.getUsername(), pageSize, page);
+        return ResponseEntity.ok(
+                SuccessResponse.of(
+                        WritingSuccessCode.WRITING_READ_ALL_SUCCESS,
+                        responses
+                )
+        );
     }
 }
