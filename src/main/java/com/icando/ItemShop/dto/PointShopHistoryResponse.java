@@ -19,7 +19,7 @@ public class PointShopHistoryResponse {
         this.name = pointShopHistory.getItem().getName();
         this.imageUrl = pointShopHistory.getItem().getImageUrl();
         this.point = pointShopHistory.getItem().getPoint();
-        this.number = pointShopHistory.getItem().getNumber();
+        this.number = pointShopHistory.getNumber();
     }
 
 }

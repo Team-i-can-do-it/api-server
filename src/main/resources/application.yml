@@ -24,7 +24,6 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
-
 spring:
   config:
     import: optional:file:./.env, optional:classpath:prompts.yml
@@ -57,6 +56,7 @@ spring:
       host: localhost
       password : ${REDIS_PASSWORD:}
       timeout: 60000
+      password: ${REDIS_PASSWORD}
   jwt:
     secret: ${JWT_SECRET_KEY}
     access:
@@ -76,7 +76,6 @@ mail:
       mail.smtp.auth: true #SMTP 인증여부(필수)
       mail.smtp.ssl.enable: true #SMTP 보안 연결 사용 여부
       mail.smtp.ssl.trust: smtp.naver.com
-
 
 cloud:
   aws:

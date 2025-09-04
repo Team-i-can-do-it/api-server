@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AdminPointShopTest {
+public class AdminPointHistoryShopTest {
 
     @Mock
     private MemberRepository memberRepository;
