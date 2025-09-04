@@ -12,6 +12,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,9 +35,9 @@ public class ParagraphCompletionController {
     }
 
     @PostMapping()
-    public ResponseEntity<SuccessResponse<ParagraphCompletionResponse>> writeParagraphCompletionArticle(@Valid @RequestBody ParagraphCompletionRequest paragraphCompletionRequest) {
-        //TODO: 현재는 1으로 고정, 추후에 UserDetails에서 MemberId를 가져와야 함
-        ParagraphCompletionResponse response = paragraphCompletionService.insertParagraphCompletionArticle(1L, paragraphCompletionRequest);
+    public ResponseEntity<SuccessResponse<ParagraphCompletionResponse>> writeParagraphCompletionArticle(@Valid @RequestBody ParagraphCompletionRequest paragraphCompletionRequest,
+                                                                                                        @AuthenticationPrincipal UserDetails userDetails) {
+        ParagraphCompletionResponse response = paragraphCompletionService.insertParagraphCompletionArticle(userDetails.getUsername(), paragraphCompletionRequest);
         return ResponseEntity.ok(
                 SuccessResponse.of(
                         ParagraphCompletionSuccessCode.PARAGRAPH_COMPLETION_CREATE_SUCCESS,
@@ -45,9 +47,9 @@ public class ParagraphCompletionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessResponse<ParagraphCompletionResponse>> getParagraphCompletionArticle(@PathVariable Long id) {
-        //TODO: 현재는 1으로 고정, 추후에 UserDetails에서 MemberId를 가져와야 함
-        ParagraphCompletionResponse response = paragraphCompletionService.getParagraphCompletionArticle(1L, id);
+    public ResponseEntity<SuccessResponse<ParagraphCompletionResponse>> getParagraphCompletionArticle(@PathVariable Long id,
+                                                                                                      @AuthenticationPrincipal UserDetails userDetails) {
+        ParagraphCompletionResponse response = paragraphCompletionService.getParagraphCompletionArticle(userDetails.getUsername(), id);
         return ResponseEntity.ok(
                 SuccessResponse.of(
                         ParagraphCompletionSuccessCode.PARAGRAPH_COMPLETION_READ_SUCCESS,
@@ -59,9 +61,10 @@ public class ParagraphCompletionController {
     @GetMapping()
     public ResponseEntity<SuccessResponse<PagedResponse<ParagraphCompletionListResponse>>> getAllParagraphCompletionArticle(
             @Valid @RequestParam(defaultValue = "20") @Min(1) @Max(100) int pageSize,
-            @Valid @RequestParam(defaultValue = "1") @Min(1) int page
+            @Valid @RequestParam(defaultValue = "1") @Min(1) int page,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        PagedResponse<ParagraphCompletionListResponse> responses = paragraphCompletionService.getAllParagraphCompletionArticle(1L, pageSize, page);
+        PagedResponse<ParagraphCompletionListResponse> responses = paragraphCompletionService.getAllParagraphCompletionArticle(userDetails.getUsername(), pageSize, page);
         return ResponseEntity.ok(
                 SuccessResponse.of(
                         ParagraphCompletionSuccessCode.PARAGRAPH_COMPLETION_READ_ALL_SUCCESS,

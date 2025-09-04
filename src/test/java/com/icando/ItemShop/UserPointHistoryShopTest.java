@@ -82,6 +82,7 @@ public class UserPointHistoryShopTest {
                 Role.ADMIN,
                 false
         );
+
     }
 
     @Test
@@ -126,7 +127,7 @@ public class UserPointHistoryShopTest {
 
         //when,then
         PointShopException exception = assertThrows(PointShopException.class, () ->
-                userPointShopService.buyItem(item.getId(),number, user.getEmail()));
+                userPointShopService.buyItem(item.getId(),number, admin.getEmail()));
 
         assertEquals(PointShopErrorCode.NOT_ENOUGH_MEMBER_POINT, exception.getErrorCode());
         }
@@ -143,7 +144,7 @@ public class UserPointHistoryShopTest {
 
         //when,then
         PointShopException exception = assertThrows(PointShopException.class, () ->
-                userPointShopService.buyItem(item.getId(),number, user.getEmail()));
+                userPointShopService.buyItem(item.getId(),number, admin.getEmail()));
 
         assertEquals(PointShopErrorCode.OUT_OF_STOCK, exception.getErrorCode());
     }

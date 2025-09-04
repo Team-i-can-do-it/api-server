@@ -54,6 +54,7 @@ spring:
     redis:
       port: 6379
       host: localhost
+      password : ${REDIS_PASSWORD:}
       timeout: 60000
       password: ${REDIS_PASSWORD}
   jwt:
@@ -69,7 +70,7 @@ mail:
   naver:
     host: smtp.naver.com #네이버 메일 서버 주소
     port: 465 #네이버 SMTP 포트
-    username: cho65156@naver.com
+    username: ${MAIL_USERNAME}
     password : ${MAIL_PASSWORD}
     properties:
       mail.smtp.auth: true #SMTP 인증여부(필수)

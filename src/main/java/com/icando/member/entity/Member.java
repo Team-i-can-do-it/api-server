@@ -94,6 +94,9 @@ public class Member extends BaseEntity {
             throw new MemberException(MemberErrorCode.NOT_ENOUGH_POINTS);}
         totalPoint -= itemPoint;
     }
+    public void updateMbti(Mbti mbti) {
+        this.mbti = mbti;
+    }
 }
 
 
