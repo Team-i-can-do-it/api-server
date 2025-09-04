@@ -22,7 +22,7 @@ public class Mbti extends BaseEntity {
     @Column(name = "mbti_description")
     private String description;
 
-    @Column(name = "mbti_iamage_url")
+    @Column(name = "mbti_image_url")
     private String imageUrl;
 
     private Mbti(
