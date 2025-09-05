@@ -11,6 +11,7 @@ import com.icando.member.login.handler.LoginFailureHandler;
 import com.icando.member.login.handler.LoginSuccessHandler;
 import com.icando.member.login.service.LoginService;
 import com.icando.member.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -67,20 +68,26 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
 
-                                .requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger 접근 허용
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger 접근 허용
                                 .requestMatchers("/auth/login").permitAll()
                                 .requestMatchers("/oauth2/**", "/login/oauth2/code/**").permitAll()
                                 .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/mail/code/request").permitAll()
                                 .requestMatchers("/mail/code/verify").permitAll()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/writing/**").authenticated()
                                 .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/oauth2/authorization/google")
                         .successHandler(oAuth2LoginSuccessHandler)
                         .failureHandler(oAuth2LoginFailureHandler)
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                ).exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"error\": \"Unauthorized\"}");
+                        })
                 );
 
         //세션을 사용하지 않는 정책
@@ -88,8 +95,9 @@ public class SecurityConfig {
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.addFilterBefore(jwtAuthenticationProcessingFilter(redisTemplate), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationProcessingFilter(redisTemplate), CustomJsonUsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
 
 
 
