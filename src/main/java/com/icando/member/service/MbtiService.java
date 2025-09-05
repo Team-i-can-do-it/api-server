@@ -28,6 +28,5 @@ public class MbtiService {
         Mbti mbti = mbtiRepository.findByName(mbtiRequest.name())
             .orElseThrow(() -> new MemberException(MemberErrorCode.MBTI_NOT_FOUND));
 
-        member.updateMbti(mbti);
     }
 }

@@ -3,7 +3,7 @@ package com.icando.member.service;
 import com.icando.member.dto.MyPageResponse;
 import com.icando.member.entity.Mbti;
 import com.icando.member.entity.Member;
-import com.icando.member.entity.Point;
+import com.icando.member.entity.PointHistory;
 import com.icando.member.exception.MemberErrorCode;
 import com.icando.member.exception.MemberException;
 import com.icando.member.repository.MbtiRepository;
@@ -28,7 +28,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email).orElseThrow(
                 ()-> new MemberException(MemberErrorCode.MEMBER_EMAIL_NOT_FOUND));
 
-        Point point = pointRepository.findPointByMemberId(member.getId()).orElseThrow(
+        PointHistory point = pointRepository.findPointByMemberId(member.getId()).orElseThrow(
                 () -> new MemberException(MemberErrorCode.POINT_IS_NOT_FOUND));
 
         Mbti mbti = mbtiRepository.findFirstByMemberIdOrderByModifiedAtDesc(member.getId())
@@ -36,7 +36,7 @@ public class MemberService {
 
         return MyPageResponse.of(
                 member.getName(),
-                point.getPoint(),
+                point.getPoints(),
                 mbti.getId(),
                 mbti.getName()
         );

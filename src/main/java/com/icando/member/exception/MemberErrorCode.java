@@ -14,7 +14,7 @@ public enum MemberErrorCode implements ErrorCode {
     NOT_ADMIN_MEMBER(HttpStatus.BAD_REQUEST,"관리자 계정이 아닙니다" ),
     MEMBER_EMAIL_NOT_FOUND(HttpStatus.BAD_REQUEST, "이메일이 없습니다."),
     MYPAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "마이페이지 정보를 찾을 수 없습니다."),
-    POINT_IS_NOT_FOUND(HttpStatus.BAD_REQUEST, "포인트를 가져올 수 없습니다.");
+    POINT_IS_NOT_FOUND(HttpStatus.BAD_REQUEST, "포인트를 가져올 수 없습니다."),
     EXCEEDED_EARN_POINT(HttpStatus.BAD_REQUEST,"하루 포인트 적립 횟수는 3회까지 가능합니다." ),
     MBTI_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 MBTI가 존재하지 않습니다."),
     MBTI_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MBTI 저장 실패");

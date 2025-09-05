@@ -28,6 +28,7 @@ public class MemberController {
 
 
     private final MemberService memberService;
+    private final MbtiService mbtiService;
 
     @GetMapping("/myPage")
     public ResponseEntity<SuccessResponse<MyPageResponse>> searchMypae(

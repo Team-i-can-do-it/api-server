@@ -44,7 +44,6 @@ public class Member extends BaseEntity {
     @Column(name = "role", nullable = false)
     private Role role = Role.USER;
 
-
     @Column(name = "member_total_point")
     @ColumnDefault("0")
     private int totalPoint;
@@ -93,9 +92,7 @@ public class Member extends BaseEntity {
             throw new MemberException(MemberErrorCode.NOT_ENOUGH_POINTS);}
         totalPoint -= itemPoint;
     }
-    public void updateMbti(Mbti mbti) {
-        this.mbti = mbti;
-    }
+
 }
 
 

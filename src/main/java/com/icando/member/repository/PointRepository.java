@@ -8,7 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface PointRepository extends JpaRepository<PointHistory,Long> {
-
-    Optional<Point> findPointByMemberId(Long memberId);
     Optional<PointHistory> findPointByMemberId(Long memberId);
 }
