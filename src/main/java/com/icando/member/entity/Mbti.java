@@ -22,11 +22,25 @@ public class Mbti extends BaseEntity {
     @Column(name = "mbti_description")
     private String description;
 
-    @Column(name = "mbti_iamage_url")
+    @Column(name = "mbti_image_url")
     private String imageUrl;
 
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name ="member_id")
     private Member member;
+
+    private Mbti(
+        String name,
+        String description,
+        String imageUrl
+    ) {
+        this.name = name;
+        this.description = description;
+        this.imageUrl = null;
+    }
+
+    public static Mbti of(String name, String description, String imageUrl) {
+        return new Mbti(name, description, imageUrl);
+    }
 
 }

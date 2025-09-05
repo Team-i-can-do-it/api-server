@@ -1,14 +1,19 @@
 package com.icando.member.entity;
 
 import com.icando.global.BaseEntity;
+import com.icando.member.exception.MemberErrorCode;
+import com.icando.member.exception.MemberException;
 import jakarta.persistence.*;
+
+import lombok.*;
 import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class Member extends BaseEntity {
 
     @Id
@@ -39,6 +44,10 @@ public class Member extends BaseEntity {
     @Column(name = "role", nullable = false)
     private Role role = Role.USER;
 
+
+    @Column(name = "member_total_point")
+    @ColumnDefault("0")
+    private int totalPoint;
 
     private Member(String name, String email,String password,Provider provider,
                    String providerId, Boolean isVerified, Role role) {
@@ -73,6 +82,19 @@ public class Member extends BaseEntity {
 
     public void updateVerify() {
         this.isVerified = true;
+    }
+
+    public void addPoints(int getPoint) {
+        totalPoint += getPoint;
+    }
+
+    public void decreasePoint(int itemPoint){
+        if(totalPoint < itemPoint){
+            throw new MemberException(MemberErrorCode.NOT_ENOUGH_POINTS);}
+        totalPoint -= itemPoint;
+    }
+    public void updateMbti(Mbti mbti) {
+        this.mbti = mbti;
     }
 }
 

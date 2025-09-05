@@ -2,12 +2,16 @@ package com.icando.feedback.service;
 
 import com.icando.feedback.dto.FeedbackRequest;
 import com.icando.feedback.dto.FeedbackResponse;
+import com.icando.feedback.dto.MbtiScore;
 import com.icando.feedback.entity.Feedback;
 import com.icando.feedback.entity.FeedbackScore;
 import com.icando.feedback.exception.FeedbackErrorCode;
 import com.icando.feedback.exception.FeedbackException;
 import com.icando.feedback.repository.FeedbackRepository;
 import com.icando.feedback.repository.FeedbackScoreRepository;
+import com.icando.member.entity.ActivityType;
+import com.icando.member.service.PointService;
+import com.icando.member.repository.MbtiRepository;
 import com.icando.writing.entity.Topic;
 import com.icando.writing.entity.Writing;
 import com.icando.writing.service.WritingService;
@@ -26,13 +30,15 @@ public class FeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final FeedbackScoreRepository feedbackScoreRepository;
     private final WritingService writingService;
+    private final MbtiRepository mbtiRepository;
+    private final PointService pointService;
 
     @Value("${feedback.evaluation.prompt.feedback}")
     private String evaluationPromptFeedback;
 
     // TODO: 추후 stream, Flux 비동기로 성능개선
     @Transactional
-    public FeedbackResponse generateFeedback(FeedbackRequest reqeust) {
+    public FeedbackResponse generateFeedback(FeedbackRequest reqeust, ActivityType activityType) {
         Writing writing = writingService.getWriting(reqeust.writingId());
         Topic topic = writing.getTopic();
 
@@ -48,6 +54,7 @@ public class FeedbackService {
             throw new FeedbackException(FeedbackErrorCode.FEEDBACK_GENERATION_FAILED);
         }
 
+        pointService.earnPoints(writing.getMember().getId(),100,activityType);
         Feedback savedFeedback = saveFeedback(aiResponse);
         saveFeedbackScore(aiResponse, savedFeedback);
         return aiResponse;
@@ -57,9 +64,9 @@ public class FeedbackService {
         Feedback feedbackToSave = Feedback.builder()
             .content(aiResponse.overallFeedback())
             .score(aiResponse.overallScore())
-            .expressionStyle(aiResponse.mbti().expressionStyle())
-            .contentFormat(aiResponse.mbti().contentFormat())
-            .toneOfVoice(aiResponse.mbti().toneOfVoice())
+            .expressionStyle(aiResponse.mbtiScore().expressionStyle())
+            .contentFormat(aiResponse.mbtiScore().contentFormat())
+            .toneOfVoice(aiResponse.mbtiScore().toneOfVoice())
             .substance(aiResponse.evaluationFeedback().substanceFeedback())
             .completeness(aiResponse.evaluationFeedback().completenessFeedback())
             .expressiveness(aiResponse.evaluationFeedback().expressivenessFeedback())

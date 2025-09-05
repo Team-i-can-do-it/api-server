@@ -6,6 +6,7 @@ import com.icando.global.success.SuccessResponse;
 import com.icando.ItemShop.dto.ItemRequest;
 import com.icando.ItemShop.exception.PointShopSuccessCode;
 import com.icando.ItemShop.service.AdminPointShopService;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -65,7 +66,7 @@ public class AdminPointShopController {
     @GetMapping
     public ResponseEntity<SuccessResponse<Page<PointShopHistoryResponse>>> getAllUserPurchases(
             @AuthenticationPrincipal UserDetails userDetails,
-            @PageableDefault(size = 10) Pageable pageable) {
+            @Parameter(hidden = true) @PageableDefault(size = 10) Pageable pageable) {
 
         Page<PointShopHistoryResponse> purchasesPage = adminPointShopService.getAllUserPurchasesByAdminId(userDetails.getUsername(),pageable);
 

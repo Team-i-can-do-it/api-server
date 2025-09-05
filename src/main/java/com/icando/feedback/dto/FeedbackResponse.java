@@ -3,7 +3,7 @@ package com.icando.feedback.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record FeedbackResponse(
-    Mbti mbti,
+    MbtiScore mbtiScore,
     Evaluation evaluation,
     @JsonProperty("evaluation_feedback")
     EvaluationFeedback evaluationFeedback,

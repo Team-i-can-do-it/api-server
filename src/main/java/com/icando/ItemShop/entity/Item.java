@@ -30,18 +30,11 @@ public class Item extends BaseEntity {
     @Column(name = "item_point", nullable = false)
     private int point;
 
-    @Column(name = "item_buier_number")
-    private String number;
-
     private Item(String name, String imageUrl, int quantity, int point) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.quantity = quantity;
         this.point = point;
-    }
-
-    private Item(String number) {
-        this.number = number;
     }
 
     public void decreaseQuantity(int count) {
@@ -53,10 +46,6 @@ public class Item extends BaseEntity {
 
     public static Item of(String name, String imageUrl, int quantity, int point) {
         return new Item(name, imageUrl, quantity, point);
-    }
-
-    public static Item byPhoneNumber(String phoneNumber) {
-        return new Item(phoneNumber);
     }
 
     public void editItemQuantity(int editQuantity) {

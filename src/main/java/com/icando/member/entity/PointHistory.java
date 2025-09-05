@@ -13,38 +13,33 @@ import org.hibernate.annotations.ColumnDefault;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Point extends BaseEntity {
+public class PointHistory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "point_id")
+    @Column(name = "point_history_id")
     private Long id;
-
-    @Column(name = "member_point")
-    @ColumnDefault("0")
-    private int point;
 
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name ="member_id" , nullable = false)
     private Member member;
 
-    private Point (int point ,Member member){
-        this.point = point;
+    @Column(name = "points")
+    private int points;
+
+    @Enumerated
+    @Column(name = "point_activity_type")
+    private ActivityType activityType;
+
+    private PointHistory(Member member,int points,ActivityType activityType){
+        this.points = points;
         this.member = member;
+        this.activityType = activityType;
     }
 
-    public static Point of(int point, Member member){
-        return new Point(point,member);
+    public static PointHistory of(Member member, int points, ActivityType activityType){
+        return new PointHistory(member,points, activityType);
     }
 
-    public void decreasePoint(int itemPoint){
-        if(point < itemPoint){
-            throw new MemberException(MemberErrorCode.NOT_ENOUGH_POINTS);}
-        point -= itemPoint;
-    }
-
-    public void earnPoints(int getPoint) {
-        point += getPoint;
-    }
 
 }

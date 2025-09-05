@@ -21,6 +21,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -71,7 +73,7 @@ public class AdminPointShopService {
 
         validateAdmin(email);
 
-        Page<PointShopHistory> pointShopHistoriesPage = pointShopHistoryRepository.findAll(pageable);
+        Page<PointShopHistory> pointShopHistoriesPage = pointShopHistoryRepository.findAllByOrderByCreatedAtDesc(pageable);
         return pointShopHistoriesPage
                 .map(pointShopHistory -> new PointShopHistoryResponse(pointShopHistory));
     }

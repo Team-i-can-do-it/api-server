@@ -3,7 +3,6 @@ package com.icando.ItemShop.service;
 
 import com.icando.ItemShop.dto.ItemGetType;
 import com.icando.ItemShop.dto.PointShopHistoryResponse;
-import com.icando.ItemShop.dto.ItemRequest;
 import com.icando.ItemShop.dto.ItemResponse;
 import com.icando.ItemShop.entity.Item;
 import com.icando.ItemShop.entity.PointShopHistory;
@@ -11,14 +10,12 @@ import com.icando.ItemShop.exception.PointShopErrorCode;
 import com.icando.ItemShop.exception.PointShopException;
 import com.icando.ItemShop.repository.ItemRepository;
 import com.icando.ItemShop.repository.PointShopHistoryRepository;
+import com.icando.member.entity.ActivityType;
 import com.icando.member.entity.Member;
-import com.icando.ItemShop.repository.ItemRepositoryImpl;
-import com.icando.member.entity.Member;
-import com.icando.member.entity.Point;
 import com.icando.member.exception.MemberErrorCode;
 import com.icando.member.exception.MemberException;
 import com.icando.member.repository.MemberRepository;
-import com.icando.member.repository.PointRepository;
+import com.icando.member.service.PointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +31,7 @@ public class UserPointShopService {
 
     private final PointShopHistoryRepository pointShopHistoryRepository;
     private final MemberRepository memberRepository;
-    private final PointRepository pointRepository;
+    private final PointService pointService;
 
     public List<ItemResponse> getItemList(ItemGetType itemGetType) {
 
@@ -58,15 +55,12 @@ public class UserPointShopService {
 
     @Transactional
     public Item buyItem(Long itemId,String number, String email) {
-        Member member = validateMember(email);
         Item item = validateItem(itemId);
-        Point memberPoint = validatePoint(member.getId(), item.getPoint());
-        Item phone = Item.byPhoneNumber(number);
-        memberPoint.decreasePoint(item.getPoint());
-        item.decreaseQuantity(item.getQuantity());
-        pointRepository.save(memberPoint);
-        itemRepository.save(phone);
-
+        Member member = validatePoint(email, item.getPoint());
+        PointShopHistory pointShopHistory = PointShopHistory.byPhoneNumber(member,item,number);
+        pointService.usedPoint(member.getId(),item.getPoint(), ActivityType.BUY);
+        item.decreaseQuantity(1);
+        pointShopHistoryRepository.save(pointShopHistory);
         return item;
     }
       
@@ -79,7 +73,7 @@ public class UserPointShopService {
 
     private Member validateMember(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.INVALID_MEMBER_EMAIL));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.INVALID_MEMBER_ID));
     }
 
     private Item validateItem(Long itemId) {
@@ -87,13 +81,13 @@ public class UserPointShopService {
                 .orElseThrow(() -> new PointShopException(PointShopErrorCode.INVALID_ITEM_ID));
     }
 
-    private Point validatePoint(Long memberId, int itemPoint) {
-        Point point = pointRepository.findPointByMemberId(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.INVALID_MEMBER_ID));
+    private Member validatePoint(String email, int itemPoint) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.INVALID_MEMBER_EMAIL));
 
-        if (point.getPoint() < itemPoint) {
+        if (member.getTotalPoint() < itemPoint) {
             throw new PointShopException(PointShopErrorCode.NOT_ENOUGH_MEMBER_POINT);
         }
-        return point;
+        return member;
     }
 }
