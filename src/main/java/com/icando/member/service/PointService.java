@@ -33,6 +33,7 @@ public class PointService {
 
 
         List<PointHistory> todayEarnPoint = pointHistoryRepository.findByMemberIdAndCreatedAtBetween(memberId,startOfDay,endOfDay);
+
         long isActivityWordCount = todayEarnPoint.stream().
                 filter(PointHistory -> PointHistory.getActivityType() == ActivityType.WORD).count();
         long isActivityTopicCount = todayEarnPoint.stream().
