@@ -34,13 +34,13 @@ public class UserPointShopController {
     @GetMapping("/{itemId}")
     public ResponseEntity<SuccessResponse> getItem(
             @PathVariable Long itemId){
-        userPointShopService.getItem(itemId);
+        ItemResponse item = userPointShopService.getItem(itemId);
 
         return ResponseEntity.ok(
-                SuccessResponse.of(PointShopSuccessCode.SUCCESS_GET_ITEM));
+                SuccessResponse.of(PointShopSuccessCode.SUCCESS_GET_ITEM,item));
     }
 
-    @GetMapping("/PointHistory")
+    @GetMapping("/pointHistory")
     public ResponseEntity<SuccessResponse<List<PointShopHistoryResponse>>> getPointHistory(
             @AuthenticationPrincipal UserDetails userDetails){
 
