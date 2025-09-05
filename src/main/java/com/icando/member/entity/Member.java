@@ -44,9 +44,6 @@ public class Member extends BaseEntity {
     @Column(name = "role", nullable = false)
     private Role role = Role.USER;
 
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name ="mbti_id")
-    private Mbti mbti;
 
     @Column(name = "member_total_point")
     @ColumnDefault("0")
