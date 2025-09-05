@@ -64,6 +64,7 @@ public class UserPointHistoryShopTest {
     private ItemRequest createItem;
     private ItemRequest createItem2;
     private Member user;
+    private Member admin;
     private String number;
 
     @BeforeEach
@@ -79,6 +80,14 @@ public class UserPointHistoryShopTest {
                 "user1",
                 "user@example.com",
                 "1234",
+                Role.USER,
+                false
+        );
+        admin = Member.createLocalMemberByTest(
+                2L,
+                "admin",
+                "admin@example.com",
+                "1234",
                 Role.ADMIN,
                 false
         );
@@ -90,7 +99,7 @@ public class UserPointHistoryShopTest {
     void buyItem_Success() {
         //given
         when(memberRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        Item item = adminPointShopService.createItemByAdminId(createItem, user.getEmail());
+        Item item = adminPointShopService.createItemByAdminId(createItem, admin.getEmail());
         user.addPoints(1000);
 
         when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
@@ -120,14 +129,14 @@ public class UserPointHistoryShopTest {
     void point_less_than_item_point_exception() {
         //given
         when(memberRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        Item item = adminPointShopService.createItemByAdminId(createItem, user.getEmail());
+        Item item = adminPointShopService.createItemByAdminId(createItem, admin.getEmail());
         user.addPoints(50);
 
         when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
 
         //when,then
         PointShopException exception = assertThrows(PointShopException.class, () ->
-                userPointShopService.buyItem(item.getId(),number, admin.getEmail()));
+                userPointShopService.buyItem(item.getId(),number, user.getEmail()));
 
         assertEquals(PointShopErrorCode.NOT_ENOUGH_MEMBER_POINT, exception.getErrorCode());
         }
@@ -137,14 +146,14 @@ public class UserPointHistoryShopTest {
     void item_quantity_0_exception() {
         //given
         when(memberRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        Item item = adminPointShopService.createItemByAdminId(createItem2, user.getEmail());
+        Item item = adminPointShopService.createItemByAdminId(createItem2, admin.getEmail());
         user.addPoints(1000);
 
         when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
 
         //when,then
         PointShopException exception = assertThrows(PointShopException.class, () ->
-                userPointShopService.buyItem(item.getId(),number, admin.getEmail()));
+                userPointShopService.buyItem(item.getId(),number, user.getEmail()));
 
         assertEquals(PointShopErrorCode.OUT_OF_STOCK, exception.getErrorCode());
     }
