@@ -8,19 +8,17 @@ import com.icando.member.login.exception.AuthSuccessCode;
 import com.icando.member.login.service.LoginService;
 import com.icando.global.success.SuccessResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,8 +26,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
     private final LoginService loginService;
+
+    // TEST용
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(
+            @RequestBody LoginDto loginDto,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String accessToken = jwtService.createAccessToken(userDetails.getUsername());
+        String refreshToken = jwtService.createRefreshToken();
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+        return ResponseEntity.ok(tokens);
+    }
+
 
 
     @PostMapping("/join")
@@ -42,43 +54,6 @@ public class LoginController {
                 .body(SuccessResponse.of(AuthSuccessCode.MEMBER_SUCCESS_SIGNUP));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto loginRequestDto, HttpServletResponse httpResponse) {
-        try {
-            // 사용자 인증
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequestDto.getEmail(),
-                            loginRequestDto.getPassword()
-                    )
-            );
-
-            // JWT 생성
-            String accessToken = jwtService.createAccessToken(loginRequestDto.getEmail());
-            String refreshToken = jwtService.createRefreshToken();
-
-            jwtService.updateRefreshToken(loginRequestDto.getEmail(), refreshToken);
-            jwtService.sendAccessTokenAndRefreshToken(httpResponse, accessToken, refreshToken);
-
-            // 응답 DTO
-            LoginResponse response = new LoginResponse(
-                    "로그인에 성공하였습니다.",
-                    loginRequestDto.getEmail(),
-                    accessToken,
-                    refreshToken
-            );
-
-            // REST API 응답
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(SuccessResponse.of(AuthSuccessCode.LOGIN_SUCCESS, response));
-
-        } catch (AuthenticationException e) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body("아이디 또는 비밀번호가 올바르지 않습니다.");
-        }
-    }
 
     @PostMapping("/logout")
     public ResponseEntity<SuccessResponse> logOut(HttpServletRequest request) {

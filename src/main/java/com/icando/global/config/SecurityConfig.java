@@ -3,11 +3,15 @@ package com.icando.global.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icando.global.auth.filter.JwtAuthenticationProcessingFilter;
 import com.icando.global.auth.service.JwtService;
+import com.icando.global.oauth.services.CustomOAuth2UserService;
+import com.icando.global.oauth.handler.OAuth2LoginFailureHandler;
+import com.icando.global.oauth.handler.OAuth2LoginSuccessHandler;
 import com.icando.member.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
 import com.icando.member.login.handler.LoginFailureHandler;
 import com.icando.member.login.handler.LoginSuccessHandler;
 import com.icando.member.login.service.LoginService;
 import com.icando.member.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +24,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
@@ -32,7 +37,9 @@ public class SecurityConfig {
     private final JwtService jwtService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final MemberRepository memberRepository;
-    private final RedisConfig redisConfig;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     /**
      * BCryptPasswordEncoder : SpringSecurity에서 제공하는 클래스로 비밀번호 암호화 하는데 필요한 Encoder
@@ -44,7 +51,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, RedisTemplate<String, String > redisTemplate) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, RedisTemplate<String, String > redisTemplate, CustomOAuth2UserService customOAuth2UserService) throws Exception {
         //CSRF 비활성화
         http
                 .csrf((auth) -> auth.disable());
@@ -60,13 +67,28 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
 
+
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger 접근 허용
+                                .requestMatchers("/auth/login").permitAll()
+                                .requestMatchers("/oauth2/**", "/login/oauth2/code/**").permitAll()
                                 .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/mail/code/request").permitAll()
                                 .requestMatchers("/mail/code/verify").permitAll()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/writing/**").authenticated()
-                                .anyRequest().authenticated());
+                                .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/oauth2/authorization/google")
+                        .successHandler(oAuth2LoginSuccessHandler)
+                        .failureHandler(oAuth2LoginFailureHandler)
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                ).exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"error\": \"Unauthorized\"}");
+                        })
+                );
 
         //세션을 사용하지 않는 정책
         http
@@ -74,7 +96,8 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtAuthenticationProcessingFilter(redisTemplate), CustomJsonUsernamePasswordAuthenticationFilter.class);
-        http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
+        http.addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
 
 
 
@@ -124,11 +147,16 @@ public class SecurityConfig {
     public CustomJsonUsernamePasswordAuthenticationFilter customJsonUsernamePasswordAuthenticationFilter() {
         CustomJsonUsernamePasswordAuthenticationFilter customJsonUsernamePasswordLoginFilter
                 = new CustomJsonUsernamePasswordAuthenticationFilter(objectMapper);
+
+        // 로그인 요청을 "/auth/login"으로 변경
+        customJsonUsernamePasswordLoginFilter.setFilterProcessesUrl("/auth/login");
+
         customJsonUsernamePasswordLoginFilter.setAuthenticationManager(authenticationManager());
         customJsonUsernamePasswordLoginFilter.setAuthenticationSuccessHandler(loginSuccessHandler());
         customJsonUsernamePasswordLoginFilter.setAuthenticationFailureHandler(loginFailureHandler());
         return customJsonUsernamePasswordLoginFilter;
     }
+
 
     @Bean
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter(RedisTemplate<String, String> redisTemplate) {
