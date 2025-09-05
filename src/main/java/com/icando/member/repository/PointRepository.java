@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface PointRepository extends JpaRepository<Point,Long> {
 
     Optional<Point> findPointByMemberId(Long memberId);
+
 }

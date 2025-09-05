@@ -8,4 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface MbtiRepository extends JpaRepository<Mbti,Long> {
+    Optional<Mbti> findFirstByMemberIdOrderByModifiedAtDesc(Long memberId);
 }
