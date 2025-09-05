@@ -30,6 +30,14 @@ public class Item extends BaseEntity {
     @Column(name = "item_point", nullable = false)
     private int point;
 
+    private Item(Long id, String name, String imageUrl, int quantity, int point) {
+        this.id = id;
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.quantity = quantity;
+        this.point = point;
+    }
+
     private Item(String name, String imageUrl, int quantity, int point) {
         this.name = name;
         this.imageUrl = imageUrl;
