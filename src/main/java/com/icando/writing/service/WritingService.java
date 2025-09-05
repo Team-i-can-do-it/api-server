@@ -59,8 +59,9 @@ public class WritingService {
 
         Member member = memberRepository.findByEmail(username)
             .orElseThrow(() -> new AuthException(AuthErrorCode.INVALID_MEMBER_ID));
+        Page<Writing> result = writingRepository.findAllByMember(member, pageRequest);
 
-        return writingRepository.findAllByMember(member, pageRequest)
+        return result
                 .map(writing -> new WritingListResponse(
                         writing.getId(),
                         writing.getTopic().getTopic(),
