@@ -9,6 +9,8 @@ import com.icando.writing.enums.Category;
 import com.icando.writing.enums.WritingSuccessCode;
 import com.icando.writing.error.TopicErrorCode;
 import com.icando.writing.error.TopicException;
+import com.icando.writing.error.WritingErrorCode;
+import com.icando.writing.error.WritingException;
 import com.icando.writing.service.TopicService;
 import com.icando.writing.service.WritingService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -97,9 +99,18 @@ public class WritingController {
     public ResponseEntity<SuccessResponse<Page<WritingListResponse>>> getAllWritings(
             @RequestParam(defaultValue = "20") int pageSize,
             @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "createdAt,DESC") String sort,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        Page<WritingListResponse> responses = writingService.getAllWritings(userDetails.getUsername(), pageSize, page);
+        // TODO: sort 형식을 통일하는 방향대로 수정할 것
+        String [] sortParams = sort.split(",");
+        if (sortParams.length != 2) {
+            throw new WritingException(WritingErrorCode.INVALID_SORT_PARAMETER);
+        }
+        String sortBy = sortParams[0];
+        boolean isAsc = "ASC".equalsIgnoreCase(sortParams[1]);
+
+        Page<WritingListResponse> responses = writingService.getAllWritings(userDetails.getUsername(), pageSize, page, sortBy, isAsc);
         return ResponseEntity.ok(
                 SuccessResponse.of(
                         WritingSuccessCode.WRITING_READ_ALL_SUCCESS,

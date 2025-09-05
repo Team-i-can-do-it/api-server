@@ -5,9 +5,17 @@ import com.icando.writing.entity.Writing;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WritingRepository extends JpaRepository<Writing, Long> {
+    @Query("""
+        SELECT w FROM Writing w
+            JOIN FETCH w.topic t
+            JOIN FETCH w.feedback f
+        WHERE w.member = :member
+        ORDER BY w.createdAt DESC
+    """)
     Page<Writing> findAllByMember(Member member, Pageable pageable);
 }

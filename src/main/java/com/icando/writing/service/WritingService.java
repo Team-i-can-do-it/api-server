@@ -19,8 +19,11 @@ import com.icando.writing.repository.WritingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.StringTokenizer;
 
 @Service
 @RequiredArgsConstructor
@@ -50,8 +53,9 @@ public class WritingService {
             .orElseThrow(() -> new WritingException(WritingErrorCode.WRITING_NOT_FOUND));
     }
 
-    public Page<Writing> getAllWritings(String username, int pageSize, int page) {
-        PageRequest pageRequest = PageRequest.of(page, pageSize);
+    public Page<WritingListResponse> getAllWritings(String username, int pageSize, int page, String sortBy, boolean isAsc) {
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize, isAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending());
 
         Member member = memberRepository.findByEmail(username)
             .orElseThrow(() -> new AuthException(AuthErrorCode.INVALID_MEMBER_ID));
@@ -59,8 +63,13 @@ public class WritingService {
         return writingRepository.findAllByMember(member, pageRequest)
                 .map(writing -> new WritingListResponse(
                         writing.getId(),
-                        FeedbackResponse.of(writing.getFeedback()),
-                        TopicResponse.of(writing.getTopic())
+                        writing.getTopic().getTopic(),
+                        (writing.getContent().length() > 200 ? writing.getContent().substring(0, 200) + "..." : writing.getContent()),
+                        writing.getFeedback().getExpressionStyle(),
+                        writing.getFeedback().getContentFormat(),
+                        writing.getFeedback().getToneOfVoice(),
+                        writing.getFeedback().getScore(),
+                        writing.getCreatedAt()
                 ));
     }
 }
