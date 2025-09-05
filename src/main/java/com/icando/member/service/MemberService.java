@@ -2,10 +2,8 @@ package com.icando.member.service;
 
 import com.icando.member.dto.MbtiResponse;
 import com.icando.member.dto.MyPageResponse;
-import com.icando.member.dto.RecentlyMbtiResponse;
 import com.icando.member.entity.Mbti;
 import com.icando.member.entity.Member;
-import com.icando.member.entity.PointHistory;
 import com.icando.member.exception.MemberErrorCode;
 import com.icando.member.exception.MemberException;
 import com.icando.member.repository.MbtiRepository;
@@ -30,18 +28,14 @@ public class MemberService {
 
     public MyPageResponse searchMyPage(String email) {
 
-        Member member = memberRepository.findByEmail(email).orElseThrow(
-                ()-> new MemberException(MemberErrorCode.MEMBER_EMAIL_NOT_FOUND));
+        validateMember(email);;
 
-        PointHistory point = pointRepository.findPointByMemberId(member.getId()).orElseThrow(
-                () -> new MemberException(MemberErrorCode.POINT_IS_NOT_FOUND));
-
-        Mbti mbti = mbtiRepository.findFirstByMemberIdOrderByModifiedAtDesc(member.getId())
+        Mbti mbti = mbtiRepository.findFirstByMemberIdOrderByModifiedAtDesc(validateMember(email).getId())
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MBTI_NOT_FOUND));
 
         return MyPageResponse.of(
-                member.getName(),
-                point.getPoints(),
+                validateMember(email).getName(),
+                validateMember(email).getTotalPoint(),
                 mbti.getId(),
                 mbti.getName()
         );
@@ -50,34 +44,28 @@ public class MemberService {
     //가지고 있는 MBTI를 다 가져온다.
     public MbtiResponse searchMbti(String email) {
 
-        Member member = memberRepository.findByEmail(email).orElseThrow(
-                () -> new MemberException(MemberErrorCode.MEMBER_EMAIL_NOT_FOUND));
+        validateMember(email);
 
-        RecentlyMbtiResponse response = RecentlyMbti(email);
+        Mbti mbti = mbtiRepository.findFirstByMemberIdOrderByModifiedAtDesc(validateMember(email).getId())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MBTI_NOT_FOUND));
 
-        List<Object[]> mbtiList = mbtiRepository.findAllByMemberId(member.getId())
+        List<Object[]> mbtiList = mbtiRepository.findAllByMemberId(validateMember(email).getId())
                 .stream()
                 .map(m -> new Object[]{m.getId(),m.getName()})
                 .toList();
 
         return MbtiResponse.of(
-                response.getMbtiId(),
-                response.getMbtiName(),
+                mbti.getId(),
+                mbti.getName(),
                 mbtiList
         );
     }
 
-    //최근에 받은 MBTI를 가져온다.
-    public RecentlyMbtiResponse RecentlyMbti(String email) {
+    private Member validateMember(String email) {
         Member member = memberRepository.findByEmail(email).orElseThrow(
-                () -> new MemberException(MemberErrorCode.MEMBER_EMAIL_NOT_FOUND));
-        Mbti mbti = mbtiRepository.findFirstByMemberIdOrderByModifiedAtDesc(member.getId())
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MBTI_NOT_FOUND));
-
-        return RecentlyMbtiResponse.of(
-                mbti.getId(),
-                mbti.getName()
+                () -> new MemberException(MemberErrorCode.MEMBER_EMAIL_NOT_FOUND)
         );
+        return member;
     }
 }
 
