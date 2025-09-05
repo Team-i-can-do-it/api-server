@@ -15,7 +15,6 @@ public interface WritingRepository extends JpaRepository<Writing, Long> {
             JOIN FETCH w.topic t
             JOIN FETCH w.feedback f
         WHERE w.member = :member
-        ORDER BY w.createdAt DESC
     """)
     Page<Writing> findAllByMember(Member member, Pageable pageable);
 }
