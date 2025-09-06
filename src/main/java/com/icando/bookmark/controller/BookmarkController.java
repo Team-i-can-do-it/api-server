@@ -36,4 +36,10 @@ public class BookmarkController {
         Page<BookmarkListResponse> response = bookmarkService.getBookmarks(userDetails.getUsername(), page, pageSize);
         return ResponseEntity.ok(SuccessResponse.of(BookmarkSuccessCode.SUCCESS_GET_LIST_BOOKMARKS, response));
     }
+
+    @DeleteMapping
+    public ResponseEntity<SuccessResponse<Void>> deleteBookmark(@RequestParam Long bookmarkId, @AuthenticationPrincipal UserDetails userDetails) {
+        bookmarkService.deleteBookmark(bookmarkId, userDetails.getUsername());
+        return ResponseEntity.ok(SuccessResponse.of(BookmarkSuccessCode.SUCCESS_DELETE_BOOKMARK));
+    }
 }

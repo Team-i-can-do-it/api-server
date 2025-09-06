@@ -48,4 +48,13 @@ public class BookmarkService {
 
         return bookmarks.map(BookmarkListResponse::of);
     }
+
+    public void deleteBookmark(Long bookmarkId, String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new BookmarkException(BookmarkErrorCode.USER_NOT_FOUND));
+        Bookmark bookmark = bookmarkRepository.findBookmarkByIdAndMember(bookmarkId, member)
+                .orElseThrow(() -> new BookmarkException(BookmarkErrorCode.BOOKMARK_NOT_FOUND));
+
+        bookmarkRepository.delete(bookmark);
+    }
 }

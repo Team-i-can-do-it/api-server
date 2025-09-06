@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
@@ -20,4 +22,6 @@ JOIN FETCH b.referenceMaterial rm
 WHERE b.member = :member
 """)
     Page<Bookmark> findAllByMember(Member member, Pageable pageable);
+
+    Optional<Bookmark> findBookmarkByIdAndMember(Long id, Member member);
 }
