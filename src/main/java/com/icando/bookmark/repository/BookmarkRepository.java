@@ -1,0 +1,13 @@
+package com.icando.bookmark.repository;
+
+import com.icando.bookmark.entity.Bookmark;
+import com.icando.member.entity.Member;
+import com.icando.referenceMaterial.entity.ReferenceMaterial;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
+
+    boolean existsByMemberAndReferenceMaterial(Member member, ReferenceMaterial referenceMaterial);
+}
