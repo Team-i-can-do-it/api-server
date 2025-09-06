@@ -11,7 +11,6 @@ import com.icando.member.entity.Member;
 import com.icando.member.repository.MemberRepository;
 import com.icando.referenceMaterial.entity.ReferenceMaterial;
 import com.icando.referenceMaterial.repository.ReferenceMaterialRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
