@@ -16,7 +16,7 @@ public class TopicService {
 
     // 카테고리 랜덤
     public Topic getRandomTopicByCategory(Category category) {
-        return topicRepository.findRandomByCategory(category.name())
+        return topicRepository.findRandomByCategory(category)
             .orElseThrow(() -> new TopicException(TopicErrorCode.TOPIC_NOT_FOUND));
     }
 

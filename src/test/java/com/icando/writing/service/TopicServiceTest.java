@@ -31,7 +31,7 @@ class TopicServiceTest {
         Category category = Category.DAILY_LIFE;
         Topic expectedTopic = Topic.of(category, "테스트 주제");
 
-        when(topicRepository.findRandomByCategory(category.name()))
+        when(topicRepository.findRandomByCategory(category))
             .thenReturn(Optional.of(expectedTopic));
 
         // when
@@ -40,7 +40,7 @@ class TopicServiceTest {
         // then
         assertNotNull(actualTopic);
         assertEquals(expectedTopic.getTopicContent(), actualTopic.getTopicContent());
-        verify(topicRepository).findRandomByCategory(category.name());
+        verify(topicRepository).findRandomByCategory(category);
     }
 
     @Test
