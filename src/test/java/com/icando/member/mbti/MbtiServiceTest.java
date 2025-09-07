@@ -90,17 +90,16 @@ public class MbtiServiceTest {
     }
 
     @Test
-    @DisplayName("MBTI 저장 실패 - 존재하지 않는 MBTI")
-    void saveMbti_fail_mbtiNotFound() {
+    @DisplayName("MBTI 저장 실패 - 사용자에게 이미 MBTI가 할당된 경우")
+    void saveMbti_fail_memberAlreadyHasMbti() {
         // given
         when(memberRepository.findByEmail(member.getEmail())).thenReturn(Optional.of(member));
-        when(mbtiRepository.findByName(anyString())).thenReturn(Optional.empty());
+        when(mbtiRepository.existsByMemberAndName(member, mbtiRequest.name())).thenReturn(true);
 
         // when & then
-        MemberException exception = assertThrows(MemberException.class, () -> {
-            mbtiService.saveMbti(mbtiRequest, member.getEmail());
-        });
-        assertThat(exception.getErrorCode()).isEqualTo(MemberErrorCode.MBTI_NOT_FOUND);
+        MemberException exception = assertThrows(MemberException.class, () -> mbtiService.saveMbti(mbtiRequest, member.getEmail()));
+
+        assertThat(exception.getErrorCode()).isEqualTo(MemberErrorCode.DUPLICATE_MBTI);
     }
 
 
