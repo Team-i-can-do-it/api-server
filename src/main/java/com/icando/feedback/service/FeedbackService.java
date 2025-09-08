@@ -56,6 +56,7 @@ public class FeedbackService {
 
         pointService.earnPoints(writing.getMember().getId(),100,activityType);
         Feedback savedFeedback = saveFeedback(aiResponse);
+        writing.updateFeedback(savedFeedback);
         saveFeedbackScore(aiResponse, savedFeedback);
         return aiResponse;
     }
