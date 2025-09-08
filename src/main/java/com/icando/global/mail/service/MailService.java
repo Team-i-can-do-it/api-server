@@ -91,12 +91,9 @@ public class MailService {
         } if (!redisCode.equals(codeDto.getCode())) {
             return MailErrorCode.CODE_IS_NOT_CORRECT;
         }
+
+        redisUtil.setDataExpire("verified:" + codeDto.getEmail(), codeDto.getEmail(), 600);
         redisUtil.deleteData(codeDto.getEmail());
-
-        Member member = memberRepository.findByEmail(codeDto.getEmail())
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_EMAIL_NOT_FOUND));
-
-        member.updateVerify();
 
         return MailErrorCode.CODE_OK;
     }

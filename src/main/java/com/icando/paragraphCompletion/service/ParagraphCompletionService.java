@@ -1,6 +1,5 @@
 package com.icando.paragraphCompletion.service;
 
-import com.icando.global.dto.PagedResponse;
 import com.icando.member.entity.Member;
 import com.icando.member.repository.MemberRepository;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionListResponse;
@@ -90,17 +89,14 @@ public class ParagraphCompletionService {
         return ParagraphCompletionResponse.of(paragraphCompletion);
     }
 
-    public PagedResponse<ParagraphCompletionListResponse> getAllParagraphCompletionArticle(String memberEmail, int pageSize, int page) {
+    public Page<ParagraphCompletionListResponse> getAllParagraphCompletionArticle(String memberEmail, int pageSize, int page) {
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new ParagraphCompletionException(ParagraphCompletionErrorCode.USER_NOT_FOUND));
 
         Page<ParagraphCompletion> paragraphCompletions =
                 paragraphCompletionRepository.findAllByMember(member, PageRequest.of(page - 1, pageSize));
 
-        long totalElements = paragraphCompletions.getTotalElements();
-        int totalPages = paragraphCompletions.getTotalPages();
-        return PagedResponse.of(paragraphCompletions.stream()
-                .map(ParagraphCompletionListResponse::of)
-                .toList(), page, pageSize, totalElements, totalPages);
+        return paragraphCompletions
+                .map(ParagraphCompletionListResponse::of);
     }
 }

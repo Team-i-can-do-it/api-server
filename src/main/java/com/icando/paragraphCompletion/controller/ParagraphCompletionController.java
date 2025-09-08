@@ -1,6 +1,5 @@
 package com.icando.paragraphCompletion.controller;
 
-import com.icando.global.dto.PagedResponse;
 import com.icando.global.success.SuccessResponse;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionListResponse;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionRequest;
@@ -13,6 +12,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -81,12 +81,12 @@ public class ParagraphCompletionController {
         description = "문단 완성 글 전체를 조회합니다."
     )
     @GetMapping()
-    public ResponseEntity<SuccessResponse<PagedResponse<ParagraphCompletionListResponse>>> getAllParagraphCompletionArticle(
+    public ResponseEntity<SuccessResponse<Page<ParagraphCompletionListResponse>>> getAllParagraphCompletionArticle(
             @Valid @RequestParam(defaultValue = "20") @Min(1) @Max(100) int pageSize,
             @Valid @RequestParam(defaultValue = "1") @Min(1) int page,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        PagedResponse<ParagraphCompletionListResponse> responses = paragraphCompletionService.getAllParagraphCompletionArticle(userDetails.getUsername(), pageSize, page);
+        Page<ParagraphCompletionListResponse> responses = paragraphCompletionService.getAllParagraphCompletionArticle(userDetails.getUsername(), pageSize, page);
         return ResponseEntity.ok(
                 SuccessResponse.of(
                         ParagraphCompletionSuccessCode.PARAGRAPH_COMPLETION_READ_ALL_SUCCESS,
