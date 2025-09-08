@@ -17,7 +17,8 @@ public enum MemberErrorCode implements ErrorCode {
     POINT_IS_NOT_FOUND(HttpStatus.BAD_REQUEST, "포인트를 가져올 수 없습니다."),
     EXCEEDED_EARN_POINT(HttpStatus.BAD_REQUEST,"하루 포인트 적립 횟수는 3회까지 가능합니다." ),
     MBTI_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 MBTI가 존재하지 않습니다."),
-    MBTI_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MBTI 저장 실패");
+    MBTI_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MBTI 저장 실패"),
+    DUPLICATE_MBTI(HttpStatus.CONFLICT, "해당 MBTI는 중복입니다.");
 
     private final HttpStatus status;
     private final String message;

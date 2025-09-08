@@ -25,8 +25,18 @@ public class MbtiService {
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new MemberException(MemberErrorCode.INVALID_MEMBER_EMAIL));
 
-        Mbti mbti = mbtiRepository.findByName(mbtiRequest.name())
-            .orElseThrow(() -> new MemberException(MemberErrorCode.MBTI_NOT_FOUND));
+        // MBTI가 이미 존재하는지 조회
+        if (mbtiRepository.existsByMemberAndName(member, mbtiRequest.name())) {
+            throw new MemberException(MemberErrorCode.DUPLICATE_MBTI);
+        }
 
+        Mbti newMbti = Mbti.of(
+            mbtiRequest.name(),
+            mbtiRequest.description(),
+            mbtiRequest.imageUrl()
+        );
+        newMbti.updateMember(member);
+
+        mbtiRepository.save(newMbti);
     }
 }
