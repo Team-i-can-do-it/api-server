@@ -1,7 +1,7 @@
 package com.icando.global.oauth.services;
 
 import com.icando.global.oauth.CustomOAuth2User;
-import com.icando.global.oauth.OAuthAtrributes;
+import com.icando.global.oauth.OAuthAttributes;
 import com.icando.member.entity.Member;
 import com.icando.member.entity.Provider;
 import com.icando.member.login.exception.AuthErrorCode;
@@ -43,7 +43,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        OAuthAtrributes extractAttributes = OAuthAtrributes.of(provider, userNameAttributeName, attributes);
+        OAuthAttributes extractAttributes = OAuthAttributes.of(provider, userNameAttributeName, attributes);
 
         Member createMember = getMember(extractAttributes, provider);
 
@@ -56,7 +56,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         );
     }
 
-    private Member getMember(OAuthAtrributes attributes, Provider provider) {
+
+
+    private Member getMember(OAuthAttributes attributes, Provider provider) {
+
         String email = attributes.getOAuth2UserInfo().getEmail();
         Member findMember = memberRepository.findByEmail(email).orElse(null);
 
@@ -75,7 +78,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
 
-    private Member saveMember(OAuthAtrributes attributes, Provider provider) {
+    private Member saveMember(OAuthAttributes attributes, Provider provider) {
+
             Member createdMember = attributes.toEntity(provider, attributes.getOAuth2UserInfo());
             return memberRepository.save(createdMember);
         }

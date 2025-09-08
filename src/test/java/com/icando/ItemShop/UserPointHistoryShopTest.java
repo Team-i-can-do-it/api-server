@@ -99,6 +99,7 @@ public class UserPointHistoryShopTest {
     void buyItem_Success() {
         //given
         when(memberRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(memberRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
         Item item = adminPointShopService.createItemByAdminId(createItem, admin.getEmail());
         user.addPoints(1000);
 
@@ -129,6 +130,7 @@ public class UserPointHistoryShopTest {
     void point_less_than_item_point_exception() {
         //given
         when(memberRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(memberRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
         Item item = adminPointShopService.createItemByAdminId(createItem, admin.getEmail());
         user.addPoints(50);
 
@@ -146,6 +148,7 @@ public class UserPointHistoryShopTest {
     void item_quantity_0_exception() {
         //given
         when(memberRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(memberRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
         Item item = adminPointShopService.createItemByAdminId(createItem2, admin.getEmail());
         user.addPoints(1000);
 

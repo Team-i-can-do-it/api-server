@@ -2,7 +2,9 @@ package com.icando.member.controller;
 
 
 import com.icando.global.success.SuccessResponse;
+import com.icando.member.dto.MbtiResponse;
 import com.icando.member.dto.MyPageResponse;
+import com.icando.member.dto.PointHistoryResponse;
 import com.icando.member.exception.MemberSuccessCode;
 import com.icando.member.service.MemberService;
 import com.icando.global.success.SuccessCode;
@@ -12,6 +14,7 @@ import com.icando.member.exception.MemberSuccessCode;
 import com.icando.member.service.MbtiService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/member")
@@ -39,6 +44,17 @@ public class MemberController {
         return ResponseEntity.ok(
                 SuccessResponse.of(MemberSuccessCode.MYPAGE_SUCCESS_FOUND, myPageResponse));
     }
+
+    @GetMapping("/mypage/mbti")
+    public ResponseEntity<SuccessResponse> searchMbti(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        MbtiResponse mbtiResponse = memberService.searchMbti(userDetails.getUsername());
+
+        return ResponseEntity.ok(
+                SuccessResponse.of(MemberSuccessCode.MBTI_SUCCESS_FOUND, mbtiResponse)
+        );
+    }
   
     @Operation(
         summary = "Mbti 저장",
@@ -54,8 +70,16 @@ public class MemberController {
         return ResponseEntity.ok(
             SuccessResponse.of(MemberSuccessCode.MBTI_SUCCESS_SAVE)
         );
+    }
 
+    @GetMapping("/mypage/point")
+    public ResponseEntity<SuccessResponse> searchMyPagePoint(@AuthenticationPrincipal UserDetails userDetails){
 
+        List<PointHistoryResponse> response = memberService.searchPointHistory(userDetails.getUsername());
+
+        return ResponseEntity.ok(
+                SuccessResponse.of(MemberSuccessCode.POINT_SUCCESS_SEARCH, response)
+        );
     }
 }
 
