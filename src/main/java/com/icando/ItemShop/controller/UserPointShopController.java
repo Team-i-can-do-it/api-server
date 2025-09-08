@@ -6,6 +6,7 @@ import com.icando.ItemShop.dto.ItemResponse;
 import com.icando.ItemShop.exception.PointShopSuccessCode;
 import com.icando.ItemShop.service.UserPointShopService;
 import com.icando.global.success.SuccessResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/pointShop")
 @RequiredArgsConstructor
+@Tag(
+    name = "유저 포인트/샵 컨트롤러",
+    description = "유저 상점 포인트 관련 컨트롤러 입니다."
+)
 public class UserPointShopController {
 
     private final UserPointShopService userPointShopService;
