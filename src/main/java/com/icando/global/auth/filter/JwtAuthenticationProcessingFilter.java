@@ -42,7 +42,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             "/api/v1/auth/login",
             "/api/v1/auth/join",
             "/api/v1/mail/code/request",
-            "/api/v1/mail/code/verify"
+            "/api/v1/mail/code/verify",
+            "/api/v1/actuator/**"
     );
 
 

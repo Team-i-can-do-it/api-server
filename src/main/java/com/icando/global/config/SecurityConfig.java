@@ -69,6 +69,7 @@ public class SecurityConfig {
 
 
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger 접근 허용
+                                .requestMatchers("/actuator/**").permitAll()
                                 .requestMatchers("/auth/login").permitAll()
                                 .requestMatchers("/oauth2/**", "/login/oauth2/code/**").permitAll()
                                 .requestMatchers("/auth/**").permitAll()
