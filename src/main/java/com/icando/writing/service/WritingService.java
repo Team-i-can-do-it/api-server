@@ -64,7 +64,7 @@ public class WritingService {
         return result
                 .map(writing -> new WritingListResponse(
                         writing.getId(),
-                        writing.getTopic().getTopic(),
+                        writing.getTopic().getTopicContent(),
                         (writing.getContent().length() > 200 ? writing.getContent().substring(0, 200) + "..." : writing.getContent()),
                         writing.getFeedback().getExpressionStyle(),
                         writing.getFeedback().getContentFormat(),

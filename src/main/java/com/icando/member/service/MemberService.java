@@ -31,12 +31,6 @@ public class MemberService {
 
         validateMember(email);;
 
-        Mbti mbti = mbtiRepository.findFirstByMemberIdOrderByModifiedAtDesc(member.getId())
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MBTI_NOT_FOUND));
-
-        return MyPageResponse.of(
-                member.getName(),
-                member.getTotalPoint(),
         Mbti mbti = mbtiRepository.findFirstByMemberIdOrderByModifiedAtDesc(validateMember(email).getId())
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MBTI_NOT_FOUND));
 
