@@ -13,6 +13,7 @@ import com.icando.member.dto.MbtiRequest;
 import com.icando.member.exception.MemberSuccessCode;
 import com.icando.member.service.MbtiService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
+@Tag(
+    name = "멤버 컨트롤러",
+    description = "멤버 관련 컨트롤러 입니다."
+)
 public class MemberController {
 
 
