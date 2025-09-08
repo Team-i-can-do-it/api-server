@@ -12,6 +12,4 @@ import java.util.List;
 public interface PointShopHistoryRepository extends JpaRepository<PointShopHistory,Long> {
 
     List<PointShopHistory> findTop10ByMemberIdOrderByCreatedAtDesc(Long memberId);
-
-    Page<PointShopHistory> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }
