@@ -7,6 +7,7 @@ import com.icando.ItemShop.dto.ItemRequest;
 import com.icando.ItemShop.exception.PointShopSuccessCode;
 import com.icando.ItemShop.service.AdminPointShopService;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/adminPointShop")
 @RequiredArgsConstructor
+@Tag(
+    name = "어드민 샵 관리",
+    description = "어드민 권한을 가진 유저가 아이템을 관리 할 수 있습니다."
+)
 public class AdminPointShopController {
 
     private final AdminPointShopService adminPointShopService;
