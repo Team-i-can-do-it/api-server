@@ -42,7 +42,7 @@ public class MemberController {
                 SuccessResponse.of(MemberSuccessCode.MYPAGE_SUCCESS_FOUND, myPageResponse));
     }
 
-    @GetMapping("/myPage/mbti")
+    @GetMapping("/mypage/mbti")
     public ResponseEntity<SuccessResponse> searchMbti(
             @AuthenticationPrincipal UserDetails userDetails
     ) {

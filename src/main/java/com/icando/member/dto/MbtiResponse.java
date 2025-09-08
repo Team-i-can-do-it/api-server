@@ -11,9 +11,9 @@ public class MbtiResponse {
 
     private Long RecentlyMbtiId;
     private String RecentlyMbtiName;
-    private List<Object[]> mbtiList;
+    private List<MbtiSummaryDto> mbtiList;
 
-    public static MbtiResponse of(Long RecentlyMbtiId, String RecentlyMbtiName, List<Object[]> mbtiList) {
+    public static MbtiResponse of(Long RecentlyMbtiId, String RecentlyMbtiName, List<MbtiSummaryDto> mbtiList) {
         return new MbtiResponse(RecentlyMbtiId, RecentlyMbtiName, mbtiList);
     }
 

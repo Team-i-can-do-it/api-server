@@ -1,6 +1,7 @@
 package com.icando.member.service;
 
 import com.icando.member.dto.MbtiResponse;
+import com.icando.member.dto.MbtiSummaryDto;
 import com.icando.member.dto.MyPageResponse;
 import com.icando.member.entity.Mbti;
 import com.icando.member.entity.Member;
@@ -49,9 +50,9 @@ public class MemberService {
         Mbti mbti = mbtiRepository.findFirstByMemberIdOrderByModifiedAtDesc(validateMember(email).getId())
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MBTI_NOT_FOUND));
 
-        List<Object[]> mbtiList = mbtiRepository.findAllByMemberId(validateMember(email).getId())
+        List<MbtiSummaryDto> mbtiList = mbtiRepository.findAllByMemberId(validateMember(email).getId())
                 .stream()
-                .map(m -> new Object[]{m.getId(),m.getName()})
+                .map(m -> new MbtiSummaryDto(m.getId(), m.getName()))
                 .toList();
 
         return MbtiResponse.of(
