@@ -81,7 +81,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         }
 
     private Provider getProvider(String registrationId) {
-    if(NAVER.equals(registrationId)) {
+    if (NAVER.equals(registrationId)) {
         return Provider.NAVER;
     }
     return Provider.GOOGLE;
