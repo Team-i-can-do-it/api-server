@@ -1,6 +1,7 @@
 package com.icando.member.repository;
 
 import com.icando.member.entity.Mbti;
+import com.icando.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,5 +13,5 @@ public interface MbtiRepository extends JpaRepository<Mbti,Long> {
     Optional<Mbti> findFirstByMemberIdOrderByModifiedAtDesc(Long memberId);
     Optional<Mbti> findByName(String name);
     List<Mbti> findAllByMemberId(Long memberId);
-
+    Boolean existsByMemberAndName(Member member, String name);
 }

@@ -33,9 +33,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             if (oAuth2User.getRole() == Role.USER) {
                 String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
                 String refreshToken= jwtService.createRefreshToken();
-                response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
-                response.addHeader(jwtService.getRefreshHeader(), "Bearer " + refreshToken);
-
+                setTokensAndSendResponse(response, accessToken, refreshToken, oAuth2User.getEmail());
                 jwtService.sendAccessTokenAndRefreshToken(response, accessToken, null);
             } else {
                 loginSuccess(response, oAuth2User);
@@ -45,13 +43,24 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         }
     }
 
+    private void setTokensAndSendResponse(HttpServletResponse response, String accessToken, String refreshToken, String email) throws IOException {
+        response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
+        response.addHeader(jwtService.getRefreshHeader(), "Bearer " + refreshToken);
+
+        jwtService.sendAccessTokenAndRefreshToken(response, accessToken, refreshToken);
+
+        if (refreshToken != null && email != null) {
+            jwtService.updateRefreshToken(email, refreshToken);
+        }
+    }
+
+
     private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User) throws IOException {
         String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
-        String refrehsToken = jwtService.createRefreshToken();
-        response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
-        response.addHeader(jwtService.getRefreshHeader(), "Bearer " + refrehsToken);
+        String refreshToken = jwtService.createRefreshToken();
+        setTokensAndSendResponse(response, accessToken, refreshToken, oAuth2User.getEmail());
 
-        jwtService.sendAccessTokenAndRefreshToken(response, accessToken, refrehsToken);
-        jwtService.updateRefreshToken(oAuth2User.getEmail(), refrehsToken);
+        jwtService.sendAccessTokenAndRefreshToken(response, accessToken, refreshToken);
+        jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
     }
 }

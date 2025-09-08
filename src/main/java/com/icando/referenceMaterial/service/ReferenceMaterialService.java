@@ -53,7 +53,7 @@ public class ReferenceMaterialService {
         List<ReferenceMaterial> referenceMaterials = new ArrayList<>();
         for (var i = 0; i < topics.size(); i++) {
             var topic = topics.get(i);
-            GlobalLogger.info("Generating reference materials for topic: {} / {} - {}", i + 1, topics.size(), topic.getTopic());
+            GlobalLogger.info("Generating reference materials for topic: {} / {} - {}", i + 1, topics.size(), topic.getTopicContent());
             try {
                 referenceMaterials.addAll(getReferenceMaterials(topic.getId())
                         .stream()
@@ -93,7 +93,7 @@ public class ReferenceMaterialService {
                         .build())
                 .build()
                 .prompt(generateUrlsPrompt)
-                .user(topic.getTopic())
+                .user(topic.getTopicContent())
                 .call()
                 .entity(new ParameterizedTypeReference<List<ReferenceMaterialAiResponse>>() { });
 
