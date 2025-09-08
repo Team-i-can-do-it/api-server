@@ -11,5 +11,8 @@ import java.util.List;
 @Repository
 public interface PointHistoryRepository extends JpaRepository<PointHistory,Long> {
 
+    int countByMemberIdAndCreatedAt(Long memberId, LocalDate today);
+    List<PointHistory> findAllByMemberId(Long memberId);
     List<PointHistory> findByMemberIdAndCreatedAtBetween(Long memberId, LocalDateTime startOfDay, LocalDateTime endOfDay);
+
 }
