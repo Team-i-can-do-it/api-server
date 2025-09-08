@@ -1,6 +1,5 @@
 package com.icando.paragraphCompletion.service;
 
-import com.icando.global.dto.PagedResponse;
 import com.icando.member.entity.Member;
 import com.icando.member.repository.MemberRepository;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionListResponse;
@@ -23,12 +22,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -303,20 +302,14 @@ class ParagraphCompletionServiceTest {
 
         when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(member));
 
-        Page<ParagraphCompletion> paragraphCompletions = mock(Page.class);
+        Page<ParagraphCompletion> paragraphCompletions = new PageImpl<>(List.of(paragraphCompletion));
         when(paragraphCompletionRepository.findAllByMember(any(), any())).thenReturn(paragraphCompletions);
-        when(paragraphCompletions.getTotalElements()).thenReturn(1L);
-        when(paragraphCompletions.getTotalPages()).thenReturn(123);
-        when(paragraphCompletions.stream()).thenReturn(Stream.of(
-                paragraphCompletion
-        ));
 
         when(paragraphCompletionRepository.findAllByMember(any(), any())).thenReturn(paragraphCompletions);
         // when & then
-        PagedResponse<ParagraphCompletionListResponse> result = paragraphCompletionService.getAllParagraphCompletionArticle("test@test.com", 20, 1);
+        Page<ParagraphCompletionListResponse> result = paragraphCompletionService.getAllParagraphCompletionArticle("test@test.com", 20, 1);
 
         assertEquals(1, result.getTotalElements());
-        assertEquals(123, result.getTotalPages());
         assertEquals(1, result.getContent().size());
         verify(paragraphCompletionRepository, times(0)).save(any());
 
