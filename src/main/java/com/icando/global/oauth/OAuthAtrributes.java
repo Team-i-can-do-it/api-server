@@ -1,6 +1,7 @@
 package com.icando.global.oauth;
 
 import com.icando.global.oauth.userinfo.GoogleOAuth2UserInfo;
+import com.icando.global.oauth.userinfo.NaverOAuth2UserInfo;
 import com.icando.global.oauth.userinfo.OAuth2UserInfo;
 import com.icando.member.entity.Member;
 import com.icando.member.entity.Provider;
@@ -28,14 +29,24 @@ public class OAuthAtrributes {
 
     public static OAuthAtrributes of(Provider provider, String userNameAttributeName,
                                      Map<String, Object> attributes) {
+            if(provider == Provider.NAVER) {
+                return ofNaver(userNameAttributeName, attributes);
+            }
             return ofGoogle(userNameAttributeName, attributes);
-
     }
 
     public static OAuthAtrributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
         return OAuthAtrributes.builder()
                 .nameAttributeKey(userNameAttributeName)
                 .oAuth2UserInfo(new GoogleOAuth2UserInfo(attributes))
+                .name((String) attributes.get("name"))
+                .build();
+    }
+
+    public static OAuthAtrributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
+        return OAuthAtrributes.builder()
+                .nameAttributeKey(userNameAttributeName)
+                .oAuth2UserInfo(new NaverOAuth2UserInfo(attributes))
                 .name((String) attributes.get("name"))
                 .build();
     }

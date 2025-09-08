@@ -37,8 +37,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 response.addHeader(jwtService.getRefreshHeader(), "Bearer " + refreshToken);
 
                 jwtService.sendAccessTokenAndRefreshToken(response, accessToken, null);
-            } else {
-                loginSuccess(response, oAuth2User);
+
+                //TODO : 후에 URL 정리된 후 수정
+//                String redirectUrl = "http://localhost:3000/" + accessToken + "&refresh=" + refreshToken;
+//                response.sendRedirect(redirectUrl);
             }
         } catch (Exception e) {
             throw e;

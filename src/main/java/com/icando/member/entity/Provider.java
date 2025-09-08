@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 public enum Provider {
 
     LOCAL,
-    GOOGLE
+    GOOGLE,
+    NAVER
 
 }

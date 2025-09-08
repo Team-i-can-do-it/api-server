@@ -20,12 +20,16 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Map;
 
+import static com.icando.member.entity.Provider.NAVER;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberRepository memberRepository;
+
+    public static final String NAVER = "naver";
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -52,25 +56,35 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         );
     }
 
-        private Provider getProvider(String registrationId) {
-            return Provider.GOOGLE;
-        }
-
     private Member getMember(OAuthAtrributes attributes, Provider provider) {
         String email = attributes.getOAuth2UserInfo().getEmail();
         Member findMember = memberRepository.findByEmail(email).orElse(null);
 
-        if(findMember != null) {
-            throw new AuthException(AuthErrorCode.ALREADY_MEMBER_EXIST);
+        if (findMember != null) {
+            if (findMember.getProvider() == Provider.LOCAL) {
+                throw new AuthException(AuthErrorCode.ALREADY_MEMBER_EXIST);
+            }
+
+            if (findMember.getProvider() != provider) {
+                throw new AuthException(AuthErrorCode.ALREADY_MEMBER_EXIST);
+            }
+            return findMember;
         }
+
         return saveMember(attributes, provider);
     }
-
 
 
     private Member saveMember(OAuthAtrributes attributes, Provider provider) {
             Member createdMember = attributes.toEntity(provider, attributes.getOAuth2UserInfo());
             return memberRepository.save(createdMember);
         }
+
+    private Provider getProvider(String registrationId) {
+    if(NAVER.equals(registrationId)) {
+        return Provider.NAVER;
     }
+    return Provider.GOOGLE;
+    }
+}
 
