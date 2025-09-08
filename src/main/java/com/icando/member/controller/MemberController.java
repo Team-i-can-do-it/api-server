@@ -59,7 +59,7 @@ public class MemberController {
         );
     }
 
-    @GetMapping("/myPage/point")
+    @GetMapping("/mypage/point")
     public ResponseEntity<SuccessResponse> searchMyPagePoint(@AuthenticationPrincipal UserDetails userDetails){
 
         List<PointHistoryResponse> response = memberService.searchPointHistory(userDetails.getUsername());
