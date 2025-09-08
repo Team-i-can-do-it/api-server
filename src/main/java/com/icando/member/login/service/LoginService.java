@@ -1,5 +1,6 @@
 package com.icando.member.login.service;
 
+import com.icando.global.utils.RedisUtil;
 import com.icando.member.login.exception.AuthErrorCode;
 import com.icando.member.login.exception.AuthException;
 import com.icando.member.login.dto.JoinDto;
@@ -24,9 +25,15 @@ public class LoginService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    private final RedisUtil redisUtil;
 
     public JoinResponse join(JoinDto joinDto) {
 
+        String verified = redisUtil.getData("verified:" + joinDto.getEmail());
+
+        if(verified == null || !verified.equals(joinDto.getEmail())) {
+            throw new AuthException(AuthErrorCode.ALREADY_MEMBER_EXIST);
+        }
         // EMAIL이 이미 존재하면 ERROR 예외 발생
         memberRepository.findByEmail(joinDto.getEmail())
                 .ifPresent(member -> {
@@ -42,11 +49,8 @@ public class LoginService implements UserDetailsService {
                 false
         );
 
-        if(member.getIsVerified() == true) {
-            throw new AuthException(AuthErrorCode.EMAIL_INVALID);
-        }
-
         memberRepository.save(member);
+        redisUtil.deleteData("verified:" + member.getEmail());
 
         return JoinResponse.toResponse(member);
     }
