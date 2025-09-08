@@ -11,7 +11,7 @@ import lombok.Getter;
 import java.util.Map;
 
 @Getter
-public class OAuthAtrributes {
+public class OAuthAttributes {
 
     // OAuth2 로그인 시 key가 되는 값(PK)
     private String nameAttributeKey;
@@ -20,20 +20,20 @@ public class OAuthAtrributes {
     private String name;
 
     @Builder
-    private OAuthAtrributes(String nameAttributeKey, OAuth2UserInfo oAuth2UserInfo, String name) {
+    private OAuthAttributes(String nameAttributeKey, OAuth2UserInfo oAuth2UserInfo, String name) {
         this.nameAttributeKey = nameAttributeKey;
         this.oAuth2UserInfo = oAuth2UserInfo;
         this.name = name;
     }
 
-    public static OAuthAtrributes of(Provider provider, String userNameAttributeName,
+    public static OAuthAttributes of(Provider provider, String userNameAttributeName,
                                      Map<String, Object> attributes) {
             return ofGoogle(userNameAttributeName, attributes);
 
     }
 
-    public static OAuthAtrributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
-        return OAuthAtrributes.builder()
+    public static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
+        return OAuthAttributes.builder()
                 .nameAttributeKey(userNameAttributeName)
                 .oAuth2UserInfo(new GoogleOAuth2UserInfo(attributes))
                 .name((String) attributes.get("name"))
