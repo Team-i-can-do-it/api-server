@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,19 +27,27 @@ public class PointService {
     public void earnPoints(Long memberId, int getPoint, ActivityType activityType) {
 
         LocalDate today = LocalDate.now();
-        int todayEarnPoint = pointHistoryRepository.countByMemberIdAndCreatedAt(memberId,today);
-
-        if(todayEarnPoint > 3){
-            throw new MemberException(MemberErrorCode.EXCEEDED_EARN_POINT);
-        }
-
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.atStartOfDay().withHour(23).withMinute(59).withSecond(59);
         Member member = validateMember(memberId);
 
+
+        List<PointHistory> todayEarnPoint = pointHistoryRepository.findByMemberIdAndCreatedAtBetween(memberId,startOfDay,endOfDay);
+
+        long isActivityWordCount = todayEarnPoint.stream().
+                filter(PointHistory -> PointHistory.getActivityType() == ActivityType.WORD).count();
+        long isActivityTopicCount = todayEarnPoint.stream().
+                filter(PointHistory -> PointHistory.getActivityType() == ActivityType.TOPIC).count();
+
+        if (isActivityWordCount + isActivityTopicCount >= 3 ) {
+            throw new MemberException(MemberErrorCode.EXCEEDED_EARN_POINT);
+        }
         member.addPoints(getPoint);
 
         PointHistory pointHistory = PointHistory.of(member,getPoint,activityType);
 
         pointHistoryRepository.save(pointHistory);
+
     }
 
     public void usedPoint(Long memberId,int itemPoint, ActivityType activityType){

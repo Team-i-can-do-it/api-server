@@ -1,5 +1,7 @@
 package com.icando.member.service;
 
+import com.icando.member.dto.MbtiResponse;
+import com.icando.member.dto.MbtiSummaryDto;
 import com.icando.member.dto.MyPageResponse;
 import com.icando.member.dto.PointHistoryResponse;
 import com.icando.member.entity.Mbti;
@@ -27,9 +29,7 @@ public class MemberService {
 
     public MyPageResponse searchMyPage(String email) {
 
-        Member member = memberRepository.findByEmail(email).orElseThrow(
-                ()-> new MemberException(MemberErrorCode.MEMBER_EMAIL_NOT_FOUND));
-
+        validateMember(email);;
 
         Mbti mbti = mbtiRepository.findFirstByMemberIdOrderByModifiedAtDesc(member.getId())
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MBTI_NOT_FOUND));
@@ -37,10 +37,17 @@ public class MemberService {
         return MyPageResponse.of(
                 member.getName(),
                 member.getTotalPoint(),
+        Mbti mbti = mbtiRepository.findFirstByMemberIdOrderByModifiedAtDesc(validateMember(email).getId())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MBTI_NOT_FOUND));
+
+        return MyPageResponse.of(
+                validateMember(email).getName(),
+                validateMember(email).getTotalPoint(),
                 mbti.getId(),
                 mbti.getName()
         );
     }
+
 
     public List<PointHistoryResponse> searchPointHistory(String email) {
         Member member = memberRepository.findByEmail(email).orElseThrow(
@@ -55,6 +62,34 @@ public class MemberService {
                         ))
                 .toList();
         return points;
+    }
+          
+    //가지고 있는 MBTI를 다 가져온다.
+    public MbtiResponse searchMbti(String email) {
+
+        validateMember(email);
+
+        Mbti mbti = mbtiRepository.findFirstByMemberIdOrderByModifiedAtDesc(validateMember(email).getId())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MBTI_NOT_FOUND));
+
+        List<MbtiSummaryDto> mbtiList = mbtiRepository.findAllByMemberId(validateMember(email).getId())
+                .stream()
+                .map(m -> new MbtiSummaryDto(m.getId(), m.getName()))
+                .toList();
+
+        return MbtiResponse.of(
+                mbti.getId(),
+                mbti.getName(),
+                mbtiList
+        );
+    }
+
+    private Member validateMember(String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                () -> new MemberException(MemberErrorCode.MEMBER_EMAIL_NOT_FOUND)
+        );
+        return member;
+
     }
 }
 

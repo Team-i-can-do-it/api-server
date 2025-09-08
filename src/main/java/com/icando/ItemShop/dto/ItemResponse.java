@@ -7,12 +7,14 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 public class ItemResponse {
 
+    private Long id;
     private String name;
     private String imageUrl;
     private int quantity;
     private int point;
 
     public ItemResponse(Item item) {
+        this.id = item.getId();
         this.name = item.getName();
         this.imageUrl = item.getImageUrl();
         this. quantity = item.getQuantity();

@@ -9,14 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 // TODO: 추후 랜덤 성능 개선
-public interface TopicRepository extends JpaRepository<Topic, Long> {
-
-    @Query(value = "SELECT * FROM topic t WHERE t.category = :category ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
-    Optional<Topic> findRandomByCategory(@Param("category") String category);
-
-    @Query(value = "SELECT * FROM topic ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
-    Optional<Topic> findRandom();
-
+public interface TopicRepository extends JpaRepository<Topic, Long>, TopicRepositoryCustom {
     @Query("SELECT distinct t FROM Topic t WHERE SIZE(t.referenceMaterials) < :referenceMaterialsCount and t.category = 'CULTURE_ARTS'") // TODO: 임시로 문화예술 카테고리만
     List<Topic> findByReferenceMaterialsCount(int referenceMaterialsCount);
 }
