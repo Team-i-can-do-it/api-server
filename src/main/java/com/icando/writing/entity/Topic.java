@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,12 @@ public class Topic {
 
     @Column(name = "topic_content")
     private String topicContent;
+
+    @Column(name = "topic_title")
+    private String topicTitle;
+
+    @Column(name = "topic_description", length = 2000)
+    private String topicDescription;
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<ReferenceMaterial> referenceMaterials = new ArrayList<>();
