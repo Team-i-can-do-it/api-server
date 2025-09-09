@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.userdetails.User;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class LoginService implements UserDetailsService {
         String verified = redisUtil.getData("verified:" + joinDto.getEmail());
 
         if(verified == null || !verified.equals(joinDto.getEmail())) {
-            throw new AuthException(AuthErrorCode.ALREADY_MEMBER_EXIST);
+            throw new AuthException(AuthErrorCode.MAIL_VERIFIED_FAILED);
         }
         // EMAIL이 이미 존재하면 ERROR 예외 발생
         memberRepository.findByEmail(joinDto.getEmail())
@@ -57,12 +58,15 @@ public class LoginService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws MemberException {
-        System.out.println("=== loadUserByUsername 호출됨! email: " + email + " ===");
-        log.info("loadUserByUsername 호출됨! email: {}", email);
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new AuthException(AuthErrorCode.EMAIL_INVALID));
+                .orElseThrow(() -> new AuthException(AuthErrorCode.MEMBER_NOT_FOUND));
 
-        return org.springframework.security.core.userdetails.User.builder()
+        // TEST코드에서 활용하려고, 적어놓음
+        if(member.getEmail() != email) {
+            throw new AuthException(AuthErrorCode.INVALID_MEMBER_ID);
+        }
+
+        return User.builder()
                 .username(member.getEmail())
                 .password(member.getPassword())
                 .roles(member.getRole().name())
