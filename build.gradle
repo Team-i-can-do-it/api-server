@@ -43,7 +43,7 @@ dependencies {
     testImplementation 'com.h2database:h2'
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
     // Ehcache
-    implementation 'org.ehcache:ehcache:3.10.8'
+    implementation 'org.ehcache:ehcache:3.11.1'
     implementation 'javax.cache:cache-api'
     //Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
