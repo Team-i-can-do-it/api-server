@@ -2,7 +2,6 @@ package com.icando.feedback.service;
 
 import com.icando.feedback.dto.FeedbackRequest;
 import com.icando.feedback.dto.FeedbackResponse;
-import com.icando.feedback.dto.MbtiScore;
 import com.icando.feedback.entity.Feedback;
 import com.icando.feedback.entity.FeedbackScore;
 import com.icando.feedback.exception.FeedbackErrorCode;
@@ -103,7 +102,6 @@ public class FeedbackService {
     private Feedback saveFeedback(FeedbackResponse aiResponse) {
         Feedback feedbackToSave = Feedback.builder()
             .content(aiResponse.overallFeedback())
-            .score(aiResponse.overallScore())
             .expressionStyle(aiResponse.mbtiScore().expressionStyle())
             .contentFormat(aiResponse.mbtiScore().contentFormat())
             .toneOfVoice(aiResponse.mbtiScore().toneOfVoice())

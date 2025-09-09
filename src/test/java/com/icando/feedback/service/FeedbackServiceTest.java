@@ -24,6 +24,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -121,7 +123,8 @@ class FeedbackServiceTest {
             evaluation,
             evaluationFeedback,
             "전반적으로 훌륭합니다!",
-            95
+            95,
+            LocalDateTime.now()
         );
     }
     

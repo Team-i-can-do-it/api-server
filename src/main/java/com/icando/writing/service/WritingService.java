@@ -1,11 +1,9 @@
 package com.icando.writing.service;
 
-import com.icando.feedback.dto.FeedbackResponse;
 import com.icando.member.login.exception.AuthErrorCode;
 import com.icando.member.login.exception.AuthException;
 import com.icando.member.entity.Member;
 import com.icando.member.repository.MemberRepository;
-import com.icando.writing.dto.TopicResponse;
 import com.icando.writing.dto.WritingCreateRequest;
 import com.icando.writing.dto.WritingListResponse;
 import com.icando.writing.entity.Topic;
@@ -22,8 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.StringTokenizer;
 
 @Service
 @RequiredArgsConstructor
@@ -69,7 +65,7 @@ public class WritingService {
                         writing.getFeedback().getExpressionStyle(),
                         writing.getFeedback().getContentFormat(),
                         writing.getFeedback().getToneOfVoice(),
-                        writing.getFeedback().getScore(),
+                        writing.getFeedback().getFeedbackScore().getFeedbackOverallScore(),
                         writing.getCreatedAt()
                 ));
     }

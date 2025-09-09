@@ -1,12 +1,13 @@
 package com.icando.paragraphCompletion.dto;
 
-import com.icando.member.entity.Member;
+import com.icando.feedback.dto.FeedbackResponse;
 import com.icando.paragraphCompletion.entity.ParagraphCompletion;
 import com.icando.paragraphCompletion.entity.ParagraphWord;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -19,13 +20,19 @@ public class ParagraphCompletionResponse {
 
     private List<String> words;
 
-    // TODO: Feedback DTO 추가해야함
+    private FeedbackResponse feedback;
+    private LocalDateTime createdAt;
 
     public static ParagraphCompletionResponse of(ParagraphCompletion paragraphCompletion) {
         ParagraphCompletionResponse response = new ParagraphCompletionResponse();
         response.id = paragraphCompletion.getId();
         response.content = paragraphCompletion.getContent();
         response.words = paragraphCompletion.getParagraphWords().stream().map(ParagraphWord::getWord).toList();
+        if (paragraphCompletion.getFeedback() != null) {
+            response.feedback = FeedbackResponse.of(paragraphCompletion.getFeedback());
+        }
+        response.createdAt = paragraphCompletion.getCreatedAt();
+
         return response;
     }
 }
