@@ -98,5 +98,19 @@ public class MemberController {
                 SuccessResponse.of(MemberSuccessCode.POINT_SUCCESS_SEARCH, response)
         );
     }
+
+    @Operation(
+            summary = "회원탈퇴",
+            description = "회원탈퇴를 할 수 있는 컨트롤러입니다."
+    )
+    @PostMapping("/delete")
+    public ResponseEntity<SuccessResponse> deleteMember(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        memberService.deleteMember(userDetails.getUsername());
+
+        return ResponseEntity.ok(
+                SuccessResponse.of(MemberSuccessCode.MEMBER_SUCCESS_DELETED));
+    }
 }
 
