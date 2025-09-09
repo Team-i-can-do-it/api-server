@@ -56,6 +56,9 @@ spring:
       host: localhost
       password : ${REDIS_PASSWORD:}
       timeout: 60000
+  cache:
+    jcache:
+      config: ehcache.xml
 
 
   jwt:
