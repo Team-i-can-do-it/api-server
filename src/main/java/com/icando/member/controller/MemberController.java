@@ -13,6 +13,7 @@ import com.icando.member.dto.MbtiRequest;
 import com.icando.member.exception.MemberSuccessCode;
 import com.icando.member.service.MbtiService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +30,20 @@ import java.util.List;
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
+@Tag(
+    name = "멤버 API",
+    description = "멤버 관련 컨트롤러 입니다."
+)
 public class MemberController {
 
 
     private final MemberService memberService;
     private final MbtiService mbtiService;
 
+    @Operation(
+        summary = "마이페이지 조회",
+        description = "유저가 마이페이지를 조회합니다."
+    )
     @GetMapping("/myPage")
     public ResponseEntity<SuccessResponse<MyPageResponse>> searchMypae(
             @AuthenticationPrincipal UserDetails userDetails
@@ -45,6 +54,10 @@ public class MemberController {
                 SuccessResponse.of(MemberSuccessCode.MYPAGE_SUCCESS_FOUND, myPageResponse));
     }
 
+    @Operation(
+        summary = "마이페이지 Mbti 조회",
+        description = "유저가 마이페이지에서 Mbti를 조회합니다."
+    )
     @GetMapping("/mypage/mbti")
     public ResponseEntity<SuccessResponse> searchMbti(
             @AuthenticationPrincipal UserDetails userDetails
@@ -72,6 +85,10 @@ public class MemberController {
         );
     }
 
+    @Operation(
+        summary = "포인트 조회",
+        description = "유저는 자기의 포인트 내역을 조회합니다."
+    )
     @GetMapping("/mypage/point")
     public ResponseEntity<SuccessResponse> searchMyPagePoint(@AuthenticationPrincipal UserDetails userDetails){
 

@@ -95,6 +95,10 @@ public class WritingController {
             .ok(SuccessResponse.of(WritingSuccessCode.WRITING_CREATE_SUCCESS));
     }
 
+    @Operation(
+        summary = "글쓰기 내역 리스트 조회",
+        description = "유저는 자기의 글쓰기 내역을 조회합니다."
+    )
     @GetMapping
     public ResponseEntity<SuccessResponse<Page<WritingListResponse>>> getAllWritings(
             @RequestParam(defaultValue = "20") int pageSize,

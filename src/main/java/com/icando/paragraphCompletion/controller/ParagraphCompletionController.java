@@ -6,6 +6,8 @@ import com.icando.paragraphCompletion.dto.ParagraphCompletionRequest;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionResponse;
 import com.icando.paragraphCompletion.enums.ParagraphCompletionSuccessCode;
 import com.icando.paragraphCompletion.service.ParagraphCompletionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -21,9 +23,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/paragraph-completion")
 @RequiredArgsConstructor
+@Tag(
+    name = "문단 완성 API",
+    description = "문단 완성 관련 API입니다."
+)
 public class ParagraphCompletionController {
     private final ParagraphCompletionService paragraphCompletionService;
 
+    @Operation(
+        summary = "랜덤 단어 반환",
+        description = "파라미터의 갯수에 따라 랜덤단어를 반환합니다."
+    )
     @GetMapping("/words")
     public ResponseEntity<SuccessResponse<List<String>>> getWords(@RequestParam @Min(3) @Max(100) int count) {
         return ResponseEntity.ok(
@@ -34,6 +44,10 @@ public class ParagraphCompletionController {
         );
     }
 
+    @Operation(
+        summary = "문단 완성한 글을 받습니다.",
+        description = "랜덤 문단으로 완성된 글을 저장합니다."
+    )
     @PostMapping()
     public ResponseEntity<SuccessResponse<ParagraphCompletionResponse>> writeParagraphCompletionArticle(@Valid @RequestBody ParagraphCompletionRequest paragraphCompletionRequest,
                                                                                                         @AuthenticationPrincipal UserDetails userDetails) {
@@ -46,6 +60,10 @@ public class ParagraphCompletionController {
         );
     }
 
+    @Operation(
+        summary = "문단 완성된 글을 조회합니다.",
+        description = "문단 완성된 글을 조회합니다."
+    )
     @GetMapping("/{id}")
     public ResponseEntity<SuccessResponse<ParagraphCompletionResponse>> getParagraphCompletionArticle(@PathVariable Long id,
                                                                                                       @AuthenticationPrincipal UserDetails userDetails) {
@@ -58,6 +76,10 @@ public class ParagraphCompletionController {
         );
     }
 
+    @Operation(
+        summary = "문단 완성 글 전체 조회",
+        description = "문단 완성 글 전체를 조회합니다."
+    )
     @GetMapping()
     public ResponseEntity<SuccessResponse<Page<ParagraphCompletionListResponse>>> getAllParagraphCompletionArticle(
             @Valid @RequestParam(defaultValue = "20") @Min(1) @Max(100) int pageSize,
