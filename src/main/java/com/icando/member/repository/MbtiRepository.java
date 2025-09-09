@@ -18,7 +18,7 @@ public interface MbtiRepository extends JpaRepository<Mbti,Long> {
     List<Mbti> findAllByMemberId(Long memberId);
     Boolean existsByMemberAndName(Member member, String name);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("DELETE FROM Mbti m WHERE m.member.id = :memberId")
     void deleteAllByMemberId(@Param("memberId") Long memberId);
 }
