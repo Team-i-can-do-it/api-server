@@ -19,14 +19,12 @@ public abstract class BaseEntity {
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
-
     @LastModifiedDate
     @Column(name = "modified_at", nullable = false)
     private LocalDateTime modifiedAt;
 
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted = false;
-
 
     public void softDelete() {
         this.deleted = true;

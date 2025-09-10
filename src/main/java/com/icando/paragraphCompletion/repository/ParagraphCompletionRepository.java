@@ -18,6 +18,7 @@ public interface ParagraphCompletionRepository extends JpaRepository<ParagraphCo
             JOIN FETCH pc.member m
             JOIN FETCH pc.paragraphWords pw
             LEFT JOIN FETCH pc.feedback f
+            LEFT JOIN FETCH pc.feedback.feedbackScore fs
             WHERE pc.id = :id AND m = :member
     """)
     Optional<ParagraphCompletion> findByIdAndMember(Long id, Member member);

@@ -1,11 +1,15 @@
 package com.icando.writing.entity;
 
 
+import com.icando.referenceMaterial.entity.ReferenceMaterial;
 import com.icando.writing.enums.Category;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,11 +25,24 @@ public class Topic {
     @Column(name = "category")
     private Category category;
 
-    @Column(name = "topic")
-    private String topic;
+    @Column(name = "topic_content")
+    private String topicContent;
 
-    public Topic(Category category, String topic) {
+    @Column(name = "topic_title")
+    private String topicTitle;
+
+    @Column(name = "topic_description", length = 2000)
+    private String topicDescription;
+
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<ReferenceMaterial> referenceMaterials = new ArrayList<>();
+
+    public Topic(Category category, String topicContent) {
         this.category = category;
-        this.topic = topic;
+        this.topicContent = topicContent;
+    }
+
+    public static Topic of(Category category, String topic) {
+        return new Topic(category, topic);
     }
 }

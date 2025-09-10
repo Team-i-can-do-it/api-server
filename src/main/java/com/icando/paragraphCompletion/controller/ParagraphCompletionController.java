@@ -1,17 +1,23 @@
 package com.icando.paragraphCompletion.controller;
 
-import com.icando.global.dto.PagedResponse;
 import com.icando.global.success.SuccessResponse;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionListResponse;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionRequest;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionResponse;
+import com.icando.paragraphCompletion.enums.ParagraphCompletionErrorCode;
 import com.icando.paragraphCompletion.enums.ParagraphCompletionSuccessCode;
+import com.icando.paragraphCompletion.exception.ParagraphCompletionException;
 import com.icando.paragraphCompletion.service.ParagraphCompletionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,9 +25,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/paragraph-completion")
 @RequiredArgsConstructor
+@Tag(
+    name = "문단 완성 API",
+    description = "문단 완성 관련 API입니다."
+)
 public class ParagraphCompletionController {
     private final ParagraphCompletionService paragraphCompletionService;
 
+    @Operation(
+        summary = "랜덤 단어 반환",
+        description = "파라미터의 갯수에 따라 랜덤단어를 반환합니다."
+    )
     @GetMapping("/words")
     public ResponseEntity<SuccessResponse<List<String>>> getWords(@RequestParam @Min(3) @Max(100) int count) {
         return ResponseEntity.ok(
@@ -32,10 +46,14 @@ public class ParagraphCompletionController {
         );
     }
 
+    @Operation(
+        summary = "문단 완성한 글을 받습니다.",
+        description = "랜덤 문단으로 완성된 글을 저장합니다."
+    )
     @PostMapping()
-    public ResponseEntity<SuccessResponse<ParagraphCompletionResponse>> writeParagraphCompletionArticle(@Valid @RequestBody ParagraphCompletionRequest paragraphCompletionRequest) {
-        //TODO: 현재는 1으로 고정, 추후에 UserDetails에서 MemberId를 가져와야 함
-        ParagraphCompletionResponse response = paragraphCompletionService.insertParagraphCompletionArticle(1L, paragraphCompletionRequest);
+    public ResponseEntity<SuccessResponse<ParagraphCompletionResponse>> writeParagraphCompletionArticle(@Valid @RequestBody ParagraphCompletionRequest paragraphCompletionRequest,
+                                                                                                        @AuthenticationPrincipal UserDetails userDetails) {
+        ParagraphCompletionResponse response = paragraphCompletionService.insertParagraphCompletionArticle(userDetails.getUsername(), paragraphCompletionRequest);
         return ResponseEntity.ok(
                 SuccessResponse.of(
                         ParagraphCompletionSuccessCode.PARAGRAPH_COMPLETION_CREATE_SUCCESS,
@@ -44,10 +62,14 @@ public class ParagraphCompletionController {
         );
     }
 
+    @Operation(
+        summary = "문단 완성된 글을 조회합니다.",
+        description = "문단 완성된 글을 조회합니다."
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessResponse<ParagraphCompletionResponse>> getParagraphCompletionArticle(@PathVariable Long id) {
-        //TODO: 현재는 1으로 고정, 추후에 UserDetails에서 MemberId를 가져와야 함
-        ParagraphCompletionResponse response = paragraphCompletionService.getParagraphCompletionArticle(1L, id);
+    public ResponseEntity<SuccessResponse<ParagraphCompletionResponse>> getParagraphCompletionArticle(@PathVariable Long id,
+                                                                                                      @AuthenticationPrincipal UserDetails userDetails) {
+        ParagraphCompletionResponse response = paragraphCompletionService.getParagraphCompletionArticle(userDetails.getUsername(), id);
         return ResponseEntity.ok(
                 SuccessResponse.of(
                         ParagraphCompletionSuccessCode.PARAGRAPH_COMPLETION_READ_SUCCESS,
@@ -56,12 +78,25 @@ public class ParagraphCompletionController {
         );
     }
 
+    @Operation(
+        summary = "문단 완성 글 전체 조회",
+        description = "문단 완성 글 전체를 조회합니다."
+    )
     @GetMapping()
-    public ResponseEntity<SuccessResponse<PagedResponse<ParagraphCompletionListResponse>>> getAllParagraphCompletionArticle(
+    public ResponseEntity<SuccessResponse<Page<ParagraphCompletionListResponse>>> getAllParagraphCompletionArticle(
             @Valid @RequestParam(defaultValue = "20") @Min(1) @Max(100) int pageSize,
-            @Valid @RequestParam(defaultValue = "1") @Min(1) int page
+            @Valid @RequestParam(defaultValue = "1") @Min(1) int page,
+            @RequestParam(defaultValue = "createdAt,DESC") String sort,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        PagedResponse<ParagraphCompletionListResponse> responses = paragraphCompletionService.getAllParagraphCompletionArticle(1L, pageSize, page);
+        String [] sortParams = sort.split(",");
+        if (sortParams.length != 2) {
+            throw new ParagraphCompletionException(ParagraphCompletionErrorCode.INVALID_SORT_PARAMETER);
+        }
+        String sortBy = sortParams[0];
+        boolean isAsc = "ASC".equalsIgnoreCase(sortParams[1]);
+
+        Page<ParagraphCompletionListResponse> responses = paragraphCompletionService.getAllParagraphCompletionArticle(userDetails.getUsername(), pageSize, page, sortBy, isAsc);
         return ResponseEntity.ok(
                 SuccessResponse.of(
                         ParagraphCompletionSuccessCode.PARAGRAPH_COMPLETION_READ_ALL_SUCCESS,

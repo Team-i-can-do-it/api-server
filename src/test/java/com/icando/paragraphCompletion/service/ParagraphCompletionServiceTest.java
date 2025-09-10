@@ -1,6 +1,5 @@
 package com.icando.paragraphCompletion.service;
 
-import com.icando.global.dto.PagedResponse;
 import com.icando.member.entity.Member;
 import com.icando.member.repository.MemberRepository;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionListResponse;
@@ -9,7 +8,7 @@ import com.icando.paragraphCompletion.dto.ParagraphCompletionResponse;
 import com.icando.paragraphCompletion.entity.ParagraphCompletion;
 import com.icando.paragraphCompletion.entity.ParagraphWord;
 import com.icando.paragraphCompletion.entity.WordSetItem;
-import com.icando.paragraphCompletion.exception.ParagraphCompletionErrorCode;
+import com.icando.paragraphCompletion.enums.ParagraphCompletionErrorCode;
 import com.icando.paragraphCompletion.repository.ParagraphCompletionRepository;
 import com.icando.paragraphCompletion.repository.ParagraphWordRepository;
 import com.icando.paragraphCompletion.repository.WordSetItemRepository;
@@ -23,12 +22,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -131,20 +130,20 @@ class ParagraphCompletionServiceTest {
     void insertParagraphCompletionArticle_Success() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given
         Member mb1 = mock(Member.class);
-        when(mb1.getId()).thenReturn(1L);
-        when(memberRepository.findById(anyLong())).thenReturn(Optional.of(mb1));
+        when(mb1.getEmail()).thenReturn("test@test.com");
+        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(mb1));
         ParagraphCompletionRequest req = createParagraphCompletionRequest("이것은 테스트 문장입니다.", List.of("테스트", "문장", "입니다"));
         ParagraphCompletion pc = createParagraphCompletion("이것은 테스트 문장입니다.", List.of("테스트", "문장", "입니다"));
 
         when(paragraphCompletionRepository.save(any())).thenReturn(pc);
 
         // when & then
-        var res = paragraphCompletionService.insertParagraphCompletionArticle(mb1.getId(), req);
+        var res = paragraphCompletionService.insertParagraphCompletionArticle(mb1.getEmail(), req);
 
         assertEquals(req.getContent(), res.getContent());
         assertEquals(3, res.getWords().size());
 
-        verify(memberRepository, times(1)).findById(anyLong());
+        verify(memberRepository, times(1)).findByEmail(anyString());
         verify(paragraphCompletionRepository, times(1)).save(any());
     }
 
@@ -153,11 +152,11 @@ class ParagraphCompletionServiceTest {
     void insertParagraphCompletionArticle_WordNotInContent() {
         // given
         Member mb1 = mock(Member.class);
-        when(mb1.getId()).thenReturn(1L);
+        when(mb1.getEmail()).thenReturn("test@test.com");
         ParagraphCompletionRequest req = createParagraphCompletionRequest("이것은 테스트 문장입니다.", List.of("테스트", "없는단어"));
         // when & then
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            paragraphCompletionService.insertParagraphCompletionArticle(mb1.getId(), req);
+            paragraphCompletionService.insertParagraphCompletionArticle(mb1.getEmail(), req);
         });
         assertEquals(ParagraphCompletionErrorCode.WORD_NOT_IN_CONTENT.getMessage(), exception.getMessage());
         verify(memberRepository, times(0)).findById(anyLong());
@@ -168,15 +167,15 @@ class ParagraphCompletionServiceTest {
     @DisplayName("존재하지 않는 회원일 경우 예외 발생")
     void insertParagraphCompletionArticle_UserNotFound() {
         // given
-        Long nonExistentUserId = 999L;
-        when(memberRepository.findById(nonExistentUserId)).thenReturn(Optional.empty());
+        String nonExistentUserEmail = "no@test.com";
+        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         ParagraphCompletionRequest req = createParagraphCompletionRequest("이것은 테스트 문장입니다.", List.of("테스트", "문장"));
         // when & then
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            paragraphCompletionService.insertParagraphCompletionArticle(nonExistentUserId, req);
+            paragraphCompletionService.insertParagraphCompletionArticle(nonExistentUserEmail, req);
         });
         assertEquals(ParagraphCompletionErrorCode.USER_NOT_FOUND.getMessage(), exception.getMessage());
-        verify(memberRepository, times(1)).findById(nonExistentUserId);
+        verify(memberRepository, times(1)).findByEmail(nonExistentUserEmail);
         verify(paragraphCompletionRepository, times(0)).save(any());
     }
 
@@ -187,7 +186,7 @@ class ParagraphCompletionServiceTest {
         ParagraphCompletionRequest req = createParagraphCompletionRequest("", List.of());
         // when & then
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            paragraphCompletionService.insertParagraphCompletionArticle(1L, req);
+            paragraphCompletionService.insertParagraphCompletionArticle("test@test.com", req);
         });
         assertEquals(ParagraphCompletionErrorCode.INVALID_WORD_COUNT.getMessage(), exception.getMessage());
         verify(memberRepository, times(0)).findById(anyLong());
@@ -201,7 +200,7 @@ class ParagraphCompletionServiceTest {
         ParagraphCompletionRequest req = createParagraphCompletionRequest("", List.of("테스트", "문장"));
         // when & then
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            paragraphCompletionService.insertParagraphCompletionArticle(1L, req);
+            paragraphCompletionService.insertParagraphCompletionArticle("test@test.com", req);
         });
         assertEquals(ParagraphCompletionErrorCode.INVALID_CONTENT.getMessage(), exception.getMessage());
         verify(memberRepository, times(0)).findById(anyLong());
@@ -246,17 +245,17 @@ class ParagraphCompletionServiceTest {
         //given
         Member member = mock(Member.class);
         ParagraphCompletion paragraphCompletion = createParagraphCompletion("테스트 문장입니다.", List.of("테스트", "문장", "입니다"));
-        when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
+        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(member));
         when(paragraphCompletionRepository.findByIdAndMember(anyLong(), eq(member))).thenReturn(Optional.of(paragraphCompletion));
 
         // when & then
-        ParagraphCompletionResponse response = paragraphCompletionService.getParagraphCompletionArticle(1L, 1L);
+        ParagraphCompletionResponse response = paragraphCompletionService.getParagraphCompletionArticle("test@test.com", 1L);
 
         assertEquals("테스트 문장입니다.", response.getContent());
         assertEquals(3, response.getWords().size());
 
         verify(paragraphCompletionRepository, times(0)).save(any());
-        verify(memberRepository, times(1)).findById(anyLong());
+        verify(memberRepository, times(1)).findByEmail(anyString());
         verify(paragraphCompletionRepository, times(1)).findByIdAndMember(anyLong(), any());
     }
 
@@ -264,14 +263,14 @@ class ParagraphCompletionServiceTest {
     @DisplayName("없는 사용자로 문단완성 글 조회 시도")
     void getParagraphCompletion_UserNotFound() {
         // given
-        when(memberRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         // when & then
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            paragraphCompletionService.getParagraphCompletionArticle(999L, 1L);
+            paragraphCompletionService.getParagraphCompletionArticle("no@test.com", 1L);
         });
         assertEquals(exception.getMessage(), ParagraphCompletionErrorCode.USER_NOT_FOUND.getMessage());
 
-        verify(memberRepository, times(1)).findById(anyLong());
+        verify(memberRepository, times(1)).findByEmail(anyString());
     }
 
     @Test
@@ -279,17 +278,17 @@ class ParagraphCompletionServiceTest {
     void getParagraphCompletion_PostNotFound() {
         // given
         Member member = mock(Member.class);
-        when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
+        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(member));
         when(paragraphCompletionRepository.findByIdAndMember(anyLong(), any())).thenReturn(Optional.empty());
 
         // when & then
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            paragraphCompletionService.getParagraphCompletionArticle(1L, 1L);
+            paragraphCompletionService.getParagraphCompletionArticle("test@test.com", 1L);
         });
 
         assertEquals(exception.getMessage(), ParagraphCompletionErrorCode.PARAGRAPH_COMPLETION_NOT_FOUND.getMessage());
 
-        verify(memberRepository, times(1)).findById(anyLong());
+        verify(memberRepository, times(1)).findByEmail(anyString());
         verify(paragraphCompletionRepository, times(1)).findByIdAndMember(anyLong(), any());
     }
 
@@ -298,29 +297,25 @@ class ParagraphCompletionServiceTest {
     @DisplayName("문단완성 글 목록 조회 성공")
     void getAllParagraphCompletion_Success() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         //given
+        String sortBy = "createdAt";
+        boolean isAsc = false;
         Member member = mock(Member.class);
         ParagraphCompletion paragraphCompletion = createParagraphCompletion("테스트 문장입니다.", List.of("테스트", "문장", "입니다"));
 
-        when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
+        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(member));
 
-        Page<ParagraphCompletion> paragraphCompletions = mock(Page.class);
+        Page<ParagraphCompletion> paragraphCompletions = new PageImpl<>(List.of(paragraphCompletion));
         when(paragraphCompletionRepository.findAllByMember(any(), any())).thenReturn(paragraphCompletions);
-        when(paragraphCompletions.getTotalElements()).thenReturn(1L);
-        when(paragraphCompletions.getTotalPages()).thenReturn(123);
-        when(paragraphCompletions.stream()).thenReturn(Stream.of(
-                paragraphCompletion
-        ));
 
         when(paragraphCompletionRepository.findAllByMember(any(), any())).thenReturn(paragraphCompletions);
         // when & then
-        PagedResponse<ParagraphCompletionListResponse> result = paragraphCompletionService.getAllParagraphCompletionArticle(1L, 20, 1);
+        Page<ParagraphCompletionListResponse> result = paragraphCompletionService.getAllParagraphCompletionArticle("test@test.com", 20, 1, sortBy, isAsc);
 
         assertEquals(1, result.getTotalElements());
-        assertEquals(123, result.getTotalPages());
         assertEquals(1, result.getContent().size());
         verify(paragraphCompletionRepository, times(0)).save(any());
 
-        verify(memberRepository, times(1)).findById(anyLong());
+        verify(memberRepository, times(1)).findByEmail(anyString());
         verify(paragraphCompletionRepository, times(1)).findAllByMember(any(), any());
     }
 
@@ -328,13 +323,15 @@ class ParagraphCompletionServiceTest {
     @DisplayName("없는 사용자로 문단완성 글 목록 조회 시도")
     void getAllParagraphCompletion_UserNotFound() {
         // given
-        when(memberRepository.findById(anyLong())).thenReturn(Optional.empty());
+        String sortBy = "createdAt";
+        boolean isAsc = false;
+        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         // when & then
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            paragraphCompletionService.getAllParagraphCompletionArticle(999L, 20, 1);
+            paragraphCompletionService.getAllParagraphCompletionArticle("no@test.com", 20, 1, sortBy, isAsc);
         });
         assertEquals(exception.getMessage(), ParagraphCompletionErrorCode.USER_NOT_FOUND.getMessage());
 
-        verify(memberRepository, times(1)).findById(anyLong());
+        verify(memberRepository, times(1)).findByEmail(anyString());
     }
 }

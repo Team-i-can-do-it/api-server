@@ -43,4 +43,12 @@ public class Writing extends BaseEntity {
 
         return writing;
     }
+
+    /**
+     * Writing에서 생성된 피드백을 연결하는 메서드
+     * @param feedback 생성된 피드백 엔티티
+     */
+    public void updateFeedback(Feedback feedback) {
+        this.feedback = feedback;
+    }
 }
