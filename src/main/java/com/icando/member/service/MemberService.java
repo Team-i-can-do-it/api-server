@@ -34,13 +34,14 @@ public class MemberService {
         validateMember(email);;
 
         Mbti mbti = mbtiRepository.findFirstByMemberIdOrderByModifiedAtDesc(validateMember(email).getId())
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MBTI_NOT_FOUND));
+                .orElse(null);
 
+        //MBTI가 없으면 NULL값 반환,
         return MyPageResponse.of(
                 validateMember(email).getName(),
                 validateMember(email).getTotalPoint(),
-                mbti.getId(),
-                mbti.getName()
+                mbti != null ? mbti.getId() : null,
+                mbti != null ? mbti.getName() : null
         );
     }
 
@@ -66,7 +67,7 @@ public class MemberService {
         validateMember(email);
 
         Mbti mbti = mbtiRepository.findFirstByMemberIdOrderByModifiedAtDesc(validateMember(email).getId())
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MBTI_NOT_FOUND));
+                .orElse(null);
 
         List<MbtiSummaryDto> mbtiList = mbtiRepository.findAllByMemberId(validateMember(email).getId())
                 .stream()
@@ -74,8 +75,8 @@ public class MemberService {
                 .toList();
 
         return MbtiResponse.of(
-                mbti.getId(),
-                mbti.getName(),
+                mbti != null ? mbti.getId() : null,
+                mbti != null ? mbti.getName() : null,
                 mbtiList
         );
     }
