@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -51,6 +52,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Profile("!test")  // test 프로필에서는 제외
     public SecurityFilterChain filterChain(HttpSecurity http, RedisTemplate<String, String > redisTemplate, CustomOAuth2UserService customOAuth2UserService) throws Exception {
         //CSRF 비활성화
         http
@@ -102,6 +104,18 @@ public class SecurityConfig {
 
 
         // 설정된 보안 구성을 적용하여 SecurityFilterChain 객체 생성
+        return http.build();
+    }
+
+    @Bean
+    @Profile("test")
+    public SecurityFilterChain testFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf -> csrf.disable())
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
+                .logout(logout -> logout.disable())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
         return http.build();
     }
 
