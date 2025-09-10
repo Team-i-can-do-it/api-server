@@ -1,6 +1,7 @@
 package com.icando.feedback.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.icando.feedback.entity.Feedback;
 
 // 5가지 평가 지표 피드백
 public record EvaluationFeedback(
@@ -14,4 +15,14 @@ public record EvaluationFeedback(
     String clarityFeedback,
     @JsonProperty("coherence_feedback")
     String coherenceFeedback
-) {}
+) {
+    public static EvaluationFeedback of(Feedback feedback) {
+        return new EvaluationFeedback(
+            feedback.getSubstance(),
+            feedback.getCompleteness(),
+            feedback.getExpressiveness(),
+            feedback.getClarity(),
+            feedback.getCoherence()
+        );
+    }
+}

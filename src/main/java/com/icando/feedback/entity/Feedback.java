@@ -20,9 +20,6 @@ public class Feedback extends BaseEntity {
     @Column(name = "feedback_content")
     private String content;
 
-    @Column(name = "feedback_score")
-    private int score;
-
     @Column(name = "feedback_expression_style")
     private Integer expressionStyle;
 
@@ -47,10 +44,12 @@ public class Feedback extends BaseEntity {
     @Column(name = "feedback_coherence")
     private String coherence;
 
+    @OneToOne(mappedBy = "feedback", fetch = FetchType.LAZY)
+    private FeedbackScore feedbackScore;
+
     @Builder
     public Feedback(
         String content,
-        int score,
         Integer expressionStyle,
         Integer contentFormat,
         Integer toneOfVoice,
@@ -61,7 +60,6 @@ public class Feedback extends BaseEntity {
         String coherence
     ) {
         this.content = content;
-        this.score = score;
         this.expressionStyle = expressionStyle;
         this.contentFormat = contentFormat;
         this.toneOfVoice = toneOfVoice;

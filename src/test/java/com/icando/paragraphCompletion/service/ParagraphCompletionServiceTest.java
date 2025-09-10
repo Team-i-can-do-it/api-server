@@ -297,6 +297,8 @@ class ParagraphCompletionServiceTest {
     @DisplayName("문단완성 글 목록 조회 성공")
     void getAllParagraphCompletion_Success() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         //given
+        String sortBy = "createdAt";
+        boolean isAsc = false;
         Member member = mock(Member.class);
         ParagraphCompletion paragraphCompletion = createParagraphCompletion("테스트 문장입니다.", List.of("테스트", "문장", "입니다"));
 
@@ -307,7 +309,7 @@ class ParagraphCompletionServiceTest {
 
         when(paragraphCompletionRepository.findAllByMember(any(), any())).thenReturn(paragraphCompletions);
         // when & then
-        Page<ParagraphCompletionListResponse> result = paragraphCompletionService.getAllParagraphCompletionArticle("test@test.com", 20, 1);
+        Page<ParagraphCompletionListResponse> result = paragraphCompletionService.getAllParagraphCompletionArticle("test@test.com", 20, 1, sortBy, isAsc);
 
         assertEquals(1, result.getTotalElements());
         assertEquals(1, result.getContent().size());
@@ -321,10 +323,12 @@ class ParagraphCompletionServiceTest {
     @DisplayName("없는 사용자로 문단완성 글 목록 조회 시도")
     void getAllParagraphCompletion_UserNotFound() {
         // given
+        String sortBy = "createdAt";
+        boolean isAsc = false;
         when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         // when & then
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            paragraphCompletionService.getAllParagraphCompletionArticle("no@test.com", 20, 1);
+            paragraphCompletionService.getAllParagraphCompletionArticle("no@test.com", 20, 1, sortBy, isAsc);
         });
         assertEquals(exception.getMessage(), ParagraphCompletionErrorCode.USER_NOT_FOUND.getMessage());
 

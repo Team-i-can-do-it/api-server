@@ -3,7 +3,6 @@ package com.icando.paragraphCompletion.entity;
 import com.icando.feedback.entity.Feedback;
 import com.icando.global.BaseEntity;
 import com.icando.member.entity.Member;
-import com.icando.paragraphCompletion.dto.ParagraphCompletionRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -43,5 +42,9 @@ public class ParagraphCompletion extends BaseEntity {
         paragraphCompletion.content = content;
         paragraphCompletion.member = member;
         return paragraphCompletion;
+    }
+
+    public void updateFeedback(Feedback savedFeedback) {
+        this.feedback = savedFeedback;
     }
 }
