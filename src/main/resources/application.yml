@@ -52,8 +52,8 @@ spring:
       api-key: ${OPENAI_API_KEY}
   data:
     redis:
-      port: 6379
-      host: localhost
+      port: ${REDIS_PORT}
+      host: ${REDIS_HOST}
       password : ${REDIS_PASSWORD:}
       timeout: 60000
 
