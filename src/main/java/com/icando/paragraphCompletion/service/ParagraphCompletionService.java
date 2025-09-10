@@ -15,6 +15,7 @@ import com.icando.paragraphCompletion.repository.ParagraphWordRepository;
 import com.icando.paragraphCompletion.repository.WordSetItemRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,12 +90,12 @@ public class ParagraphCompletionService {
         return ParagraphCompletionResponse.of(paragraphCompletion);
     }
 
-    public Page<ParagraphCompletionListResponse> getAllParagraphCompletionArticle(String memberEmail, int pageSize, int page) {
+    public Page<ParagraphCompletionListResponse> getAllParagraphCompletionArticle(String memberEmail, int pageSize, int page, String sortBy, boolean isAsc) {
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new ParagraphCompletionException(ParagraphCompletionErrorCode.USER_NOT_FOUND));
 
         Page<ParagraphCompletion> paragraphCompletions =
-                paragraphCompletionRepository.findAllByMember(member, PageRequest.of(page - 1, pageSize));
+                paragraphCompletionRepository.findAllByMember(member, PageRequest.of(page - 1, pageSize, isAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()));
 
         return paragraphCompletions
                 .map(ParagraphCompletionListResponse::of);

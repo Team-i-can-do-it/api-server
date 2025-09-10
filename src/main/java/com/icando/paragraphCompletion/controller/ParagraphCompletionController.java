@@ -4,7 +4,9 @@ import com.icando.global.success.SuccessResponse;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionListResponse;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionRequest;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionResponse;
+import com.icando.paragraphCompletion.enums.ParagraphCompletionErrorCode;
 import com.icando.paragraphCompletion.enums.ParagraphCompletionSuccessCode;
+import com.icando.paragraphCompletion.exception.ParagraphCompletionException;
 import com.icando.paragraphCompletion.service.ParagraphCompletionService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -62,9 +64,17 @@ public class ParagraphCompletionController {
     public ResponseEntity<SuccessResponse<Page<ParagraphCompletionListResponse>>> getAllParagraphCompletionArticle(
             @Valid @RequestParam(defaultValue = "20") @Min(1) @Max(100) int pageSize,
             @Valid @RequestParam(defaultValue = "1") @Min(1) int page,
+            @RequestParam(defaultValue = "createdAt,DESC") String sort,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        Page<ParagraphCompletionListResponse> responses = paragraphCompletionService.getAllParagraphCompletionArticle(userDetails.getUsername(), pageSize, page);
+        String [] sortParams = sort.split(",");
+        if (sortParams.length != 2) {
+            throw new ParagraphCompletionException(ParagraphCompletionErrorCode.INVALID_SORT_PARAMETER);
+        }
+        String sortBy = sortParams[0];
+        boolean isAsc = "ASC".equalsIgnoreCase(sortParams[1]);
+
+        Page<ParagraphCompletionListResponse> responses = paragraphCompletionService.getAllParagraphCompletionArticle(userDetails.getUsername(), pageSize, page, sortBy, isAsc);
         return ResponseEntity.ok(
                 SuccessResponse.of(
                         ParagraphCompletionSuccessCode.PARAGRAPH_COMPLETION_READ_ALL_SUCCESS,
