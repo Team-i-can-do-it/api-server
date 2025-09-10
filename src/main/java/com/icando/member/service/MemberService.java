@@ -8,6 +8,8 @@ import com.icando.member.entity.Mbti;
 import com.icando.member.entity.Member;
 import com.icando.member.exception.MemberErrorCode;
 import com.icando.member.exception.MemberException;
+import com.icando.member.login.exception.AuthErrorCode;
+import com.icando.member.login.exception.AuthException;
 import com.icando.member.repository.MbtiRepository;
 import com.icando.member.repository.MemberRepository;
 import com.icando.member.repository.PointHistoryRepository;
@@ -84,6 +86,13 @@ public class MemberService {
         );
         return member;
 
+    }
+
+    public void deleteMember(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthException(AuthErrorCode.EMAIL_INVALID));
+        mbtiRepository.deleteAllByMemberId(member.getId());
+        memberRepository.delete(member);
     }
 }
 

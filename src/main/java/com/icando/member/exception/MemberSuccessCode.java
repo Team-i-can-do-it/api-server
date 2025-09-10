@@ -11,7 +11,8 @@ public enum MemberSuccessCode implements SuccessCode {
     MYPAGE_SUCCESS_FOUND(HttpStatus.OK, "마이페이지를 성공적으로 조회하였습니다."),
     MBTI_SUCCESS_SAVE(HttpStatus.CREATED, "MBTI 저장이 성공했습니다."),
     POINT_SUCCESS_SEARCH(HttpStatus.OK, "POINT를 성공적으로 조회하였습니다."),
-    MBTI_SUCCESS_FOUND(HttpStatus.OK, "MBTI 조회를 성공했습니다.");
+    MBTI_SUCCESS_FOUND(HttpStatus.OK, "MBTI 조회를 성공했습니다."),
+    MEMBER_SUCCESS_DELETED(HttpStatus.OK, "회원탈퇴를 성공적으로 완료했습니다.");
     private final HttpStatus status;
     private final String message;
 
