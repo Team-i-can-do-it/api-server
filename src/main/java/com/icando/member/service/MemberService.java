@@ -90,7 +90,7 @@ public class MemberService {
 
     public void deleteMember(String email) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new AuthException(AuthErrorCode.EMAIL_INVALID));
+                .orElseThrow(() -> new AuthException(AuthErrorCode.MEMBER_NOT_FOUND));
         mbtiRepository.deleteAllByMemberId(member.getId());
         memberRepository.delete(member);
     }
