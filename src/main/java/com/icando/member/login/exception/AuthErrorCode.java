@@ -8,9 +8,8 @@ import org.springframework.http.HttpStatus;
 public enum AuthErrorCode implements ErrorCode {
 
     INVALID_MEMBER_ID(HttpStatus.BAD_REQUEST, "입력하신 회원 ID가 올바르지 않거나 존재하지 않습니다."),
-    MEMBER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 회원가입이 되어있습니다."),
+    MEMBER_ALREADY_EXIST(HttpStatus.CONFLICT, "이미 회원가입이 되어있습니다."),
     ACCESS_EXCEPTION(HttpStatus.BAD_REQUEST, "액세스 토큰이 없습니다."),
-    ALREADY_MEMBER_EXIST(HttpStatus.BAD_REQUEST, "이미 존재하는 회원입니다."),
     MAIL_VERIFIED_FAILED(HttpStatus.BAD_REQUEST, "메일 인증이 완료되지않았습니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다.");
 

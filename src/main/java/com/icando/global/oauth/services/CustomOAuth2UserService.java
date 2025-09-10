@@ -65,11 +65,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         if (findMember != null) {
             if (findMember.getProvider() == Provider.LOCAL) {
-                throw new AuthException(AuthErrorCode.ALREADY_MEMBER_EXIST);
+                throw new AuthException(AuthErrorCode.MEMBER_ALREADY_EXIST);
             }
 
             if (findMember.getProvider() != provider) {
-                throw new AuthException(AuthErrorCode.ALREADY_MEMBER_EXIST);
+                throw new AuthException(AuthErrorCode.MEMBER_ALREADY_EXIST);
             }
             return findMember;
         }
