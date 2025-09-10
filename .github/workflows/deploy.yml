@@ -10,7 +10,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # 1. 코드 체크아웃
+        # 1. 코드 체크아웃
       - name: Github Repository 불러오기
         uses: actions/checkout@v4
 
