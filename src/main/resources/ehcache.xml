@@ -14,7 +14,7 @@
     </cache-template>
 
     <cache alias="topic" uses-template="default-template">
-        <value-type>com.icando.writing.entity.Topic</value-type>
+        <value-type>java.util.ArrayList</value-type>
         <expiry>
             <ttl unit="days">30</ttl>
         </expiry>
