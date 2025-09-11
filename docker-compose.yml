@@ -6,6 +6,8 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro   # CPU/Memory 메트릭 수집용
     restart: unless-stopped
 
   prometheus:
