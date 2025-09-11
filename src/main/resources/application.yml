@@ -58,7 +58,7 @@ spring:
       timeout: 60000
   cache:
     jcache:
-      config: ehcache.xml
+      config: classpath:ehcache.xml
 
 
   jwt:
