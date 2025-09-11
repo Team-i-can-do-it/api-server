@@ -43,8 +43,13 @@ dependencies {
     testImplementation 'com.h2database:h2'
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
     // Ehcache
-    implementation 'org.ehcache:ehcache:3.11.1'
+    implementation 'org.ehcache:ehcache:3.10.8:jakarta'
     implementation 'javax.cache:cache-api'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'javax.cache:cache-api:1.1.1'
+    // JAXB API 추가 (Java 11 이상에서 필수)
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
+    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.2'
     //Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
     //Redis
