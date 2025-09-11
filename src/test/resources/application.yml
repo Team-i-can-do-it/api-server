@@ -86,6 +86,7 @@ feedback:
 reference-material:
   urls:
     prompt: "dummy reference material prompt for testing"
+
 security:
   oauth2:
     client:

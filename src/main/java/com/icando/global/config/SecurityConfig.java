@@ -106,7 +106,7 @@ public class SecurityConfig {
         // 설정된 보안 구성을 적용하여 SecurityFilterChain 객체 생성
         return http.build();
     }
-
+    
     // 테스트 전용: oauth2Login 제거
     @Bean
     @Profile("test")

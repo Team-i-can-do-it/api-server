@@ -9,9 +9,15 @@ import com.icando.member.entity.ActivityType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.SortedMap;
 
 @RestController
 @RequestMapping("/feedback")
@@ -47,4 +53,18 @@ public class FeedbackController {
             .status(successCode.getStatus())
             .body(responseBody);
     }
+
+    @Operation(
+            summary = "일별 피드백 평균 점수 조회",
+            description = "사용자의 일별 피드백 평균 점수를 조회합니다."
+    )
+    @GetMapping("/summary/{yyyyMM}")
+    public ResponseEntity<SuccessResponse<SortedMap<LocalDate, Integer>>> getDailyAverageScoresByDate(
+            @Valid @Pattern(regexp = "^(\\d{4})-(0[1-9]|1[0-2])$", message = "yyyy-MM 형식으로 입력해야 합니다.") @PathVariable String yyyyMM,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        SortedMap<LocalDate, Integer> dailyAverageScores = feedbackService.getDailyAverageScoresByDate(userDetails.getUsername(), yyyyMM);
+        return ResponseEntity.ok(SuccessResponse.of(FeedbackSuccessCode.FEEDBACK_SUCCESS_DAILY_AVERAGE_SCORES_RETRIEVED, dailyAverageScores));
+    }
+
 }

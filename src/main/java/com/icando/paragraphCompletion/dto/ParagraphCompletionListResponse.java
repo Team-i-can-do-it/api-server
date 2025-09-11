@@ -14,19 +14,26 @@ import java.util.List;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class ParagraphCompletionListResponse {
     private Long id;
-
     private List<String> words;
-
+    private String summary;
+    Integer expressionStyle;
+    Integer contentFormat;
+    Integer toneOfVoice;
+    Integer score;
     private LocalDateTime createdAt;
-
-    private LocalDateTime modifiedAt;
 
     public static ParagraphCompletionListResponse of(ParagraphCompletion paragraphCompletion) {
         ParagraphCompletionListResponse response = new ParagraphCompletionListResponse();
         response.id = paragraphCompletion.getId();
         response.words = paragraphCompletion.getParagraphWords().stream().map(ParagraphWord::getWord).toList();
+        response.summary = (paragraphCompletion.getContent().length() > 200 ? paragraphCompletion.getContent().substring(0, 200) + "..." : paragraphCompletion.getContent());
+        if (paragraphCompletion.getFeedback() != null) {
+            response.expressionStyle = paragraphCompletion.getFeedback().getExpressionStyle();
+            response.contentFormat = paragraphCompletion.getFeedback().getContentFormat();
+            response.toneOfVoice = paragraphCompletion.getFeedback().getToneOfVoice();
+            response.score = paragraphCompletion.getFeedback().getFeedbackScore().getFeedbackOverallScore();
+        }
         response.createdAt = paragraphCompletion.getCreatedAt();
-        response.modifiedAt = paragraphCompletion.getModifiedAt();
         return response;
     }
 }
