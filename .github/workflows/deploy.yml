@@ -63,8 +63,8 @@ jobs:
             
             cd /home/ubuntu/compose
             
-            echo "${{ secrets.ENV }}" | base64 -d > /home/ubuntu/compose/.env
-            chmod 600 /home/ubuntu/compose/.env
+            echo "${{ secrets.ENV }}" | base64 -d > .env
+            chmod 600 .env
             
             docker compose down || true
             
