@@ -63,7 +63,7 @@ public class UserPointShopService {
         pointShopHistoryRepository.save(pointShopHistory);
         return item;
     }
-      
+
     public ItemResponse getItem(Long itemId) {
 
        Item item = validateItem(itemId);
@@ -85,9 +85,6 @@ public class UserPointShopService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.INVALID_MEMBER_EMAIL));
 
-        if (member.getTotalPoint() < itemPoint) {
-            throw new PointShopException(PointShopErrorCode.NOT_ENOUGH_MEMBER_POINT);
-        }
         return member;
     }
 }

@@ -1,7 +1,8 @@
 version: '3.8'
 services:
   api-server:
-    image: ${ECR_REGISTRY}/${IMAGE_NAME}:${TAG:-latest}
+    build: .
+    image: api-server:latest
     ports:
       - "8080:8080"
     env_file:

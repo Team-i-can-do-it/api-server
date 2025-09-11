@@ -54,9 +54,9 @@ public class UserPointShopController {
     public ResponseEntity<SuccessResponse> buyItem (
             @PathVariable Long itemId,
             @RequestParam String number,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @RequestParam String email) {
 
-        userPointShopService.buyItem(itemId,number,userDetails.getUsername());
+        userPointShopService.buyItem(itemId,number,email);
 
         return ResponseEntity.ok(
                 SuccessResponse.of(PointShopSuccessCode.SUCCESS_BUY_ITEM));

@@ -76,7 +76,7 @@ public class SecurityConfig {
                                 .requestMatchers("/mail/code/request").permitAll()
                                 .requestMatchers("/mail/code/verify").permitAll()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll ()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(oAuth2LoginSuccessHandler)

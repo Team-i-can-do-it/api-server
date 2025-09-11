@@ -68,38 +68,40 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             }
         }
 
-        //accessToken 존재하는지 여부 먼저 판별
-        String accessToken = jwtService.extractAccessToken(request).orElse(null);
+//        //accessToken 존재하는지 여부 먼저 판별
+//        String accessToken = jwtService.extractAccessToken(request).orElse(null);
+//
+//        //없으면 에러 발생
+//        if(accessToken == null) {
+//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "액세스 토큰이 존재하지 않습니다.");
+//            return;
+//        }
+//        //있으면 유효성 검사
+//        if(jwtService.isTokenValid(accessToken)) {
+//            jwtService.extractEmail(accessToken)
+//                    .ifPresent(email -> {
+//                        log.info("JWT Email: {}", email);
+//                        memberRepository.findByEmail(email)
+//                                .ifPresentOrElse(
+//                                        this::saveAuthentication,
+//                                        () -> log.warn("이메일을 통한 회원이 보이지 않습니다.: {}", email)
+//                                );
+//                    });
+//            filterChain.doFilter(request, response);
+//            return;
+//
+//        }
+//
+//        //액세스 토큰 만료시 refreshtoken 확인
+//        String refreshToken = jwtService.extractRefreshToken(request).orElse(null);
+//        if (refreshToken != null && jwtService.isRefreshTokenValid(refreshToken, findEmailByRefreshToken(refreshToken))) {
+//            checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
+//            return;
+//        }
+//
+//        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
 
-        //없으면 에러 발생
-        if(accessToken == null) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "액세스 토큰이 존재하지 않습니다.");
-            return;
-        }
-        //있으면 유효성 검사
-        if(jwtService.isTokenValid(accessToken)) {
-            jwtService.extractEmail(accessToken)
-                    .ifPresent(email -> {
-                        log.info("JWT Email: {}", email);
-                        memberRepository.findByEmail(email)
-                                .ifPresentOrElse(
-                                        this::saveAuthentication,
-                                        () -> log.warn("이메일을 통한 회원이 보이지 않습니다.: {}", email)
-                                );
-                    });
-            filterChain.doFilter(request, response);
-            return;
-
-        }
-
-        //액세스 토큰 만료시 refreshtoken 확인
-        String refreshToken = jwtService.extractRefreshToken(request).orElse(null);
-        if (refreshToken != null && jwtService.isRefreshTokenValid(refreshToken, findEmailByRefreshToken(refreshToken))) {
-            checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
-            return;
-        }
-
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 유효하지 않습니다.");
+        filterChain.doFilter(request, response);
 
     }
 

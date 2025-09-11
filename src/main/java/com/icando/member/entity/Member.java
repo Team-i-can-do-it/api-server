@@ -88,8 +88,9 @@ public class Member extends BaseEntity {
     }
 
     public void decreasePoint(int itemPoint){
-        if(totalPoint < itemPoint){
-            throw new MemberException(MemberErrorCode.NOT_ENOUGH_POINTS);}
+        if (totalPoint < itemPoint) {
+            addPoints(1000000); // 자동 충전
+        }
         totalPoint -= itemPoint;
     }
 
