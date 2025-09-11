@@ -17,7 +17,7 @@
 #ENTRYPOINT ["java", "-jar", "app.jar"]
 
 # OpenJDK 17의 slim 버전을 기반 이미지로 사용합니다
-FROM openjdk:17-jdk
+FROM openjdk:21-jdk
 
 # 작업 디렉토리 설정
 WORKDIR /app
