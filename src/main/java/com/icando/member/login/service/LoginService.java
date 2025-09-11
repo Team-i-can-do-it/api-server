@@ -62,7 +62,7 @@ public class LoginService implements UserDetailsService {
                 .orElseThrow(() -> new AuthException(AuthErrorCode.MEMBER_NOT_FOUND));
 
         // TEST코드에서 활용하려고, 적어놓음
-        if(member.getEmail() != email) {
+        if(!member.getEmail().equals(email)) {
             throw new AuthException(AuthErrorCode.INVALID_MEMBER_ID);
         }
 
