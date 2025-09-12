@@ -57,7 +57,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Profile("!test")  // test 프로필에서는 제외
+    @Profile("!test")
     public SecurityFilterChain filterChain(HttpSecurity http, RedisTemplate<String, String > redisTemplate, CustomOAuth2UserService customOAuth2UserService) throws Exception {
         //CSRF 비활성화
         http
@@ -70,20 +70,22 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable());
         http
                 .logout((auth) -> auth.disable());
+        http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
         //URL 별 권한 설정
         http
                 .authorizeHttpRequests(auth -> auth
 
 
-                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger 접근 허용
-                                .requestMatchers("/actuator/**").permitAll()
-                                .requestMatchers("/auth/login").permitAll()
-                                .requestMatchers("/oauth2/**", "/login/oauth2/code/**").permitAll()
-                                .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/mail/code/request").permitAll()
-                                .requestMatchers("/mail/code/verify").permitAll()
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
-                                .anyRequest().authenticated()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger 접근 허용
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/oauth2/**", "/login/oauth2/code/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/mail/code/request").permitAll()
+                        .requestMatchers("/mail/code/verify").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(oAuth2LoginSuccessHandler)
@@ -112,6 +114,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // 테스트 전용: oauth2Login 제거
     @Bean
     @Profile("test")
     public SecurityFilterChain testFilterChain(HttpSecurity http) throws Exception {
@@ -194,6 +197,10 @@ public class SecurityConfig {
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
+
+        configuration.setExposedHeaders(List.of(
+                "authorization"
+        ));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
