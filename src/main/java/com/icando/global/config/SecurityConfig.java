@@ -188,7 +188,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:5173",
+                "http://localhost:5173/",
                 "https://e-eum.site",
                 "https:/e-eum-develop.vercel.app/welcome"
         ));
