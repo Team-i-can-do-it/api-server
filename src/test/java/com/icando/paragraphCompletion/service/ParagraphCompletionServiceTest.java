@@ -1,5 +1,6 @@
 package com.icando.paragraphCompletion.service;
 
+import com.icando.feedback.service.FeedbackService;
 import com.icando.member.entity.Member;
 import com.icando.member.repository.MemberRepository;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionListResponse;
@@ -56,6 +57,9 @@ class ParagraphCompletionServiceTest {
     @InjectMocks
     private ParagraphCompletionService paragraphCompletionService;
 
+    @Mock
+    private FeedbackService feedbackService;
+
     @BeforeEach
     void setUp() {
 //        when(chatClientBuilder.build()).thenReturn(chatClient);
@@ -70,8 +74,7 @@ class ParagraphCompletionServiceTest {
         WordSetItem word2 = createWordSetItem(2, "세상");
         WordSetItem word3 = createWordSetItem(3, "테스트");
 
-        when(wordSetItemRepository.getRandomWords(anyInt()))
-            .thenReturn(List.of(word1, word2, word3));
+        when(wordSetItemRepository.findAll()).thenReturn(List.of(word1, word2, word3));
 
         // when
         List<String> result = paragraphCompletionService.generateWords(count);
@@ -81,7 +84,6 @@ class ParagraphCompletionServiceTest {
         assertEquals("안녕", result.get(0));
         assertEquals("세상", result.get(1));
         assertEquals("테스트", result.get(2));
-        verify(wordSetItemRepository, times(1)).getRandomWords(anyInt());
     }
 
     @Test
@@ -96,7 +98,6 @@ class ParagraphCompletionServiceTest {
         // then
         assertEquals(0, result.size());
         assertTrue(result.isEmpty());
-        verify(wordSetItemRepository, times(1)).getRandomWords(anyInt());
     }
 
     @Test
@@ -106,7 +107,7 @@ class ParagraphCompletionServiceTest {
         int count = 1;
         WordSetItem word = createWordSetItem(1, "단어");
 
-        when(wordSetItemRepository.getRandomWords(anyInt())).thenReturn(List.of(word));
+        when(wordSetItemRepository.findAll()).thenReturn(List.of(word));
 
         // when
         List<String> result = paragraphCompletionService.generateWords(count);
@@ -114,7 +115,6 @@ class ParagraphCompletionServiceTest {
         // then
         assertEquals(1, result.size());
         assertEquals("단어", result.get(0));
-        verify(wordSetItemRepository, times(1)).getRandomWords(anyInt());
     }
 
     private WordSetItem createWordSetItem(int id, String word) {
@@ -133,15 +133,29 @@ class ParagraphCompletionServiceTest {
         when(mb1.getEmail()).thenReturn("test@test.com");
         when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(mb1));
         ParagraphCompletionRequest req = createParagraphCompletionRequest("이것은 테스트 문장입니다.", List.of("테스트", "문장", "입니다"));
-        ParagraphCompletion pc = createParagraphCompletion("이것은 테스트 문장입니다.", List.of("테스트", "문장", "입니다"));
+//        ParagraphCompletion pc = createParagraphCompletion("이것은 테스트 문장입니다.", List.of("테스트", "문장", "입니다"));
+        ParagraphCompletion pc = mock(ParagraphCompletion.class);
+        when(pc.getContent()).thenReturn("이것은 테스트 문장입니다.");
+        var pwList = req.getWords().stream().map(word -> {
+            var pw = mock(ParagraphWord.class);
+            try {
+                FieldUtils.writeField(pw, "word", word, true);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            return pw;
+        }).toList();
+        when(pc.getParagraphWords()).thenReturn(pwList);
 
         when(paragraphCompletionRepository.save(any())).thenReturn(pc);
+        when(pc.getId()).thenReturn(1L);
+        when(paragraphCompletionRepository.findById(any())).thenReturn(Optional.of(pc));
 
         // when & then
         var res = paragraphCompletionService.insertParagraphCompletionArticle(mb1.getEmail(), req);
 
         assertEquals(req.getContent(), res.getContent());
-        assertEquals(3, res.getWords().size());
+        assertEquals(3, res.getTopic().split(", ").length);
 
         verify(memberRepository, times(1)).findByEmail(anyString());
         verify(paragraphCompletionRepository, times(1)).save(any());
@@ -252,7 +266,7 @@ class ParagraphCompletionServiceTest {
         ParagraphCompletionResponse response = paragraphCompletionService.getParagraphCompletionArticle("test@test.com", 1L);
 
         assertEquals("테스트 문장입니다.", response.getContent());
-        assertEquals(3, response.getWords().size());
+        assertEquals(3, response.getTopic().split(", ").length);
 
         verify(paragraphCompletionRepository, times(0)).save(any());
         verify(memberRepository, times(1)).findByEmail(anyString());

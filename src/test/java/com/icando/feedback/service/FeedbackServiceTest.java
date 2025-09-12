@@ -13,6 +13,7 @@ import com.icando.writing.entity.Topic;
 import com.icando.writing.entity.Writing;
 import com.icando.writing.enums.Category;
 import com.icando.writing.enums.WritingType;
+import com.icando.writing.repository.WritingRepository;
 import com.icando.writing.service.WritingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,6 +50,9 @@ class FeedbackServiceTest {
 
     @Mock
     private WritingService writingService;
+
+    @Mock
+    private WritingRepository writingRepository;
 
     @Mock
     private PointService pointService;
@@ -75,8 +80,6 @@ class FeedbackServiceTest {
         FeedbackRequest request = new FeedbackRequest(WritingType.WRITING, writingId);
         FeedbackResponse mockAiResponse = createMockFeedbackResponse();
 
-        when(writingService.getWriting(writingId))
-            .thenReturn(writing);
         when(chatClientBuilder.build()
             .prompt(anyString())
             .system((String) any())
@@ -84,6 +87,10 @@ class FeedbackServiceTest {
             .call()
             .entity(FeedbackResponse.class))
         .thenReturn(mockAiResponse);
+        when(feedbackRepository.save(any())).thenReturn(mock(Feedback.class));
+
+
+        when(writingRepository.findById(eq(writingId))).thenReturn(Optional.of(writing));
 
         // When
         FeedbackResponse actualResponse = feedbackService.generateFeedback(request, ActivityType.TOPIC);
