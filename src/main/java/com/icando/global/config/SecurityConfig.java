@@ -76,6 +76,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login/oauth2/**").permitAll() // 추가
+                        .requestMatchers("/login/oauth2/code/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/auth/login").permitAll()
