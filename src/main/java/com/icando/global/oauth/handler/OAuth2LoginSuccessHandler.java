@@ -37,7 +37,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 jwtService.sendAccessTokenAndRefreshToken(response, accessToken, null);
 
                 //TODO : 후에 URL 정리된 후 수정
-                String redirectUrl = "http://localhost:5173/e-eum";
+                String redirectUrl = "http://e-eum.site/e-eum";
                 response.sendRedirect(redirectUrl);
             }
         } catch (Exception e) {
