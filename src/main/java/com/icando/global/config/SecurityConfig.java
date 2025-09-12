@@ -75,12 +75,11 @@ public class SecurityConfig {
         //URL 별 권한 설정
         http
                 .authorizeHttpRequests(auth -> auth
-
-
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger 접근 허용
+                        .requestMatchers("/oauth2/**").permitAll() // 추가
+                        .requestMatchers("/oauth2/code/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/oauth2/**", "/login/oauth2/code/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/mail/code/request").permitAll()
                         .requestMatchers("/mail/code/verify").permitAll()
@@ -88,6 +87,12 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(auth -> auth
+                                .baseUri("/oauth2/authorization") // 프론트에서 호출하는 URL
+                        )
+                        .redirectionEndpoint(redir -> redir
+                                .baseUri("/oauth2/code/*") // callback URL
+                        )
                         .successHandler(oAuth2LoginSuccessHandler)
                         .failureHandler(oAuth2LoginFailureHandler)
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
@@ -104,10 +109,8 @@ public class SecurityConfig {
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.addFilterBefore(jwtAuthenticationProcessingFilter(redisTemplate), CustomJsonUsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-
+        http.addFilterBefore(jwtAuthenticationProcessingFilter(redisTemplate), CustomJsonUsernamePasswordAuthenticationFilter.class);
 
 
         // 설정된 보안 구성을 적용하여 SecurityFilterChain 객체 생성
@@ -192,7 +195,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "https://e-eum.site",
-                "https:/e-eum-develop.vercel.app/welcome"
+                "https://e-eum-develop.vercel.app/welcome",
+                "https://www.e-eum.site"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
