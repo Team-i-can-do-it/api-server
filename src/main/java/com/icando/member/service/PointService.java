@@ -40,7 +40,8 @@ public class PointService {
                 filter(PointHistory -> PointHistory.getActivityType() == ActivityType.TOPIC).count();
 
         if (isActivityWordCount + isActivityTopicCount >= 3 ) {
-            throw new MemberException(MemberErrorCode.EXCEEDED_EARN_POINT);
+            return;
+            //throw new MemberException(MemberErrorCode.EXCEEDED_EARN_POINT);
         }
         member.addPoints(getPoint);
 
