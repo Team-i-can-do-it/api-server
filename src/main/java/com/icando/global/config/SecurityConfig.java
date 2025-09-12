@@ -77,15 +77,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
 
-                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger 접근 허용
-                                .requestMatchers("/actuator/**").permitAll()
-                                .requestMatchers("/auth/login").permitAll()
-                                .requestMatchers("/oauth2/**", "/login/oauth2/code/**").permitAll()
-                                .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/mail/code/request").permitAll()
-                                .requestMatchers("/mail/code/verify").permitAll()
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
-                                .anyRequest().authenticated()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // swagger 접근 허용
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/oauth2/**", "/login/oauth2/code/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/mail/code/request").permitAll()
+                        .requestMatchers("/mail/code/verify").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(oAuth2LoginSuccessHandler)
@@ -113,7 +113,7 @@ public class SecurityConfig {
         // 설정된 보안 구성을 적용하여 SecurityFilterChain 객체 생성
         return http.build();
     }
-    
+
     // 테스트 전용: oauth2Login 제거
     @Bean
     @Profile("test")

@@ -70,7 +70,8 @@ public class WritingController {
 
         }
 
-        TopicResponse topicResponse = new TopicResponse(selectedTopic.getId() ,selectedTopic.getTopicContent(), selectedTopic.getTopicTitle(), selectedTopic.getTopicDescription());
+        TopicResponse topicResponse = new TopicResponse(selectedTopic.getId(), selectedTopic.getTopicContent(), selectedTopic.getTopicTitle(), selectedTopic.getTopicDescription());
+
 
         SuccessResponse<TopicResponse> responseBody =
             SuccessResponse.of(WritingSuccessCode.TOPIC_SELECT_SUCCESS, topicResponse);
