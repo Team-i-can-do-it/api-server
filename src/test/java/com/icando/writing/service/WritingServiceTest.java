@@ -1,5 +1,6 @@
 package com.icando.writing.service;
 
+import com.icando.feedback.service.FeedbackService;
 import com.icando.member.entity.Member;
 import com.icando.member.entity.Role;
 import com.icando.member.login.exception.AuthException;
@@ -34,6 +35,8 @@ class WritingServiceTest {
     private MemberRepository memberRepository;
     @Mock
     private TopicRepository topicRepository;
+    @Mock
+    private FeedbackService feedbackService;
 
     @InjectMocks
     private WritingService writingService;
@@ -55,9 +58,17 @@ class WritingServiceTest {
             false
         );
         Topic mockTopic = Topic.of(null, "테스트 주제");
+        Writing mockWriting = mock(Writing.class);
+        when(mockWriting.getContent()).thenReturn(content);
+        when(mockWriting.getTopic()).thenReturn(mockTopic);
+        when(mockWriting.getFeedback()).thenReturn(null);
+        when(mockWriting.getId()).thenReturn(1L);
         
         when(memberRepository.findByEmail(email)).thenReturn(Optional.of(mockMember));
         when(topicRepository.findById(topicId)).thenReturn(Optional.of(mockTopic));
+        when(writingRepository.save(any(Writing.class))).thenReturn(mockWriting);
+        when(writingRepository.findById(1L)).thenReturn(Optional.of(mockWriting));
+
 
         // when
         writingService.createWriting(request, email);
