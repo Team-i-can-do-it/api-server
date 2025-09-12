@@ -1,5 +1,6 @@
 package com.icando.paragraphCompletion.service;
 
+import com.icando.global.utils.GlobalLogger;
 import com.icando.member.entity.Member;
 import com.icando.member.repository.MemberRepository;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionListResponse;
@@ -19,8 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,6 +29,7 @@ public class ParagraphCompletionService {
     private final WordSetItemRepository wordSetItemRepository;
     private final MemberRepository memberRepository;
     private final ParagraphWordRepository paragraphWordRepository;
+    private final List<String> wordList = new ArrayList<>();
 
 
     public ParagraphCompletionService(ParagraphCompletionRepository paragraphCompletionRepository, WordSetItemRepository wordSetItemRepository, MemberRepository memberRepository, ParagraphWordRepository paragraphWordRepository) {
@@ -38,8 +39,32 @@ public class ParagraphCompletionService {
         this.paragraphWordRepository = paragraphWordRepository;
     }
 
+//    public List<String> generateWords(int count) {
+//        return wordSetItemRepository.getRandomWords(count).stream().map(WordSetItem::getWord).toList();
+//    }
+
     public List<String> generateWords(int count) {
-        return wordSetItemRepository.getRandomWords(count).stream().map(WordSetItem::getWord).toList();
+        List<String> words = new ArrayList<>(count);
+        HashSet<Integer> indexes = new HashSet<>();
+        Random random = new Random();
+
+        if (wordList.isEmpty()) {
+            List<String> allWords = wordSetItemRepository.findAll().stream()
+                    .map(WordSetItem::getWord)
+                    .toList();
+            wordList.addAll(allWords);
+        }
+
+        while (indexes.size() < count) {
+            int randomIndex = random.nextInt(wordList.size());
+            indexes.add(randomIndex);
+        }
+
+        for (int index : indexes) {
+            words.add(wordList.get(index));
+        }
+
+        return words;
     }
 
     @Transactional
