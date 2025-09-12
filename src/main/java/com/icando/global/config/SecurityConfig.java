@@ -75,8 +75,8 @@ public class SecurityConfig {
         //URL 별 권한 설정
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login/oauth2/**").permitAll() // 추가
-                        .requestMatchers("/login/oauth2/code/**").permitAll()
+                        .requestMatchers("/api/v1/login/oauth2/**").permitAll() // 추가
+                        .requestMatchers("/api/v1/login/oauth2/code/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/auth/login").permitAll()
@@ -88,10 +88,10 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(auth -> auth
-                                .baseUri("/login/oauth2/authorization") // 프론트에서 호출하는 URL
+                                .baseUri("/api/v1/login/oauth2/authorization") // 프론트에서 호출하는 URL
                         )
                         .redirectionEndpoint(redir -> redir
-                                .baseUri("/login/oauth2/code/*") // callback URL
+                                .baseUri("/api/v1/login/oauth2/code/*") // callback URL
                         )
                         .successHandler(oAuth2LoginSuccessHandler)
                         .failureHandler(oAuth2LoginFailureHandler)
@@ -111,8 +111,6 @@ public class SecurityConfig {
 
         http.addFilterBefore(jwtAuthenticationProcessingFilter(redisTemplate), CustomJsonUsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-
 
 
         // 설정된 보안 구성을 적용하여 SecurityFilterChain 객체 생성
