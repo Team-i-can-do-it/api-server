@@ -70,6 +70,8 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable());
         http
                 .logout((auth) -> auth.disable());
+        http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
         //URL 별 권한 설정
         http
                 .authorizeHttpRequests(auth -> auth
@@ -188,7 +190,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:5173/",
+                "http://localhost:5173",
                 "https://e-eum.site",
                 "https:/e-eum-develop.vercel.app/welcome"
         ));
