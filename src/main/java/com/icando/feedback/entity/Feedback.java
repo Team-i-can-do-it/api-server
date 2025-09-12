@@ -69,4 +69,8 @@ public class Feedback extends BaseEntity {
         this.clarity = clarity;
         this.coherence = coherence;
     }
+
+    public void updateFeedbackScore(FeedbackScore feedbackScore) {
+        this.feedbackScore = feedbackScore;
+    }
 }

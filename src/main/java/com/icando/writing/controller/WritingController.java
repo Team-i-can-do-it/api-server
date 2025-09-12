@@ -4,6 +4,7 @@ import com.icando.global.success.SuccessResponse;
 import com.icando.writing.dto.TopicResponse;
 import com.icando.writing.dto.WritingCreateRequest;
 import com.icando.writing.dto.WritingListResponse;
+import com.icando.writing.dto.WritingResponse;
 import com.icando.writing.entity.Topic;
 import com.icando.writing.enums.Category;
 import com.icando.writing.enums.WritingSuccessCode;
@@ -85,14 +86,32 @@ public class WritingController {
         description = "새로운 글을 저장합니다."
     )
     @PostMapping
-    public ResponseEntity<SuccessResponse<Void>> createWriting(
+    public ResponseEntity<SuccessResponse<WritingResponse>> createWriting(
             @RequestBody @Valid WritingCreateRequest request,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        writingService.createWriting(request, userDetails.getUsername());
+        WritingResponse response = writingService.createWriting(request, userDetails.getUsername());
 
         return ResponseEntity
-            .ok(SuccessResponse.of(WritingSuccessCode.WRITING_CREATE_SUCCESS));
+            .ok(SuccessResponse.of(WritingSuccessCode.WRITING_CREATE_SUCCESS, response));
+    }
+
+    @Operation(
+        summary = "글 상세 조회",
+        description = "글 상세 내용을 조회합니다."
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<SuccessResponse<WritingResponse>> getWriting(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        WritingResponse response = writingService.getWritingResponse(id);
+        return ResponseEntity.ok(
+                SuccessResponse.of(
+                        WritingSuccessCode.WRITING_READ_SUCCESS,
+                        response
+                )
+        );
     }
 
     @Operation(

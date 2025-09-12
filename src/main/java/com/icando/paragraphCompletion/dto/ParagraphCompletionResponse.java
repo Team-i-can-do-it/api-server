@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -18,7 +19,8 @@ public class ParagraphCompletionResponse {
 
     private String content;
 
-    private List<String> words;
+//    private List<String> words;
+    private String topic;
 
     private FeedbackResponse feedback;
     private LocalDateTime createdAt;
@@ -27,7 +29,7 @@ public class ParagraphCompletionResponse {
         ParagraphCompletionResponse response = new ParagraphCompletionResponse();
         response.id = paragraphCompletion.getId();
         response.content = paragraphCompletion.getContent();
-        response.words = paragraphCompletion.getParagraphWords().stream().map(ParagraphWord::getWord).toList();
+        response.topic = paragraphCompletion.getParagraphWords().stream().map(ParagraphWord::getWord).collect(Collectors.joining(", "));
         if (paragraphCompletion.getFeedback() != null) {
             response.feedback = FeedbackResponse.of(paragraphCompletion.getFeedback());
         }
