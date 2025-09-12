@@ -1,7 +1,6 @@
 package com.icando.writing.service;
 
 import com.icando.feedback.dto.FeedbackRequest;
-import com.icando.feedback.dto.FeedbackResponse;
 import com.icando.feedback.service.FeedbackService;
 import com.icando.member.entity.ActivityType;
 import com.icando.member.login.exception.AuthErrorCode;

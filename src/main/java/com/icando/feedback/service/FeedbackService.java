@@ -20,7 +20,6 @@ import com.icando.writing.entity.Topic;
 import com.icando.writing.entity.Writing;
 import com.icando.writing.enums.WritingType;
 import com.icando.writing.repository.WritingRepository;
-import com.icando.writing.service.WritingService;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;

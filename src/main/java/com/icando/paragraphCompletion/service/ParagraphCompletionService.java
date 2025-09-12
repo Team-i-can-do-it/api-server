@@ -1,10 +1,7 @@
 package com.icando.paragraphCompletion.service;
 
 import com.icando.feedback.dto.FeedbackRequest;
-import com.icando.feedback.dto.FeedbackResponse;
-import com.icando.feedback.entity.Feedback;
 import com.icando.feedback.service.FeedbackService;
-import com.icando.global.utils.GlobalLogger;
 import com.icando.member.entity.ActivityType;
 import com.icando.member.entity.Member;
 import com.icando.member.repository.MemberRepository;
