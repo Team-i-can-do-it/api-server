@@ -69,7 +69,7 @@ spring:
   security:
     oauth2:
       client:
-        base-url: http://api.e-eum.site
+        base-url: https://api.e-eum.site
         registration:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
