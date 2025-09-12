@@ -196,7 +196,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "https://e-eum.site",
-                "https:/e-eum-develop.vercel.app/welcome"
+                "https://e-eum-develop.vercel.app/welcome"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
