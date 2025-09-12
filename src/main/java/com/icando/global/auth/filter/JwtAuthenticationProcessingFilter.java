@@ -43,7 +43,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             "/api/v1/auth/join",
             "/api/v1/mail/code/request",
             "/api/v1/mail/code/verify",
-            "/api/v1/actuator/**"
+            "/api/v1/actuator/**",
+            "/api/v1/login/oauth2/**"
     );
 
 
@@ -56,7 +57,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
 
         String path = request.getRequestURI(); // 예: /api/v1/swagger-ui/swagger-initializer.js
         for (String url : NO_CHECK_URL) {
