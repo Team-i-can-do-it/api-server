@@ -19,7 +19,7 @@ import com.icando.paragraphCompletion.repository.ParagraphCompletionRepository;
 import com.icando.writing.entity.Topic;
 import com.icando.writing.entity.Writing;
 import com.icando.writing.enums.WritingType;
-import com.icando.writing.service.WritingService;
+import com.icando.writing.repository.WritingRepository;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
@@ -41,9 +41,9 @@ public class FeedbackService {
     private final ChatClient.Builder chatClientBuilder;
     private final FeedbackRepository feedbackRepository;
     private final FeedbackScoreRepository feedbackScoreRepository;
-    private final WritingService writingService;
     private final MbtiRepository mbtiRepository;
     private final PointService pointService;
+    private final WritingRepository writingRepository;
     private final ParagraphCompletionRepository paragraphCompletionRepository;
     private final MemberRepository memberRepository;
 
@@ -85,7 +85,9 @@ public class FeedbackService {
     }
 
     private FeedbackResponse generateWritingFeedback(FeedbackRequest request, ActivityType activityType) {
-        Writing writing = writingService.getWriting(request.writingId());
+//        Writing writing = writingService.getWriting(request.writingId());
+        Writing writing = writingRepository.findById(request.writingId())
+                .orElseThrow(() -> new FeedbackException(FeedbackErrorCode.WRITING_NOT_FOUND));
         Topic topic = writing.getTopic();
 
         // AI에 요청후 JSON 응답을 DTO로 변환
@@ -134,7 +136,8 @@ public class FeedbackService {
             .feedback(savedFeedback)
             .build();
 
-        feedbackScoreRepository.save(scoreToSave);
+        FeedbackScore feedbackScore = feedbackScoreRepository.save(scoreToSave);
+        savedFeedback.updateFeedbackScore(feedbackScore);
     }
 
     public SortedMap<LocalDate, Integer> getDailyAverageScoresByDate(String email, String yyyyMM) {

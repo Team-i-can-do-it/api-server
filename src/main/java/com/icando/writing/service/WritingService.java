@@ -1,13 +1,18 @@
 package com.icando.writing.service;
 
+import com.icando.feedback.dto.FeedbackRequest;
+import com.icando.feedback.service.FeedbackService;
+import com.icando.member.entity.ActivityType;
 import com.icando.member.login.exception.AuthErrorCode;
 import com.icando.member.login.exception.AuthException;
 import com.icando.member.entity.Member;
 import com.icando.member.repository.MemberRepository;
 import com.icando.writing.dto.WritingCreateRequest;
 import com.icando.writing.dto.WritingListResponse;
+import com.icando.writing.dto.WritingResponse;
 import com.icando.writing.entity.Topic;
 import com.icando.writing.entity.Writing;
+import com.icando.writing.enums.WritingType;
 import com.icando.writing.error.TopicErrorCode;
 import com.icando.writing.error.TopicException;
 import com.icando.writing.error.WritingErrorCode;
@@ -29,9 +34,10 @@ public class WritingService {
     private final WritingRepository writingRepository;
     private final MemberRepository memberRepository;
     private final TopicRepository topicRepository;
+    private final FeedbackService feedbackService;
 
     @Transactional
-    public void createWriting(WritingCreateRequest request, String email) {
+    public WritingResponse createWriting(WritingCreateRequest request, String email) {
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new AuthException(AuthErrorCode.INVALID_MEMBER_ID));
 
@@ -40,7 +46,11 @@ public class WritingService {
 
         Writing writing = Writing.of(request.content(), member, topic);
 
-        writingRepository.save(writing);
+        writing = writingRepository.save(writing);
+
+        feedbackService.generateFeedback(new FeedbackRequest(WritingType.WRITING, writing.getId()), ActivityType.TOPIC);
+
+        return WritingResponse.of(writingRepository.findById(writing.getId()).orElseThrow(() -> new WritingException(WritingErrorCode.WRITING_NOT_FOUND)));
     }
 
     @Transactional(readOnly = true)
@@ -68,5 +78,13 @@ public class WritingService {
                         writing.getFeedback().getFeedbackScore().getFeedbackOverallScore(),
                         writing.getCreatedAt()
                 ));
+    }
+
+    public WritingResponse getWritingResponse(Long id) {
+
+        Writing writing = writingRepository.findById(id)
+            .orElseThrow(() -> new WritingException(WritingErrorCode.WRITING_NOT_FOUND));
+
+        return WritingResponse.of(writing);
     }
 }

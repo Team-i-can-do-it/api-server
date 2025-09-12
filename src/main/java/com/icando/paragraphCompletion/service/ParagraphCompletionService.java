@@ -1,5 +1,8 @@
 package com.icando.paragraphCompletion.service;
 
+import com.icando.feedback.dto.FeedbackRequest;
+import com.icando.feedback.service.FeedbackService;
+import com.icando.member.entity.ActivityType;
 import com.icando.member.entity.Member;
 import com.icando.member.repository.MemberRepository;
 import com.icando.paragraphCompletion.dto.ParagraphCompletionListResponse;
@@ -13,14 +16,14 @@ import com.icando.paragraphCompletion.exception.ParagraphCompletionException;
 import com.icando.paragraphCompletion.repository.ParagraphCompletionRepository;
 import com.icando.paragraphCompletion.repository.ParagraphWordRepository;
 import com.icando.paragraphCompletion.repository.WordSetItemRepository;
+import com.icando.writing.enums.WritingType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,17 +32,44 @@ public class ParagraphCompletionService {
     private final WordSetItemRepository wordSetItemRepository;
     private final MemberRepository memberRepository;
     private final ParagraphWordRepository paragraphWordRepository;
+    private final List<String> wordList = new ArrayList<>();
+    private final FeedbackService feedbackService;
 
 
-    public ParagraphCompletionService(ParagraphCompletionRepository paragraphCompletionRepository, WordSetItemRepository wordSetItemRepository, MemberRepository memberRepository, ParagraphWordRepository paragraphWordRepository) {
+    public ParagraphCompletionService(ParagraphCompletionRepository paragraphCompletionRepository, WordSetItemRepository wordSetItemRepository, MemberRepository memberRepository, ParagraphWordRepository paragraphWordRepository, FeedbackService feedbackService) {
         this.paragraphCompletionRepository = paragraphCompletionRepository;
         this.wordSetItemRepository = wordSetItemRepository;
         this.memberRepository = memberRepository;
         this.paragraphWordRepository = paragraphWordRepository;
+        this.feedbackService = feedbackService;
     }
 
+//    public List<String> generateWords(int count) {
+//        return wordSetItemRepository.getRandomWords(count).stream().map(WordSetItem::getWord).toList();
+//    }
+
     public List<String> generateWords(int count) {
-        return wordSetItemRepository.getRandomWords(count).stream().map(WordSetItem::getWord).toList();
+        List<String> words = new ArrayList<>(count);
+        HashSet<Integer> indexes = new HashSet<>();
+        Random random = new Random();
+
+        if (wordList.isEmpty()) {
+            List<String> allWords = wordSetItemRepository.findAll().stream()
+                    .map(WordSetItem::getWord)
+                    .toList();
+            wordList.addAll(allWords);
+        }
+
+        while (indexes.size() < count) {
+            int randomIndex = random.nextInt(wordList.size());
+            indexes.add(randomIndex);
+        }
+
+        for (int index : indexes) {
+            words.add(wordList.get(index));
+        }
+
+        return words;
     }
 
     @Transactional
@@ -76,6 +106,10 @@ public class ParagraphCompletionService {
         ParagraphCompletion savedParagraphCompletion = paragraphCompletionRepository.save(paragraphCompletion);
 
         paragraphWordRepository.saveAll(paragraphWords);
+
+        feedbackService.generateFeedback(new FeedbackRequest(WritingType.PARAGRAPH_COMPLETION, savedParagraphCompletion.getId()), ActivityType.WORD);
+
+        savedParagraphCompletion = paragraphCompletionRepository.findById(savedParagraphCompletion.getId()).orElseThrow(() -> new ParagraphCompletionException(ParagraphCompletionErrorCode.PARAGRAPH_COMPLETION_NOT_FOUND));
 
         return ParagraphCompletionResponse.of(savedParagraphCompletion);
     }
