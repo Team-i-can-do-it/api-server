@@ -75,13 +75,13 @@ public class SecurityConfig {
         //URL 별 권한 설정
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/login/oauth2/**").permitAll() // 추가
-                        .requestMatchers("/api/v1/swagger-ui/**", "/api/v1/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/v1/actuator/**").permitAll()
-                        .requestMatchers("/api/v1/auth/login").permitAll()
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/mail/code/request").permitAll()
-                        .requestMatchers("/api/v1/mail/code/verify").permitAll()
+                        .requestMatchers("/login/oauth2/**").permitAll() // 추가
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/mail/code/request").permitAll()
+                        .requestMatchers("/mail/code/verify").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
