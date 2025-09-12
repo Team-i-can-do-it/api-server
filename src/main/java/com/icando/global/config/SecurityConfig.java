@@ -88,6 +88,12 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(auth -> auth
+                                .baseUri("/api/v1/login/oauth2/authorization") // 프론트에서 호출하는 URL
+                        )
+                        .redirectionEndpoint(redir -> redir
+                                .baseUri("/api/v1/login/oauth2/code/*") // callback URL
+                        )
                         .successHandler(oAuth2LoginSuccessHandler)
                         .failureHandler(oAuth2LoginFailureHandler)
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
