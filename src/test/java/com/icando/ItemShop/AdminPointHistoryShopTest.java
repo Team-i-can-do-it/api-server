@@ -56,8 +56,7 @@ public class AdminPointHistoryShopTest {
             "user1",
             "user@example.com",
             "1234",
-            Role.ADMIN,
-            false
+            Role.ADMIN
         );
 
         when(memberRepository.findByEmail("user@example.com"))

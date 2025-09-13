@@ -65,8 +65,7 @@ class FeedbackServiceTest {
             "name",
             "test@exampl.com",
             "1234",
-            Role.USER,
-            false
+            Role.USER
         );
     }
 

@@ -39,8 +39,7 @@ public class LoginTest {
                 "최다빈",
                 "9636515@test.com",
                 "test123",
-                Role.USER,
-                false
+                Role.USER
         );
     }
     @Test
