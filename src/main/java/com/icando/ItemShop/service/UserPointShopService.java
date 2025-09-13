@@ -17,14 +17,17 @@ import com.icando.member.exception.MemberException;
 import com.icando.member.repository.MemberRepository;
 import com.icando.member.service.PointService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class UserPointShopService {
 
     private final ItemRepository itemRepository;
@@ -32,6 +35,7 @@ public class UserPointShopService {
     private final PointShopHistoryRepository pointShopHistoryRepository;
     private final MemberRepository memberRepository;
     private final PointService pointService;
+    private final ReentrantLock lock = new ReentrantLock();
 
     public List<ItemResponse> getItemList(ItemGetType itemGetType) {
 
@@ -55,14 +59,19 @@ public class UserPointShopService {
 
     @Transactional
     public Item buyItem(Long itemId,String number, String email) {
-        Item item = validateItem(itemId);
-        Member member = validatePoint(email, item.getPoint());
-        PointShopHistory pointShopHistory = PointShopHistory.byPhoneNumber(member,item,number);
-        pointService.usedPoint(member.getId(),item.getPoint(), ActivityType.BUY);
-        item.decreaseQuantity(1);
-        pointShopHistoryRepository.save(pointShopHistory);
-        return item;
-    }
+
+            Item item = validateItem(itemId);
+            if (item.getQuantity() <= 0) {
+                throw new PointShopException(PointShopErrorCode.OUT_OF_STOCK);
+            }
+
+            Member member = validatePoint(email, item.getPoint());
+            PointShopHistory pointShopHistory = PointShopHistory.byPhoneNumber(member,item,number);
+            pointService.usedPoint(member.getId(),item.getPoint(), ActivityType.BUY);
+            item.decreaseQuantity(1);
+            pointShopHistoryRepository.save(pointShopHistory);
+            return item;
+        }
 
     public ItemResponse getItem(Long itemId) {
 
