@@ -1,5 +1,6 @@
 package com.icando.member.service;
 
+import com.icando.bookmark.repository.BookmarkRepository;
 import com.icando.member.dto.MbtiResponse;
 import com.icando.member.dto.MbtiSummaryDto;
 import com.icando.member.dto.MyPageResponse;
@@ -13,6 +14,8 @@ import com.icando.member.login.exception.AuthException;
 import com.icando.member.repository.MbtiRepository;
 import com.icando.member.repository.MemberRepository;
 import com.icando.member.repository.PointHistoryRepository;
+import com.icando.paragraphCompletion.repository.ParagraphCompletionRepository;
+import com.icando.writing.repository.WritingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +31,9 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MbtiRepository mbtiRepository;
     private final PointHistoryRepository pointHistoryRepository;
+    private final WritingRepository writingRepository;
+    private final ParagraphCompletionRepository paragraphCompletionRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     public MyPageResponse searchMyPage(String email) {
 
@@ -92,7 +98,13 @@ public class MemberService {
     public void deleteMember(String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.MEMBER_NOT_FOUND));
+
         mbtiRepository.deleteAllByMemberId(member.getId());
+        writingRepository.deleteAllByMemberId(member.getId());
+        pointHistoryRepository.deleteAllByMemberId(member.getId());
+        paragraphCompletionRepository.deleteAllByMemberId(member.getId());
+        bookmarkRepository.deleteAllByMemberId(member.getId());
+
         memberRepository.delete(member);
     }
 }

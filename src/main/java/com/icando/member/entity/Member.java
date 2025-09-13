@@ -79,8 +79,8 @@ public class Member extends BaseEntity {
         return new Member(id, name, email, password, null, null, false, role);
     }
 
-    public void updateVerify() {
-        this.isVerified = true;
+    public void updateProvide() {
+        this.provider = Provider.LOCAL;
     }
 
     public void addPoints(int getPoint) {

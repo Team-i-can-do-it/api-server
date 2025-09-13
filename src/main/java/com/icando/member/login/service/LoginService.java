@@ -50,6 +50,7 @@ public class LoginService implements UserDetailsService {
                 false
         );
 
+        member.updateProvide();
         memberRepository.save(member);
         redisUtil.deleteData("verified:" + member.getEmail());
 
