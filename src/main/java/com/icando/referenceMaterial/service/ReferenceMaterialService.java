@@ -43,7 +43,7 @@ public class ReferenceMaterialService {
     }
 
     @Async
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 45 14 * * *")
     @Transactional
     public void generateReferenceMaterials() {
         GlobalLogger.info("Generating reference materials");
