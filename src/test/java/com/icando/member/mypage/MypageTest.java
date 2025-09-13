@@ -47,8 +47,7 @@ public class MypageTest {
                 "최다빈",
                 "9636515@test.com",
                 "test123",
-                Role.USER,
-                false
+                Role.USER
         );
         ReflectionTestUtils.setField(member, "id", 1L);
     }

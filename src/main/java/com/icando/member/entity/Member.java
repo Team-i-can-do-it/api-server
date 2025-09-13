@@ -37,9 +37,6 @@ public class Member extends BaseEntity {
     @Column(name = "member_provider_id")
     private String providerId;
 
-    @Column(name = "is_verified")
-    private Boolean isVerified = false;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role = Role.USER;
@@ -49,34 +46,32 @@ public class Member extends BaseEntity {
     private int totalPoint;
 
     private Member(String name, String email,String password,Provider provider,
-                   String providerId, Boolean isVerified, Role role) {
+                   String providerId, Role role) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.provider = provider;
         this.providerId = providerId;
-        this.isVerified = isVerified;
         this.role = role;
     }
     private Member(Long id ,String name, String email,String password,Provider provider,
-                    String providerId, Boolean isVerified, Role role) {
+                    String providerId, Role role) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.provider = provider;
         this.providerId = providerId;
-        this.isVerified = isVerified;
         this.role = role;
     }
 
     //로컬 자체로그인 회원 객체 생성
-    public static Member createLocalMember(String name, String email,String password, Role role, Boolean isVerified) {
-        return new Member(name, email, password, null, null, false, role);
+    public static Member createLocalMember(String name, String email,String password, Role role) {
+        return new Member(name, email, password, null, null,  role);
     }
 
-    public static Member createLocalMemberByTest(Long id,String name, String email,String password, Role role, Boolean isVerified) {
+    public static Member createLocalMemberByTest(Long id,String name, String email,String password, Role role) {
 
-        return new Member(id, name, email, password, null, null, false, role);
+        return new Member(id, name, email, password, null, null,  role);
     }
 
     public void updateProvide() {
