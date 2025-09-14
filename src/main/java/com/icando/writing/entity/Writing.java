@@ -29,7 +29,7 @@ public class Writing extends BaseEntity {
     @JoinColumn(name ="feedback_id" , nullable = true)
     private Feedback feedback;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
