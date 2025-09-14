@@ -41,6 +41,10 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                     memberRepository.saveAndFlush(user);
                 });
 
+        String name = memberRepository.findByEmail(email)
+                .map(user -> user.getName())
+                .orElse("알수없는 사용자");
+
         // 응답 헤더 설정
         response.setStatus(HttpServletResponse.SC_OK);
         response.setCharacterEncoding("UTF-8");
@@ -51,7 +55,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 "{ \"message\": \"%s\", \"email\": \"%s\", \"accessTokenExpiration\": \"%s\" }",
                 "로그인에 성공하였습니다.",
                 email,
-                accessExpiration
+                accessExpiration,
+                name
         );
 
         response.getWriter().write(jsonResponse);
