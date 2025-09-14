@@ -16,9 +16,11 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.icando.member.entity.Provider.NAVER;
 
@@ -58,20 +60,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 
 
-    private Member getMember(OAuthAttributes attributes, Provider provider) {
 
+    private Member getMember(OAuthAttributes attributes, Provider provider) {
         String email = attributes.getOAuth2UserInfo().getEmail();
 
-        // 1. 이메일로 기존 가입 사용자인지 확인
-        Member findMember = memberRepository.findByEmail(email).orElse(null);
-
-        // 2. 이미 가입된 회원이라면, 회원 정보를 그대로 반환 (로그인 성공)
-        if (findMember != null) {
-            return findMember;
+        // [수정] 이메일 값이 비어있는 경우에 대한 예외 처리
+        if (!StringUtils.hasText(email)) {
+            // 여기에 비즈니스 로직에 맞는 예외를 던지거나 다른 처리를 해야 합니다.
+            // 예를 들어, OAuth2AuthenticationException을 발생시켜 FailureHandler로 보내기
+            throw new OAuth2AuthenticationException("Email not found from OAuth2 provider.");
         }
 
-        // 3. 가입되지 않은 회원이라면, 소셜 정보를 기반으로 새로 저장하고 반환
-        return saveMember(attributes, provider);
+        Optional<Member> findMember = memberRepository.findByEmail(email);
+
+        return findMember.orElseGet(() -> saveMember(attributes, provider));
     }
 
 
