@@ -58,62 +58,47 @@ public class SecurityConfig {
 
     @Bean
     @Profile("!test")
-    public SecurityFilterChain filterChain(HttpSecurity http, RedisTemplate<String, String > redisTemplate, CustomOAuth2UserService customOAuth2UserService) throws Exception {
-        //CSRF 비활성화
+    public SecurityFilterChain filterChain(HttpSecurity http, RedisTemplate<String, String > redisTemplate) throws Exception {
+        // CSRF, Form Login, HTTP Basic, Logout 비활성화 (기존과 동일)
         http
-                .csrf((auth) -> auth.disable());
-        //Form Login 비활성화
-        http
-                .formLogin((auth) -> auth.disable());
-        //HTTP Basic 비활성화
-        http
-                .httpBasic((auth) -> auth.disable());
-        http
+                .csrf((auth) -> auth.disable())
+                .formLogin((auth) -> auth.disable())
+                .httpBasic((auth) -> auth.disable())
                 .logout((auth) -> auth.disable());
+
+        // CORS 설정 적용 (기존과 동일, 올바르게 설정됨)
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
-        //URL 별 권한 설정
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/oauth2/**").permitAll() // 추가
-                        .requestMatchers("/oauth2/code/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/mail/code/request").permitAll()
-                        .requestMatchers("/mail/code/verify").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .authorizationEndpoint(auth -> auth
-                                .baseUri("/oauth2/authorization") // 프론트에서 호출하는 URL
-                        )
-                        .redirectionEndpoint(redir -> redir
-                                .baseUri("/oauth2/code/**") // callback URL
-                        )
-                        .successHandler(oAuth2LoginSuccessHandler)
-                        .failureHandler(oAuth2LoginFailureHandler)
-                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                ).exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setContentType("application/json;charset=UTF-8");
-                            response.getWriter().write("{\"error\": \"Unauthorized\"}");
-                        })
-                );
 
-        //세션을 사용하지 않는 정책
+        // 세션을 사용하지 않는 정책 (기존과 동일)
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthenticationProcessingFilter(redisTemplate), CustomJsonUsernamePasswordAuthenticationFilter.class);
+        // URL 별 권한 설정 (수정됨)
+        http
+                .authorizeHttpRequests(auth -> auth
+                        // OAuth2 관련 경로는 Spring Security가 내부적으로 처리하므로 명시적 허용 불필요
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
+                        // auth 경로는 필요한 것만 명시적으로 허용 ▼▼▼
+                        .requestMatchers("/auth/login", "/auth/sign-up" /* 회원가입 경로 예시 */).permitAll()
+                        .requestMatchers("/mail/code/request", "/mail/code/verify").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        // ▼▼▼ redirectionEndpoint 설정 제거! ▼▼▼
+                        .successHandler(oAuth2LoginSuccessHandler)
+                        .failureHandler(oAuth2LoginFailureHandler)
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                );
 
 
-        // 설정된 보안 구성을 적용하여 SecurityFilterChain 객체 생성
+        http.addFilterBefore(jwtAuthenticationProcessingFilter(redisTemplate), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(customJsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+
         return http.build();
     }
 
