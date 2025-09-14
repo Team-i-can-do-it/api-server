@@ -61,19 +61,16 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private Member getMember(OAuthAttributes attributes, Provider provider) {
 
         String email = attributes.getOAuth2UserInfo().getEmail();
+
+        // 1. 이메일로 기존 가입 사용자인지 확인
         Member findMember = memberRepository.findByEmail(email).orElse(null);
 
+        // 2. 이미 가입된 회원이라면, 회원 정보를 그대로 반환 (로그인 성공)
         if (findMember != null) {
-            if (findMember.getProvider() == Provider.LOCAL) {
-                throw new AuthException(AuthErrorCode.MEMBER_ALREADY_EXIST);
-            }
-
-            if (findMember.getProvider() != provider) {
-                throw new AuthException(AuthErrorCode.MEMBER_ALREADY_EXIST);
-            }
             return findMember;
         }
 
+        // 3. 가입되지 않은 회원이라면, 소셜 정보를 기반으로 새로 저장하고 반환
         return saveMember(attributes, provider);
     }
 
