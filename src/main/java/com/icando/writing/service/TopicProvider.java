@@ -20,7 +20,7 @@ public class TopicProvider {
         return topicRepository.findAllByCategory(category);
     }
 
-    @Cacheable(cacheNames = "allTopics")
+    @Cacheable(cacheNames = "topic")
     public List<Topic> getAllTopics() {
         return topicRepository.findAll();
     }
