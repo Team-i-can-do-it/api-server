@@ -86,7 +86,7 @@ spring:
               - email
               - profile
             authorization-grant-type: authorization_code
-            redirect-uri: "https://e-eum.site/login/oauth2/code/google"
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
           naver:
             client-id: ${NAVER_CLIENT_ID}
             client-secret: ${NAVER_CLIENT_SECRET}
