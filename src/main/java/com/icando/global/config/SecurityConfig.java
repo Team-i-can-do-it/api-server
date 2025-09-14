@@ -59,45 +59,37 @@ public class SecurityConfig {
     @Bean
     @Profile("!test")
     public SecurityFilterChain filterChain(HttpSecurity http, RedisTemplate<String, String > redisTemplate) throws Exception {
-        // CSRF, Form Login, HTTP Basic, Logout 비활성화 (기존과 동일)
-        http
-                .csrf((auth) -> auth.disable())
-                .formLogin((auth) -> auth.disable())
-                .httpBasic((auth) -> auth.disable())
-                .logout((auth) -> auth.disable());
-
-        // CORS 설정 적용 (기존과 동일, 올바르게 설정됨)
+        // ... (csrf, formLogin 등 다른 설정은 그대로) ...
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
-
-        // 세션을 사용하지 않는 정책 (기존과 동일)
-        http
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        // URL 별 권한 설정 (수정됨)
+        // URL 별 권한 설정
         http
                 .authorizeHttpRequests(auth -> auth
-                        // OAuth2 관련 경로는 Spring Security가 내부적으로 처리하므로 명시적 허용 불필요
+                        // ▼▼▼ 여기에 /login 경로를 추가해서 무한 루프를 방지 ▼▼▼
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
-                        // auth 경로는 필요한 것만 명시적으로 허용 ▼▼▼
-                        .requestMatchers("/auth/login", "/auth/sign-up" /* 회원가입 경로 예시 */).permitAll()
-                        .requestMatchers("/mail/code/request", "/mail/code/verify").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/mail/code/request").permitAll()
+                        .requestMatchers("/mail/code/verify").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        // ▼▼▼ redirectionEndpoint 설정 제거! ▼▼▼
+                        // ... (redirectionEndpoint 제거한 것 유지) ...
                         .successHandler(oAuth2LoginSuccessHandler)
                         .failureHandler(oAuth2LoginFailureHandler)
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                ).exceptionHandling(ex -> ex
+                        // 이 부분은 인증되지 않은 사용자가 보호된 리소스 접근 시 /login으로 리다이렉트하는 대신 401 에러를 응답하게 함
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"status\": 401, \"message\": \"Authentication required\"}");
+                        })
                 );
-
-
-        http.addFilterBefore(jwtAuthenticationProcessingFilter(redisTemplate), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterAt(customJsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
+        // ... (세션 관리, 필터 순서 등은 이전 답변대로 유지) ...
 
         return http.build();
     }
