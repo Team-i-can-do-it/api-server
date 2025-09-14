@@ -58,18 +58,28 @@ public class SecurityConfig {
 
     @Bean
     @Profile("!test")
-    public SecurityFilterChain filterChain(HttpSecurity http, RedisTemplate<String, String > redisTemplate) throws Exception {
-        // ... (csrf, formLogin 등 다른 설정은 그대로) ...
+    public SecurityFilterChain filterChain(HttpSecurity http, RedisTemplate<String, String > redisTemplate, CustomOAuth2UserService customOAuth2UserService) throws Exception {
+        //CSRF 비활성화
+        http
+                .csrf((auth) -> auth.disable());
+        //Form Login 비활성화
+        http
+                .formLogin((auth) -> auth.disable());
+        //HTTP Basic 비활성화
+        http
+                .httpBasic((auth) -> auth.disable());
+        http
+                .logout((auth) -> auth.disable());
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
-        // URL 별 권한 설정
+        //URL 별 권한 설정
         http
                 .authorizeHttpRequests(auth -> auth
-                        // ▼▼▼ 여기에 /login 경로를 추가해서 무한 루프를 방지 ▼▼▼
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/oauth2/**").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll() // 추가
+                        .requestMatchers("/oauth2/code/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/mail/code/request").permitAll()
                         .requestMatchers("/mail/code/verify").permitAll()
@@ -77,20 +87,34 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        // ... (redirectionEndpoint 제거한 것 유지) ...
+                        .authorizationEndpoint(auth -> auth
+                                .baseUri("/oauth2/authorization") // 프론트에서 호출하는 URL
+                        )
+                        .redirectionEndpoint(redir -> redir
+                                .baseUri("/oauth2/code/**") // callback URL
+                        )
                         .successHandler(oAuth2LoginSuccessHandler)
                         .failureHandler(oAuth2LoginFailureHandler)
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                 ).exceptionHandling(ex -> ex
-                        // 이 부분은 인증되지 않은 사용자가 보호된 리소스 접근 시 /login으로 리다이렉트하는 대신 401 에러를 응답하게 함
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.setContentType("application/json;charset=UTF-8");
-                            response.getWriter().write("{\"status\": 401, \"message\": \"Authentication required\"}");
+                            response.getWriter().write("{\"error\": \"Unauthorized\"}");
                         })
                 );
-        // ... (세션 관리, 필터 순서 등은 이전 답변대로 유지) ...
 
+        //세션을 사용하지 않는 정책
+        http
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        http.addFilterBefore(jwtAuthenticationProcessingFilter(redisTemplate), CustomJsonUsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+
+
+        // 설정된 보안 구성을 적용하여 SecurityFilterChain 객체 생성
         return http.build();
     }
 
