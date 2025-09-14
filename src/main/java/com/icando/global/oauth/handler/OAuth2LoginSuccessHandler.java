@@ -42,7 +42,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
 
                 // 3. 토큰을 쿼리 파라미터에 담아 리다이렉트
-                String targetUrl = UriComponentsBuilder.fromUriString("http://e-eum.site/e-eum")
+                String targetUrl = UriComponentsBuilder.fromUriString("https://e-eum.site/e-eum")
                         .queryParam("accessToken", accessToken)
                         .queryParam("refreshToken", refreshToken)
                         .build()
