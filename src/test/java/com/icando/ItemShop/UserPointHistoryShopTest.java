@@ -80,16 +80,14 @@ public class UserPointHistoryShopTest {
                 "user1",
                 "user@example.com",
                 "1234",
-                Role.USER,
-                false
+                Role.USER
         );
         admin = Member.createLocalMemberByTest(
                 2L,
                 "admin",
                 "admin@example.com",
                 "1234",
-                Role.ADMIN,
-                false
+                Role.ADMIN
         );
 
     }

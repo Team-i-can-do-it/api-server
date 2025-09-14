@@ -46,10 +46,10 @@ public class LoginService implements UserDetailsService {
                 joinDto.getName(),
                 joinDto.getEmail(),
                 bCryptPasswordEncoder.encode(joinDto.getPassword()),
-                Role.valueOf(Role.USER.name()),
-                false
+                Role.valueOf(Role.USER.name())
         );
 
+        member.updateProvide();
         memberRepository.save(member);
         redisUtil.deleteData("verified:" + member.getEmail());
 
