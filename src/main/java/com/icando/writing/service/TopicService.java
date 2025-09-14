@@ -4,27 +4,44 @@ import com.icando.writing.entity.Topic;
 import com.icando.writing.enums.Category;
 import com.icando.writing.error.TopicErrorCode;
 import com.icando.writing.error.TopicException;
-import com.icando.writing.repository.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
 public class TopicService {
 
-    private final TopicRepository topicRepository;
+    private final TopicProvider topicProvider;
 
     // 카테고리 랜덤
     public Topic getRandomTopicByCategory(Category category) {
-        return topicRepository.findRandomByCategory(category)
-            .orElseThrow(() -> new TopicException(TopicErrorCode.TOPIC_NOT_FOUND));
+        List<Topic> topics = topicProvider.getTopicsByCategory(category);
+        checkTopic(topics);
+        int randomIndex = randomIndex(topics.size());
+
+        return topics.get(randomIndex);
     }
 
     // 주제 전체 랜덤
     public Topic getRandomTopic() {
-        return topicRepository.findRandom()
-            .orElseThrow(() -> new TopicException(TopicErrorCode.TOPIC_NOT_FOUND));
+        List<Topic> topics = topicProvider.getAllTopics();
+        checkTopic(topics);
+        int randomIndex = randomIndex(topics.size());
+
+        return topics.get(randomIndex);
     }
 
+    private void checkTopic(List<Topic> topics) {
+        if (topics == null || topics.isEmpty()) {
+            throw new TopicException(TopicErrorCode.TOPIC_NOT_FOUND);
+        }
+    }
+
+    private int randomIndex(int size) {
+        return ThreadLocalRandom.current().nextInt(size);
+    }
 
 }
