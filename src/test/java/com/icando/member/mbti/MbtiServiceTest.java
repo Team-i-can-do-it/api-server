@@ -47,8 +47,7 @@ public class MbtiServiceTest {
             "name",
             "test@exampl.com",
             "1234",
-            Role.USER,
-            false
+            Role.USER
         );
 
         mbtiRequest = new MbtiRequest("ISTP", "ISTP ", "ISTP.png");
