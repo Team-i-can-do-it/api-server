@@ -8,11 +8,11 @@ server:
     mbeanregistry:
       enabled: true
     threads:
-      max: 400
-      min-spare: 20
-    max-connections: 10000
-    accept-count: 200
-    connection-timeout: 20000
+      max: 500
+      min-spare: 100
+    max-connections: 20000
+    accept-count: 5000
+    connection-timeout: 10000
 api:
   version: v1
 
@@ -55,6 +55,12 @@ spring:
       port: ${REDIS_PORT}
       host: ${REDIS_HOST}
       password: ${REDIS_PASSWORD}
+      lettuce:
+        pool:
+          max-active: 50 # 최대 활성 연결 수
+          max-idle: 20 # 최대 유휴 연결 수
+          min-idle: 5 # 최소 유휴 연결 수
+          max-wait: 3000ms # 풀에서 연결을 얻기 위해 대기하는 최대 시간
       timeout: 60000
   cache:
     jcache:
