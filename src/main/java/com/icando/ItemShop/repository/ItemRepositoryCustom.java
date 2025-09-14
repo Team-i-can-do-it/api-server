@@ -2,6 +2,7 @@ package com.icando.ItemShop.repository;
 
 
 import com.icando.ItemShop.dto.ItemGetType;
+import com.icando.ItemShop.dto.ItemResponse;
 import com.icando.ItemShop.entity.Item;
 
 import java.util.List;
