@@ -184,7 +184,7 @@ public class UserPointShopService {
         Item item = validateItem(itemId);
         Member member = validatePoint(email, item.getPoint());
         PointShopHistory pointShopHistory = PointShopHistory.byPhoneNumber(member,item,number);
-        pointService.usedPoint(member.getId(),item.getPoint(), ActivityType.BUY);
+        pointService.usedPoint(member,item.getPoint(), ActivityType.BUY);
         item.decreaseQuantity(1);
         pointShopHistoryRepository.save(pointShopHistory);
         return item;
