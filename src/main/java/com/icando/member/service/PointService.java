@@ -18,12 +18,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class PointService {
 
     private final PointHistoryRepository pointHistoryRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public void earnPoints(Long memberId, int getPoint, ActivityType activityType) {
 
         LocalDate today = LocalDate.now();
@@ -51,9 +51,8 @@ public class PointService {
 
     }
 
-    public void usedPoint(Long memberId,int itemPoint, ActivityType activityType){
 
-        Member member = validateMember(memberId);
+    public void usePoint(Member member,int itemPoint, ActivityType activityType){
 
         member.decreasePoint(itemPoint);
 
