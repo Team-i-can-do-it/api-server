@@ -52,7 +52,7 @@ public class PointService {
     }
 
 
-    public void usedPoint(Member member,int itemPoint, ActivityType activityType){
+    public void usePoint(Member member,int itemPoint, ActivityType activityType){
 
         member.decreasePoint(itemPoint);
 
