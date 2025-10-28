@@ -141,7 +141,7 @@ public class UserPointShopTest {
         System.out.println("실패 횟수:" + failCount.get());
         System.out.println("성공 횟수:" + successCount.get());
         assertThat(updatedItem.getQuantity()).isZero();
-        assertThat(failCount.get()).isEqualTo(90    0);
+        assertThat(failCount.get()).isEqualTo(900);
         assertThat(successCount.get()).isEqualTo(100);
 
 
