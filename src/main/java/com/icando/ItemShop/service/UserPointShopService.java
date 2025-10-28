@@ -182,6 +182,10 @@ public class UserPointShopService {
     @Transactional
     public Item buyItem(Long itemId,String number, String email) {
         Item item = validateItem(itemId);
+        if (item.getQuantity() <= 0) {
+            throw new PointShopException(PointShopErrorCode.OUT_OF_STOCK);
+        }
+
         Member member = validatePoint(email, item.getPoint());
         PointShopHistory pointShopHistory = PointShopHistory.byPhoneNumber(member,item,number);
         pointService.usePoint(member,item.getPoint(), ActivityType.BUY);
