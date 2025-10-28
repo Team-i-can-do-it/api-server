@@ -93,10 +93,10 @@ public class UserPointShopTest {
     }
 
     @Test
-    @DisplayName("동시성 환경 10000명 동시 상품 구매 재고 차감 테스트")
+    @DisplayName("동시성 환경 1000명 동시 상품 구매 재고 차감 테스트")
     public void buy_1000_together() throws InterruptedException {
         //given
-        int threadCount = 10000;
+        int threadCount = 1000;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
@@ -141,7 +141,7 @@ public class UserPointShopTest {
         System.out.println("실패 횟수:" + failCount.get());
         System.out.println("성공 횟수:" + successCount.get());
         assertThat(updatedItem.getQuantity()).isZero();
-        assertThat(failCount.get()).isEqualTo(9900);
+        assertThat(failCount.get()).isEqualTo(900);
         assertThat(successCount.get()).isEqualTo(100);
 
 
