@@ -79,7 +79,7 @@ public class UserPointShopTest {
         imageFile = new MockMultipartFile("file", image,"image/jpeg", "dummy image data".getBytes());
         when(s3Uploader.upload(any(MockMultipartFile.class), anyString()))
                 .thenReturn("https://test-url.com/test.jpg");
-        ItemRequest itemDetail = new ItemRequest("치킨",imageFile,2,10);
+        ItemRequest itemDetail = new ItemRequest("치킨",imageFile,100,10);
         admin = Member.createLocalMemberByTest(
                 1L,
                 "admin",
@@ -93,10 +93,10 @@ public class UserPointShopTest {
     }
 
     @Test
-    @DisplayName("동시성 환경 100명 동시 상품 잔량 차감 테스트")
+    @DisplayName("동시성 환경 10000명 동시 상품 구매 재고 차감 테스트")
     public void buy_1000_together() throws InterruptedException {
         //given
-        int threadCount = 100;
+        int threadCount = 10000;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
@@ -141,7 +141,7 @@ public class UserPointShopTest {
         System.out.println("실패 횟수:" + failCount.get());
         System.out.println("성공 횟수:" + successCount.get());
         assertThat(updatedItem.getQuantity()).isZero();
-        assertThat(failCount.get()).isEqualTo(0);
+        assertThat(failCount.get()).isEqualTo(9900);
         assertThat(successCount.get()).isEqualTo(100);
 
 
