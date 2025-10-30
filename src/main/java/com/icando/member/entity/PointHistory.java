@@ -1,14 +1,11 @@
 package com.icando.member.entity;
 
 import com.icando.global.BaseEntity;
-import com.icando.member.exception.MemberErrorCode;
-import com.icando.member.exception.MemberException;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -27,7 +24,7 @@ public class PointHistory extends BaseEntity {
     @Column(name = "points")
     private int points;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     @Column(name = "point_activity_type")
     private ActivityType activityType;
 

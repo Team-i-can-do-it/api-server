@@ -43,7 +43,7 @@ public class Member extends BaseEntity {
 
     @Column(name = "member_total_point")
     @ColumnDefault("0")
-    private int totalPoint;
+    private Integer totalPoint;
 
     private Member(String name, String email,String password,Provider provider,
                    String providerId, Role role) {
@@ -64,6 +64,17 @@ public class Member extends BaseEntity {
         this.role = role;
     }
 
+    private Member(String name, String email,String password,Provider provider,
+                   String providerId, Role role,Integer totalPoint) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.provider = provider;
+        this.providerId = providerId;
+        this.role = role;
+        this.totalPoint = totalPoint;
+    }
+
     //로컬 자체로그인 회원 객체 생성
     public static Member createLocalMember(String name, String email,String password, Role role) {
         return new Member(name, email, password, null, null,  role);
@@ -72,6 +83,11 @@ public class Member extends BaseEntity {
     public static Member createLocalMemberByTest(Long id,String name, String email,String password, Role role) {
 
         return new Member(id, name, email, password, null, null,  role);
+    }
+
+    public static Member createLocalMemberByTestByPoint(String name, String email, String password, Role role, Integer totalPoint) {
+
+        return new Member(name, email, password, null, null,  role, totalPoint);
     }
 
     public void updateProvide() {
