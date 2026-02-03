@@ -19,6 +19,9 @@ import java.util.Map;
  * JSON 기반 로그인 요청을 처리하는 Custom Filter
  * 기본 UsernamePasswordAuthenticationFilter를 상속해서 /login 요청 시
  * email/password를 JSON Body에서 읽어와 인증 처리
+ *
+ * 기본 UsernamePasswordAuthenticationFilter는 x-www-form-urlencoded만 처리한다.
+ * application/json요청을 받기 위해 기본 필터를 상속하여 json 파싱 로직을 넣은 것
  */
 
 @RequiredArgsConstructor

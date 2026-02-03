@@ -29,7 +29,6 @@ public class MailService {
 
     private final JavaMailSender mailSender;
     private final RedisUtil redisUtil;
-    private final MemberRepository memberRepository;
 
     @Value("${mail.naver.username}")
     String sendEmail;
@@ -83,8 +82,6 @@ public class MailService {
     public MailErrorCode verifyEmailCode(CodeDto codeDto) {
         String redisCode = redisUtil.getData(codeDto.getEmail());
         Long ttl = redisUtil.getExpire(codeDto.getEmail(), TimeUnit.SECONDS);
-        log.info(codeDto.getCode());
-        log.info(redisCode);
 
         if(redisCode == null || ttl == -2) {
             return MailErrorCode.CODE_INVALID;

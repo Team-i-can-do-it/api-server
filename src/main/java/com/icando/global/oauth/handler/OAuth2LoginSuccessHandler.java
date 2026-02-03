@@ -31,8 +31,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
             if (oAuth2User.getRole() == Role.USER) {
-                String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
-                String refreshToken= jwtService.createRefreshToken();
+                String accessToken = jwtService.createAccessToken(oAuth2User.getEmail(), oAuth2User.getRole());
+                String refreshToken= jwtService.createRefreshToken(oAuth2User.getEmail(),  oAuth2User.getRole());
+
                 setTokensAndSendResponse(response, accessToken, refreshToken, oAuth2User.getEmail());
                 jwtService.sendAccessTokenAndRefreshToken(response, accessToken, null);
 
@@ -58,8 +59,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 
     private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User) throws IOException {
-        String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
-        String refreshToken = jwtService.createRefreshToken();
+        Role role = oAuth2User.getRole();
+        String accessToken = jwtService.createAccessToken(oAuth2User.getEmail(), role);
+        String refreshToken = jwtService.createRefreshToken(oAuth2User.getEmail(), role);
         setTokensAndSendResponse(response, accessToken, refreshToken, oAuth2User.getEmail());
 
         jwtService.sendAccessTokenAndRefreshToken(response, accessToken, refreshToken);

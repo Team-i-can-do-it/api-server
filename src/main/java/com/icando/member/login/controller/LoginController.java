@@ -1,6 +1,7 @@
 package com.icando.member.login.controller;
 
 import com.icando.global.auth.service.JwtService;
+import com.icando.member.entity.Role;
 import com.icando.member.login.dto.*;
 import com.icando.member.login.exception.AuthErrorCode;
 import com.icando.member.login.exception.AuthException;
@@ -41,11 +42,11 @@ public class LoginController {
     )
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(
-            @RequestBody LoginDto loginDto,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
+
         String accessToken = jwtService.createAccessToken(userDetails.getUsername());
-        String refreshToken = jwtService.createRefreshToken();
+        String refreshToken = jwtService.createRefreshToken(userDetails.getUsername());
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);

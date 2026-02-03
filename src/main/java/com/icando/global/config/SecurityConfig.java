@@ -26,7 +26,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -45,7 +44,6 @@ public class SecurityConfig {
     private final MemberRepository memberRepository;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
-    private final CustomOAuth2UserService customOAuth2UserService;
 
     /**
      * BCryptPasswordEncoder : SpringSecurity에서 제공하는 클래스로 비밀번호 암호화 하는데 필요한 Encoder
@@ -110,7 +108,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthenticationProcessingFilter(redisTemplate), CustomJsonUsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationProcessingFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class);
 
 
         // 설정된 보안 구성을 적용하여 SecurityFilterChain 객체 생성
@@ -184,8 +182,8 @@ public class SecurityConfig {
 
 
     @Bean
-    public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter(RedisTemplate<String, String> redisTemplate) {
-        JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService, memberRepository, redisTemplate);
+    public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
+        JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService);
         return jwtAuthenticationFilter;
     }
 
