@@ -3,6 +3,8 @@ package com.icando.global.auth.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.icando.member.entity.Member;
+import com.icando.member.entity.Role;
 import com.icando.member.repository.MemberRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,11 +43,6 @@ public class JwtService {
     @Value("${spring.jwt.refresh.header}")
     private String refreshHeader;
 
-    @PostConstruct
-    public void checkSecret() {
-        log.info(">>> JWT SECRET = [{}]", secretKey);
-    }
-
     /**
      * JWT의 Subject와 Claim으로 email사용 -> 클레임 Name = email로 설정
      * JWT Header에 들어오는 값 : Authorization(Key) = Bearer {token} (Value)
@@ -63,13 +60,14 @@ public class JwtService {
 
 
     //AccessToken 생성 메서드
-    public String createAccessToken(String email) {
+    public String createAccessToken(String email, Role role) {
         Date now = new Date();
         return JWT.create() // JWT토큰을 생성하는 빌더를 반환
                 .withSubject(ACCESS_TOKEN_SUBJECT)
                 .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod)) //토큰 만료 시간
                 // 클레임으로 email만 사용 추가로 더 작성해도 됨
                 .withClaim(EMAIL_CLAIM, email)
+                .withClaim("role", role.name())
                 .sign(Algorithm.HMAC512(secretKey)); //yml파일에서 지정한 secretkey로 암호화
 
     }
@@ -77,20 +75,14 @@ public class JwtService {
     /**
      * RefreshToken 생성, Claim에 email도 넣지 않는다.
      */
-    public String createRefreshToken() {
+    public String createRefreshToken(String email, Role role) {
         Date now = new Date();
         return JWT.create()
                 .withSubject(REFRESH_TOKEN_SUBJECT)
                 .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod ))
+                .withClaim(EMAIL_CLAIM, email)
+                .withClaim("role", role.name())
                 .sign(Algorithm.HMAC512(secretKey));
-    }
-
-    //AccessToken을 Header에 실어서 보내기
-    public void sendAccessToken(HttpServletResponse response, String accessToken) {
-        response.setStatus(HttpServletResponse.SC_OK);
-
-        response.setHeader(accessHeader, BEARER + accessToken);
-        log.info("재발급된 AccessToken : {}", accessToken);
     }
 
     //Access + Refresh 토큰 Header에 보내기
@@ -120,6 +112,20 @@ public class JwtService {
                 .map(refreshToken -> refreshToken.replace(BEARER, ""));
     }
 
+    public Optional<Role> extractRole(String accessToken) {
+        try {
+            String roleStr = JWT.require(Algorithm.HMAC512(secretKey))
+                    .build()
+                    .verify(accessToken)
+                    .getClaim("role")
+                    .asString();
+            return Optional.of(Role.valueOf(roleStr));
+        } catch (Exception e) {
+            log.error("토큰에서 Role 추출 실패");
+            return Optional.empty();
+        }
+    }
+
     /**
      * AccessToken에서 email 추출
      * 추출 전 JWT.require()로 검증기 생성
@@ -134,7 +140,7 @@ public class JwtService {
                     .getClaim(EMAIL_CLAIM)
                     .asString());
         } catch (Exception e) {
-            log.error("액세스 토큰이 유효하지 않습니다.");
+            e.getMessage();
             return Optional.empty();
         }
     }
